@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIelement", "Task\UIelement
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readint", "Readint\Readint.csproj", "{04855383-52C0-43BA-B96C-01B5D928EBD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonnelAccounting", "PersonnelAccounting\PersonnelAccounting.csproj", "{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{04855383-52C0-43BA-B96C-01B5D928EBD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04855383-52C0-43BA-B96C-01B5D928EBD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04855383-52C0-43BA-B96C-01B5D928EBD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
