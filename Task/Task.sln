@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.31402.337
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task", "Task\Task.csproj", "{589EFB10-2F87-49CD-9319-61311C1C6CDC}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UIelement", "Task\UIelement.csproj", "{589EFB10-2F87-49CD-9319-61311C1C6CDC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readint", "Readint\Readint.csproj", "{04855383-52C0-43BA-B96C-01B5D928EBD9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{589EFB10-2F87-49CD-9319-61311C1C6CDC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{589EFB10-2F87-49CD-9319-61311C1C6CDC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{589EFB10-2F87-49CD-9319-61311C1C6CDC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04855383-52C0-43BA-B96C-01B5D928EBD9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04855383-52C0-43BA-B96C-01B5D928EBD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04855383-52C0-43BA-B96C-01B5D928EBD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04855383-52C0-43BA-B96C-01B5D928EBD9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
