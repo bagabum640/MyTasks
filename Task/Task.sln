@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Readint", "Readint\Readint.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PersonnelAccounting", "PersonnelAccounting\PersonnelAccounting.csproj", "{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BraveNewWorld", "BraveNewWorld\BraveNewWorld.csproj", "{C1573698-FCBE-4C49-AE87-D54D0712B172}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CC4BEE5A-BA71-4F9D-841F-C4C0D0665410}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1573698-FCBE-4C49-AE87-D54D0712B172}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1573698-FCBE-4C49-AE87-D54D0712B172}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1573698-FCBE-4C49-AE87-D54D0712B172}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1573698-FCBE-4C49-AE87-D54D0712B172}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
