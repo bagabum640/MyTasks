@@ -10,10 +10,10 @@ namespace Readint
     {
         static void Main(string[] args)
         {     
-            Console.WriteLine(ReadingText());                        
+            Console.WriteLine(ReadNumber());                        
         }
 
-        static int ReadingText ()
+        static int ReadNumber ()
         {
             bool isNumber = false;
             string enteredText;
