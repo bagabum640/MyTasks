@@ -12,12 +12,12 @@ namespace ShopQueue
         {
             int cashBalance = 0;
             Queue<int> purchasesPrice = new Queue<int>();
-
             BuyAnything(purchasesPrice);
 
             while (purchasesPrice.Count > 0)
             {
-                SellAnything(ref cashBalance, purchasesPrice);
+                Console.Write($"Денег в кассе: {cashBalance}\n");
+                cashBalance += SellAnything(purchasesPrice);
             }
 
             Console.WriteLine($"Денег в кассе: {cashBalance}\n");
@@ -25,19 +25,23 @@ namespace ShopQueue
         static void BuyAnything(Queue<int> purchasesPrice)
         {
             Random random = new Random();
+            int amountOurchases = 7;
+            int minPrice = 20;
+            int maxPrice = 700;
 
-            for (int i = 0; i < 7; i++)
+            for (int i = 0; i < amountOurchases; i++)
             {
-                purchasesPrice.Enqueue(random.Next(20, 700));
+                purchasesPrice.Enqueue(random.Next(minPrice, maxPrice));
             }            
         }
-        static void SellAnything(ref int cashBalance, Queue<int> purchasesPrice)
+        static int SellAnything(Queue<int> purchasesPrice)
         {
-            Console.Write($"Денег в кассе: {cashBalance}\n");
+            int cashBalance = 0;            
             Console.WriteLine($"Сумма текущей покупки: {purchasesPrice.Peek()}");
             cashBalance += purchasesPrice.Dequeue();
             Console.ReadKey(true);
             Console.Clear();
-        }
+            return cashBalance;
+        }        
     }
 }

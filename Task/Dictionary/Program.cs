@@ -12,31 +12,35 @@ namespace Dictionary
         {
             Dictionary<string, string> fruitDictionary = new Dictionary<string, string>() 
             {
-                {"Яблоко", "фрукт растущий на яблоне" },
-                {"Груша","можно кушать"},
-                {"Апельсин","солнца сын"} 
+                {"яблоко", "фрукт растущий на яблоне" },
+                {"груша","можно кушать"},
+                {"апельсин","солнца сын"} 
             };
-
-            while (true)
-            {
-                SearchInDictionary(fruitDictionary);
-            }
-        }
-        static void SearchInDictionary(Dictionary<string, string> fruitDictionary)
-        {
+            bool stopSearch = false;
             string enteredString;
 
-            Console.Write("Какой фрукт вы ищете: ");
-            enteredString = Console.ReadLine();
-
-            foreach (var item in fruitDictionary)
+            while (stopSearch != true)
             {
-                if (item.Key.ToLower() == enteredString.ToLower())
+                Console.Write("Какой фрукт вы ищете: ");
+                enteredString = Console.ReadLine().ToLower();
+
+                if (enteredString != "exit")
                 {
-                    Console.WriteLine($"{item.Key} - это {item.Value}\n");
-                    return;
+                    SearchInDictionary(enteredString, fruitDictionary);
                 }
+                else
+                {
+                    stopSearch = true;
+                }                
             }
+        }
+        static void SearchInDictionary(string enteredString,  Dictionary<string, string> fruitDictionary)
+        {
+            if (fruitDictionary.ContainsKey(enteredString))
+            {
+                Console.WriteLine($"{enteredString} - это {fruitDictionary[enteredString]}\n");
+                return;               
+            }            
            
             Console.WriteLine("Такого фрукта нет!\n");
         }
