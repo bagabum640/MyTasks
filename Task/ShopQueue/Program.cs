@@ -11,34 +11,36 @@ namespace ShopQueue
         static void Main(string[] args)
         {
             int cashBalance = 0;
-            Queue<int> purchasesPrice = new Queue<int>();
-            BuyAnything(purchasesPrice);
+            Queue<int> clients = new Queue<int>();
+            FillTheQueue(clients);
 
-            while (purchasesPrice.Count > 0)
+            while (clients.Count > 0)
             {
                 Console.Write($"Денег в кассе: {cashBalance}\n");
-                cashBalance += SellAnything(purchasesPrice);
+                cashBalance += ServeClient(clients);
             }
 
             Console.WriteLine($"Денег в кассе: {cashBalance}\n");
         }
-        static void BuyAnything(Queue<int> purchasesPrice)
+
+        static void FillTheQueue(Queue<int> clients)
         {
             Random random = new Random();
-            int amountOurchases = 7;
+            int amountPurchases = 7;
             int minPrice = 20;
             int maxPrice = 700;
 
-            for (int i = 0; i < amountOurchases; i++)
+            for (int i = 0; i < amountPurchases; i++)
             {
-                purchasesPrice.Enqueue(random.Next(minPrice, maxPrice));
+                clients.Enqueue(random.Next(minPrice, maxPrice));
             }            
         }
-        static int SellAnything(Queue<int> purchasesPrice)
+
+        static int ServeClient(Queue<int> clients)
         {
             int cashBalance = 0;            
-            Console.WriteLine($"Сумма текущей покупки: {purchasesPrice.Peek()}");
-            cashBalance += purchasesPrice.Dequeue();
+            Console.WriteLine($"Сумма текущей покупки: {clients.Peek()}");
+            cashBalance += clients.Dequeue();
             Console.ReadKey(true);
             Console.Clear();
             return cashBalance;
