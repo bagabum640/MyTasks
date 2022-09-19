@@ -27,14 +27,10 @@ namespace MergingCollections
         {
             for (int i = 0; i < array.Length; i++)
             {
-                if (mergedStrings.Contains(array[i]))
-                {
-                    continue;
-                }
-                else
+                if (mergedStrings.Contains(array[i]) != true)
                 {
                     mergedStrings.Add(array[i]);
-                }
+                }                
             }
         }
     }
