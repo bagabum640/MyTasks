@@ -19,6 +19,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShopQueue", "ShopQueue\Shop
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SuperDynamicArray", "SuperDynamicArray\SuperDynamicArray.csproj", "{DE4E7C3B-71DE-4726-95C5-916D9334024F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NewPersonnelAccounting", "NewPersonnelAccounting\NewPersonnelAccounting.csproj", "{34549E3C-BA7A-43E5-A4F0-7CAB5EB81226}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MergingCollections", "MergingCollections\MergingCollections.csproj", "{8062BC7A-D8A6-4947-9D87-893BBB7B6D5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{DE4E7C3B-71DE-4726-95C5-916D9334024F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DE4E7C3B-71DE-4726-95C5-916D9334024F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DE4E7C3B-71DE-4726-95C5-916D9334024F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{34549E3C-BA7A-43E5-A4F0-7CAB5EB81226}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34549E3C-BA7A-43E5-A4F0-7CAB5EB81226}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34549E3C-BA7A-43E5-A4F0-7CAB5EB81226}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34549E3C-BA7A-43E5-A4F0-7CAB5EB81226}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8062BC7A-D8A6-4947-9D87-893BBB7B6D5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8062BC7A-D8A6-4947-9D87-893BBB7B6D5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8062BC7A-D8A6-4947-9D87-893BBB7B6D5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8062BC7A-D8A6-4947-9D87-893BBB7B6D5A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
