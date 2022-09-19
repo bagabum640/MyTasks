@@ -10,13 +10,18 @@ namespace SuperDynamicArray
     {
         static void Main(string[] args)
         {
-            List<int> superArray  = new List<int>();            
+            List<int> numbers  = new List<int>();            
             string enteredString;
             int enteredNumber;
             bool isExit = false;
+            const string CommandExit = "exit";
+            const string CommandShowNumbers = "show";
+            const string CommandSum = "sum";
+            const string CommandRemove = "remove";
+            const string CommandRemoveAt = "removeat";
 
-            Console.WriteLine("Введите:\nЛюбое число - чтобы добавить его в массив\nshow - чтобы показать все числа в массиве\nsum - сложить все числа в массиве" +
-                    "\nexit - чтобы выйти из программы\nremove - чтобы ввести число которое хотите удалить\nremoveAt - чтобы удалить число, указав его индекс\n");
+            Console.WriteLine($"Введите:\nЛюбое число - чтобы добавить его в массив\n{CommandShowNumbers} - чтобы показать все числа в массиве\n{CommandSum} - сложить все числа в массиве" +
+                    $"\n{CommandExit} - чтобы выйти из программы\n{CommandRemove} - чтобы ввести число которое хотите удалить\n{CommandRemoveAt} - чтобы удалить число, указав его индекс\n");
             
             while (isExit != true)
             {                
@@ -24,54 +29,53 @@ namespace SuperDynamicArray
 
                 if (int.TryParse(enteredString, out enteredNumber))
                 {
-                    superArray.Add(enteredNumber);
+                    numbers.Add(enteredNumber);
                 }
                 else
                 {
                     switch (enteredString)
                     {
-                        case "exit":
+                        case CommandExit:
                             isExit = true;
                             break;
 
-                        case "show":
+                        case CommandShowNumbers:
 
-                            foreach (var item in superArray)
+                            foreach (var number in numbers)
                             {
-                                Console.WriteLine(item);
+                                Console.WriteLine(number);
                             }
 
                             break;
 
-                        case "sum":
-                            Console.WriteLine(superArray.Sum()); 
+                        case CommandSum:
+                            Console.WriteLine(numbers.Sum()); 
                             break;
 
-                        case "remove":
+                        case CommandRemove:
                             Console.Write("Введите число, которое хотите удалить: ");
                             enteredString = Console.ReadLine();
-                            Remove(enteredString, superArray);
+                            Remove(enteredString, numbers);
                             break;
 
-                        case "removeat":
+                        case CommandRemoveAt:
                             Console.Write("Введите индекс числа, которое хотите удалить: ");
                             enteredString = Console.ReadLine();
-                            RemoveAt(enteredString, superArray);
+                            RemoveAt(enteredString, numbers);
                             break;
                     }
                 }               
             }  
         }
 
-        static void RemoveAt(string enteredString, List<int> superArray)
-        {
-            int enteredNumber;
+        static void RemoveAt(string enteredString, List<int> numbers)
+        {            
 
-            if (int.TryParse(enteredString, out enteredNumber))
+            if (int.TryParse(enteredString, out int enteredNumber))
             {
-                if (enteredNumber < superArray.Count)
+                if (enteredNumber < numbers.Count)
                 {
-                    superArray.RemoveAt(enteredNumber);
+                    numbers.RemoveAt(enteredNumber);
                 }
                 else
                 {
@@ -84,13 +88,12 @@ namespace SuperDynamicArray
             }
         }
 
-        static void Remove (string enteredString, List<int> superArray)
-        {
-            int enteredNumber;
+        static void Remove (string enteredString, List<int> numbers)
+        {            
 
-            if (int.TryParse(enteredString, out enteredNumber))
+            if (int.TryParse(enteredString, out int enteredNumber))
             {
-                superArray.Remove(enteredNumber);
+                numbers.Remove(enteredNumber);
             }
             else
             {
