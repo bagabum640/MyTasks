@@ -10,66 +10,56 @@ namespace SuperDynamicArray
     {
         static void Main(string[] args)
         {
-            List<int> numbers  = new List<int>();            
-            string enteredString;
-            int enteredNumber;
-            bool isExit = false;
             const string CommandExit = "exit";
             const string CommandShowNumbers = "show";
             const string CommandSum = "sum";
             const string CommandRemove = "remove";
             const string CommandRemoveAt = "removeat";
+            List<int> numbers = new List<int>();
+            string enteredString;            
+            bool isExit = false;
 
             Console.WriteLine($"Введите:\nЛюбое число - чтобы добавить его в массив\n{CommandShowNumbers} - чтобы показать все числа в массиве\n{CommandSum} - сложить все числа в массиве" +
-                    $"\n{CommandExit} - чтобы выйти из программы\n{CommandRemove} - чтобы ввести число которое хотите удалить\n{CommandRemoveAt} - чтобы удалить число, указав его индекс\n");
-            
+                    $"\n{CommandRemoveAt} - чтобы удалить число, указав его индекс\n{CommandRemove} - чтобы ввести число которое хотите удалить" +
+                    $"\n{CommandExit} - чтобы выйти из программы\n");
+
             while (isExit != true)
-            {                
+            {
                 enteredString = Console.ReadLine().ToLower();
 
-                if (int.TryParse(enteredString, out enteredNumber))
+                switch (enteredString)
                 {
-                    numbers.Add(enteredNumber);
+                    case CommandExit:
+                        isExit = true;
+                        break;
+
+                    case CommandShowNumbers:
+                        ShowNumbers(numbers);
+                        break;
+
+                    case CommandSum:
+                        Console.WriteLine(numbers.Sum());
+                        break;
+
+                    case CommandRemove:                        
+                        Remove(numbers);
+                        break;
+
+                    case CommandRemoveAt:                        
+                        RemoveAt(numbers);
+                        break;
+
+                    default:
+                        AddNumber(enteredString, numbers);
+                        break;
                 }
-                else
-                {
-                    switch (enteredString)
-                    {
-                        case CommandExit:
-                            isExit = true;
-                            break;
-
-                        case CommandShowNumbers:
-
-                            foreach (var number in numbers)
-                            {
-                                Console.WriteLine(number);
-                            }
-
-                            break;
-
-                        case CommandSum:
-                            Console.WriteLine(numbers.Sum()); 
-                            break;
-
-                        case CommandRemove:
-                            Console.Write("Введите число, которое хотите удалить: ");
-                            enteredString = Console.ReadLine();
-                            Remove(enteredString, numbers);
-                            break;
-
-                        case CommandRemoveAt:
-                            Console.Write("Введите индекс числа, которое хотите удалить: ");
-                            enteredString = Console.ReadLine();
-                            RemoveAt(enteredString, numbers);
-                            break;
-                    }
-                }               
-            }  
+            }
         }
 
-        static void RemoveAt(string enteredString, List<int> numbers)
-        {            
+        static void RemoveAt(List<int> numbers)
+        {
+            Console.Write("Введите индекс числа, которое хотите удалить: ");
+            string enteredString = Console.ReadLine();
 
             if (int.TryParse(enteredString, out int enteredNumber))
             {
@@ -88,8 +78,10 @@ namespace SuperDynamicArray
             }
         }
 
-        static void Remove (string enteredString, List<int> numbers)
-        {            
+        static void Remove(List<int> numbers)
+        {
+            Console.Write("Введите число, которое хотите удалить: ");
+            string enteredString = Console.ReadLine();
 
             if (int.TryParse(enteredString, out int enteredNumber))
             {
@@ -98,6 +90,26 @@ namespace SuperDynamicArray
             else
             {
                 Console.WriteLine("Вы ввели не число!");
+            }
+        }
+
+        static void AddNumber(string enteredString, List<int> numbers)
+        {
+            if (int.TryParse(enteredString, out int enteredNumber))
+            {
+                numbers.Add(enteredNumber);
+            }
+            else
+            {
+                Console.WriteLine("Введенная строка не соответствует ни одной команде и не является числом!");
+            }
+        }
+
+        static void ShowNumbers(List<int> numbers)
+        {
+            foreach (var number in numbers)
+            {
+                Console.WriteLine(number);
             }
         }
     }

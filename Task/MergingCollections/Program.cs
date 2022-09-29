@@ -17,9 +17,9 @@ namespace MergingCollections
             AddNewElements(mergedStrings, firstString);
             AddNewElements(mergedStrings, secondString);
 
-            foreach (var item in mergedStrings)
+            foreach (var element in mergedStrings)
             {
-                Console.WriteLine(item);
+                Console.WriteLine(element);
             }
         }
 
