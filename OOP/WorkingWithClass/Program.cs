@@ -14,6 +14,7 @@ namespace WorkingWithClass
             newPlayer.ShowStats();
         }
     }
+    
     class Player
     {
         public int Health;
