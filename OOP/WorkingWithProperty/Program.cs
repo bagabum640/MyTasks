@@ -23,7 +23,7 @@ namespace WorkingWithProperty
 
     class Player
     {
-        public char PlayerModel;
+        public char PlayerModel { get; private set; }
         public int PositionX { get ; private set; }
         public int PositionY { get ; private set; }
 
