@@ -14,34 +14,30 @@ namespace WorkingWithClass
             newPlayer.ShowStats();
         }
     }
-<<<<<<< HEAD
 
-=======
-    
->>>>>>> b0c8e9a7c23313aa24dab1d2e826a81a84c75801
     class Player
     {
-        public int Health;
-        public int Armor;
-        public int Damage;
+        private int _health;
+        private int _armor;
+        private int _damage;
 
         public Player()
         {
-            Health = 100;
-            Armor = 20;
-            Damage = 35;
+            _health = 100;
+            _armor = 20;
+            _damage = 35;
         }
 
         public Player(int health, int armor, int damage)
         {
-            Health = health;
-            Armor = armor;
-            Damage = damage;
+            _health = health;
+            _armor = armor;
+            _damage = damage;
         }
 
         public void ShowStats()
         {
-            Console.WriteLine($"Здоровье: {Health}\nБроня: {Armor}\nУрон: {Damage}");
+            Console.WriteLine($"Здоровье: {_health}\nБроня: {_armor}\nУрон: {_damage}");
         }
     }
 }
