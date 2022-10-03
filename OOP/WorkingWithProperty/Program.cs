@@ -23,19 +23,16 @@ namespace WorkingWithProperty
 
     class Player
     {
-        private int _positionX;
-        private int _positionY;
         public char PlayerModel;
+        public int PositionX { get ; private set; }
+        public int PositionY { get ; private set; }
 
         public Player (int positionX, int positionY, char playerModel)
         {
-            _positionX = positionX;
-            _positionY = positionY;
+            PositionX = positionX;
+            PositionY = positionY;
             PlayerModel = playerModel;
-        }        
-
-        public int PositionX { get { return _positionX; } private set { ; } }
-        public int PositionY { get { return _positionY; } private set { ; } }
+        }   
     }
 
     class Renderer
