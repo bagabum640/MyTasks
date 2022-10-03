@@ -14,7 +14,11 @@ namespace WorkingWithClass
             newPlayer.ShowStats();
         }
     }
+<<<<<<< HEAD
 
+=======
+    
+>>>>>>> b0c8e9a7c23313aa24dab1d2e826a81a84c75801
     class Player
     {
         public int Health;

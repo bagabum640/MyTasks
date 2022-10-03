@@ -10,9 +10,14 @@ namespace WorkingWithProperty
     {
         static void Main(string[] args)
         {
-            Player player = new Player (5, 5, '@');
+            int positionX = 5;
+            int positionY = 5;
+            char playerSymbol = '@';
+
+            Player player = new Player (positionX, positionY, playerSymbol);
             Renderer renderer = new Renderer();
             renderer.DrawPlayer(player);
+            Console.WriteLine();
         }
     }
 
@@ -38,7 +43,7 @@ namespace WorkingWithProperty
         public void DrawPlayer (Player player)
         {
             Console.SetCursorPosition(player.PositionX, player.PositionY);
-            Console.WriteLine(player.PlayerModel);
+            Console.Write(player.PlayerModel);
         }
     }
 }
