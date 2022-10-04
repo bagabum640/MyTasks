@@ -23,15 +23,15 @@ namespace WorkingWithProperty
 
     class Player
     {
-        public char PlayerModel { get; private set; }
+        public char Model { get; private set; }
         public int PositionX { get ; private set; }
         public int PositionY { get ; private set; }
 
-        public Player (int positionX, int positionY, char playerModel)
+        public Player (int positionX, int positionY, char model)
         {
             PositionX = positionX;
             PositionY = positionY;
-            PlayerModel = playerModel;
+            Model = model;
         }   
     }
 
@@ -40,7 +40,7 @@ namespace WorkingWithProperty
         public void DrawPlayer (Player player)
         {
             Console.SetCursorPosition(player.PositionX, player.PositionY);
-            Console.Write(player.PlayerModel);
+            Console.Write(player.Model);
         }
     }
 }
