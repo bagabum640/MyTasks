@@ -23,7 +23,7 @@ namespace PlayersDataBase
             Console.WriteLine($"Enter:\n{AddPlayerCommand} - to add new player\n{ShowPlayersCommand} - to show all players\n{ChangeActivePlayerCommand} - to ban player, used him id\n" +
                 $"{DeletePlayerCommand} - to delete player, used him id\n{ExitCommand} - to exit");
             
-            while (!isExit)
+            while (isExit == false)
             {
                 command = Console.ReadLine();
 
@@ -83,7 +83,7 @@ namespace PlayersDataBase
         {
             Console.Write("Enter id: ");
 
-            if (int.TryParse(Console.ReadLine(), out int id))
+            if (ReadNumber(out int id))
             {
                 foreach (var player in _players)
                 {
@@ -93,17 +93,13 @@ namespace PlayersDataBase
                     }                    
                 }
             }
-            else
-            {
-                Console.WriteLine("Wrong id!");
-            }
         }
 
         public void DeletePlayer()
         {
             Console.Write("Enter id: ");
 
-            if (int.TryParse(Console.ReadLine(), out int id))
+            if (ReadNumber(out int id))
             {
                 for (int i = 0; i < _players.Count; i++)
                 {
@@ -112,10 +108,19 @@ namespace PlayersDataBase
                         _players.RemoveAt(i);
                     }                    
                 }
+            }            
+        }
+
+        private bool ReadNumber (out int id)
+        {
+            if (int.TryParse(Console.ReadLine(), out id))
+            {
+                return true;
             }
             else
             {
                 Console.WriteLine("Wrong id!");
+                return false;
             }
         }
     }
