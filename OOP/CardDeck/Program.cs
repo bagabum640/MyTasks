@@ -53,30 +53,36 @@ namespace CardDeck
     class Player
     {
         private List<Card> _cards = new List<Card>();
-        Random random = new Random();
+        private Random _random = new Random();
 
         public void TakeCard(Deck deck)
         {
-            _cards.Add(deck.IssueCard(random.Next(0, deck.Cards.Count)));
+            _cards.Add(deck.IssueCard(_random.Next(0, deck.Cards.Count)));
             Console.WriteLine("\nВы берете карту из колоды.\n");
         }
 
         public void TakeSomeCard(Deck deck)
         {
             Console.Write("\nСколько карт вы хотите взять: ");
-            uint cards = Convert.ToUInt32(Console.ReadLine());
-
-            if (cards <= deck.Cards.Count())
+            
+            if (uint.TryParse(Console.ReadLine(), out uint cards))
             {
-                for (int i = 0; i < cards; i++)
+                if (cards <= deck.Cards.Count())
                 {
-                    TakeCard(deck);
+                    for (int i = 0; i < cards; i++)
+                    {
+                        TakeCard(deck);
+                    }
+                }
+                else
+                {
+                    Console.WriteLine("В колоде недостаточно карт!");
                 }
             }
             else
             {
-                Console.WriteLine("В колоде недостаточно карт!");
-            }            
+                Console.WriteLine("Неподящие данные!");
+            }    
         }
 
         public void ShowHand()
