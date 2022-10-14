@@ -12,7 +12,8 @@ namespace PlayersDataBase
         {
             const string AddPlayerCommand = "add";
             const string ShowPlayersCommand = "show";
-            const string ChangeActivePlayerCommand = "ca";            
+            const string BanPlayerCommand = "ban";
+            const string UnbanPlayerCommand = "unban";
             const string DeletePlayerCommand = "delete";
             const string ExitCommand = "exit";
 
@@ -20,7 +21,8 @@ namespace PlayersDataBase
             bool isExit = false;
             DataBase dataBase = new DataBase();
 
-            Console.WriteLine($"Enter:\n{AddPlayerCommand} - to add new player\n{ShowPlayersCommand} - to show all players\n{ChangeActivePlayerCommand} - to ban player, used him id\n" +
+            Console.WriteLine($"Enter:\n{AddPlayerCommand} - to add new player\n{ShowPlayersCommand} - to show all players\n" +
+                $"{BanPlayerCommand} - to ban player, used him id\n{UnbanPlayerCommand} - to unban player, used him id\n" +
                 $"{DeletePlayerCommand} - to delete player, used him id\n{ExitCommand} - to exit");
             
             while (isExit == false)
@@ -37,8 +39,12 @@ namespace PlayersDataBase
                         dataBase.ShowPlayers();
                         break;
 
-                    case ChangeActivePlayerCommand:
-                        dataBase.ChangeActivePlayer();
+                    case BanPlayerCommand:
+                        dataBase.BanPlayer();
+                        break;
+
+                    case UnbanPlayerCommand:
+                        dataBase.UnbanPlayer();
                         break;
 
                     case DeletePlayerCommand:
@@ -79,46 +85,52 @@ namespace PlayersDataBase
             }
         }
 
-        public void ChangeActivePlayer()
+        public void BanPlayer()
         {
-            Console.Write("Enter id: ");
-
-            if (ReadNumber(out int id))
+            if (TryGetPlayer(out Player player))
             {
-                foreach (var player in _players)
-                {
-                    if (player.ID == id)
-                    {
-                        player.ChangeActive();
-                    }                    
-                }
-            }
+                player.Ban();
+            }            
+        }
+
+        public void UnbanPlayer()
+        {
+            if (TryGetPlayer(out Player player))
+            {
+                player.Unban();
+            }            
         }
 
         public void DeletePlayer()
         {
-            Console.Write("Enter id: ");
-
-            if (ReadNumber(out int id))
+            if (TryGetPlayer(out Player player))
             {
-                for (int i = 0; i < _players.Count; i++)
-                {
-                    if (_players[i].ID == id)
-                    {
-                        _players.RemoveAt(i);
-                    }                    
-                }
-            }            
+                _players.Remove(player);
+            }                     
         }
 
-        private bool ReadNumber (out int id)
+        private bool TryGetPlayer (out Player player)
         {
-            if (int.TryParse(Console.ReadLine(), out id))
+            Console.Write("Enter id: ");
+
+            if (int.TryParse(Console.ReadLine(), out int id))
             {
-                return true;
+                foreach (var _player in _players)
+                {
+                    if (_player.ID == id)
+                    {
+                        player = _player;
+                        return true;
+                    }                    
+                }
+
+                player = null;
+                Console.WriteLine("Wrong id!");
+                return false;
             }
             else
             {
+                player = null;
                 Console.WriteLine("Wrong id!");
                 return false;
             }
@@ -130,32 +142,44 @@ namespace PlayersDataBase
         public int ID { get; private set; }
         public string Name { get; private set; }
         public int Level { get; private set; }
-        public bool isActive { get; private set; }
+        public bool IsActive { get; private set; }
 
         public Player (int id, string name)
         {
             ID = id;
             Name = name;
             Level = 1;
-            isActive = true;
+            IsActive = true;
         }
 
         public void ShowStats()
         {
-            Console.WriteLine($"ID: {ID}\nName: {Name}\nLevel:{Level}\nActive: {isActive}\n");
+            Console.WriteLine($"ID: {ID}\nName: {Name}\nLevel:{Level}\nActive: {IsActive}\n");
         }
 
-        public void ChangeActive()
+        public void Ban()
         {
-            if (isActive == true)
+            if (IsActive == true)
             {
-                isActive = false;
+                IsActive = false;
                 Console.WriteLine($"Player {Name} was baned!");
             }
             else
+            {                
+                Console.WriteLine($"The player {Name} has already been banned!");
+            }
+        }
+
+        public void Unban()
+        {
+            if (IsActive == false)
             {
-                isActive = true;
+                IsActive = true;
                 Console.WriteLine($"Player {Name} was unbaned!");
+            }
+            else
+            {                
+                Console.WriteLine($"The player {Name} has not ban!");
             }
         }
     }
