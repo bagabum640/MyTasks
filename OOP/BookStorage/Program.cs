@@ -144,7 +144,7 @@ namespace BookStorage
 
             foreach (var _book in _storage)
             {
-                if (name == _book.Name)
+                if (_book.Name == name)
                 {
                     book = _book;
                     return true;
@@ -217,19 +217,7 @@ namespace BookStorage
         public void Show()
         {
             Console.WriteLine($"{Name} - {Writter} - {YearOfIssue}");
-        }
-
-        public bool SearchedBook(string parameter)
-        {
-            if (Name == parameter || Writter == parameter || YearOfIssue == parameter)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
-        }
+        }        
     }
 }
 

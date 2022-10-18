@@ -57,8 +57,15 @@ namespace CardDeck
 
         public void TakeCard(Deck deck)
         {
-            _cards.Add(deck.IssueCard(_random.Next(0, deck.Cards.Count)));
-            Console.WriteLine("\nВы берете карту из колоды.\n");
+            if (deck.CheckSize() > 0)
+            {
+                _cards.Add(deck.IssueCard(_random.Next(0, deck.CheckSize())));
+                Console.WriteLine("\nВы берете карту из колоды.\n");
+            }
+            else
+            {
+                Console.WriteLine("В колоде недостаточно карт!");
+            }
         }
 
         public void TakeSomeCard(Deck deck)
@@ -67,7 +74,7 @@ namespace CardDeck
             
             if (uint.TryParse(Console.ReadLine(), out uint cards))
             {
-                if (cards <= deck.Cards.Count())
+                if (cards <= deck.CheckSize())
                 {
                     for (int i = 0; i < cards; i++)
                     {
@@ -99,8 +106,12 @@ namespace CardDeck
         private int _maxCardNumber = 10;
         private int _minCardNumber = 6;                
         private string[] _suits = { "Червей","Бубей","Крестов","Пик" };
+        private List<Card> _cards = new List<Card>();
 
-        public List<Card> Cards = new List<Card>();
+        public int CheckSize()
+        {
+            return _cards.Count();
+        }
 
         public void Fill()
         {
@@ -108,21 +119,21 @@ namespace CardDeck
             {
                 for (int i = _minCardNumber; i <= _maxCardNumber; i++)
                 {
-                    Cards.Add(new Card(i, suit));  
+                    _cards.Add(new Card(i, suit));  
                 }
             }
         }
 
         public Card IssueCard(int index)
         {
-            Card card = Cards[index];
-            Cards.RemoveAt(index);
+            Card card = _cards[index];
+            _cards.RemoveAt(index);
             return card;
         }
 
         public void Show()
         {
-            foreach (var card in Cards)
+            foreach (var card in _cards)
             {
                 card.ShowFace();
             }

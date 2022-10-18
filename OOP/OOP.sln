@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CardDeck", "CardDeck\CardDe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BookStorage", "BookStorage\BookStorage.csproj", "{EEF94EB4-AC47-47BF-AE48-892C64B801F9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shop", "Shop\Shop.csproj", "{E3C45D7F-D017-4402-92A0-DB1833E1B83F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{EEF94EB4-AC47-47BF-AE48-892C64B801F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEF94EB4-AC47-47BF-AE48-892C64B801F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEF94EB4-AC47-47BF-AE48-892C64B801F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E3C45D7F-D017-4402-92A0-DB1833E1B83F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E3C45D7F-D017-4402-92A0-DB1833E1B83F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E3C45D7F-D017-4402-92A0-DB1833E1B83F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E3C45D7F-D017-4402-92A0-DB1833E1B83F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
