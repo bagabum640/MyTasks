@@ -10,30 +10,30 @@ namespace Shop
     {
         static void Main(string[] args)
         {
-            const string SellerMenuCommand = "да";            
+            const string SellerMenuCommand = "да";
             const string PlayerMenuCommand = "меню";
             const string ExitCommand = "нет";
 
             bool isExit = false;
             string command;
             Seller seller = new Seller();
-            
-                        
-            Console.WriteLine($"Добро пожаловать в наш магазин! Желаете взглянуть на товар?\n" +
-                $"\n{SellerMenuCommand} - посмотреть товары\n{PlayerMenuCommand} - открыть инвентарь\n{ExitCommand} - покинуть магазин");
+            Player player = new Player();
 
             while (isExit == false)
             {
-                Console.WriteLine();
+                Console.Clear();
+                Console.WriteLine($"Добро пожаловать в наш магазин! Желаете взглянуть на товар?\n" +
+                $"\n{SellerMenuCommand} - посмотреть товары\n{PlayerMenuCommand} - открыть инвентарь\n{ExitCommand} - покинуть магазин\n");
                 command = Console.ReadLine();
 
                 switch (command)
                 {
                     case SellerMenuCommand:
-                        seller.CallMenu();
+                        seller.CallMenu(player);
                         break;
 
                     case PlayerMenuCommand:
+                        player.CallMenu();
                         break;
 
                     case ExitCommand:
@@ -61,39 +61,20 @@ namespace Shop
 
         public void Show()
         {
-            Console.WriteLine($"{Name} - стоит {Cost} монет");
+            Console.WriteLine($"{Name} - стоимость {Cost} монет");
         }
     }
 
-    class Seller
+    class Inventory : IComparer<Item>
     {
         private List<Item> _inventory = new List<Item>();
 
-        public Seller()
+        public void AddSomeItems(Item[] items)
         {
-            Item[] items = { 
-                new Item("Пироженое", 60), new Item("Пироженое", 60), new Item("Пироженое", 60), new Item("Пироженое", 60), new Item("Пироженое", 60),
-                new Item("Вода", 15), new Item("Вода", 15), new Item("Вода", 15),
-                new Item("Хлеб", 30), new Item("Хлеб", 30), new Item("Хлеб", 30), new Item("Хлеб", 30),
-                new Item("Колбаса", 80), new Item("Колбаса", 80), new Item("Сыр", 30), new Item("Сыр", 30),
-            };
             _inventory.AddRange(items);
         }
 
-        public void CallMenu()
-        {
-            
-
-            Console.Clear();
-            Console.WriteLine("Выбирай!\n");
-            ShowItems();
-            Console.Write("\nКупить: ");
-            
-
-            
-        }
-
-        private void ShowItems()
+        public void ShowItems()
         {
             foreach (var item in _inventory)
             {
@@ -101,18 +82,153 @@ namespace Shop
             }
         }
 
-        private void Sell()
+        public bool TryFindItem(out Item item, string itemName)
         {
-            string itemName;
-            itemName = Console.ReadLine();
-
-            foreach (var item in _inventory)
+            foreach (var _item in _inventory)
             {
-                if (item.Name == itemName)
+                if (_item.Name == itemName)
                 {
-
+                    item = _item;
+                    return true;
                 }
             }
-        }        
+
+            item = null;
+            return false;
+        }
+
+        public void DeleteItem(Item item)
+        {
+            _inventory.Remove(item);
+        }
+
+        public void AddItem(Item item)
+        {
+            _inventory.Add(item);
+        }
+
+        public void Sort()
+        {
+            _inventory.Sort(Compare);
+        }
+
+        public int Compare(Item item1, Item item2)
+        {
+            string itemName1 = item1.Name.ToString();
+            string itemName2 = item2.Name.ToString();
+
+            return String.Compare(itemName1, itemName2);
+        }
+    }
+
+    class Seller
+    {
+        private Inventory _inventory = new Inventory();
+
+        public Seller()
+        {
+            Item[] items =
+            {
+                new Item("Пироженое", 60), new Item("Пироженое", 60), new Item("Пироженое", 60), new Item("Пироженое", 60), new Item("Пироженое", 60),
+                new Item("Вода", 15), new Item("Вода", 15), new Item("Вода", 15),
+                new Item("Хлеб", 30), new Item("Хлеб", 30), new Item("Хлеб", 30), new Item("Хлеб", 30),
+                new Item("Колбаса", 80), new Item("Колбаса", 80), new Item("Сыр", 30), new Item("Сыр", 30),
+            };
+
+            _inventory.AddSomeItems(items);
+        }
+
+        public void CallMenu(Player player)
+        {
+            const string ExitCommand = "выйти";
+
+            bool isExit = false;
+            string command;
+
+            while (isExit != true)
+            {
+                Console.Clear();
+                Console.WriteLine("Выбирай!\n");
+                _inventory.Sort();
+                _inventory.ShowItems();
+                Console.WriteLine($"\nВведите название товара, чтобы купить его, \n{ExitCommand} - чтобы закончить покупки.\n\nКупить: ");
+                command = Console.ReadLine();
+
+                if (command == ExitCommand)
+                {
+                    isExit = true;
+                }
+                else
+                {
+                    Sell(command, player);
+                }
+            }
+        }
+
+        private void Sell(string itemName, Player player)
+        {
+            if (_inventory.TryFindItem(out Item item, itemName))
+            {
+                player.BuyItem(item);
+                _inventory.DeleteItem(item);
+            }
+            else
+            {
+                Console.WriteLine($"{itemName} отсутствует в продаже.");
+                Console.ReadKey();
+            }
+        }
+    }
+
+    class Player
+    {
+        private Inventory _inventory = new Inventory();
+
+        public void BuyItem(Item item)
+        {
+            _inventory.AddItem(item);
+        }
+
+        public void CallMenu()
+        {
+            const string ExitCommand = "выйти";
+
+            bool isExit = false;
+            string command;
+
+            while (isExit != true)
+            {
+                Console.Clear();
+                Console.WriteLine("Предметы в инвентаре:\n");
+                _inventory.Sort();
+                _inventory.ShowItems();
+                Console.WriteLine($"\nВведите название предмета, чтобы использовать его, \n{ExitCommand} - чтобы закрыть инвентарь.\n\nИспользовать: ");
+                command = Console.ReadLine();
+
+                if (command == ExitCommand)
+                {
+                    isExit = true;
+                }
+                else
+                {
+                    UseItem(command);
+                }
+            }
+        }
+
+        private void UseItem(string itemName)
+        {
+            if (_inventory.TryFindItem(out Item item, itemName))
+            {
+                Console.WriteLine($"\nСъедено {item.Name}. Нажмите любую клавишу для продолжения.");
+                _inventory.DeleteItem(item);
+                Console.ReadKey();
+            }
+            else
+            {
+                Console.WriteLine($"{itemName} отсутствует в инвентаре.");
+                Console.ReadKey();
+            }
+        }
     }
 }
