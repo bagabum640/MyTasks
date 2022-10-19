@@ -51,9 +51,9 @@ namespace Shop
     class Item
     {
         public string Name { get; private set; }
-        public int Cost { get; private set; }
+        public uint Cost { get; private set; }
 
-        public Item(string name, int cost)
+        public Item(string name, uint cost)
         {
             Name = name;
             Cost = cost;
@@ -68,6 +68,7 @@ namespace Shop
     class Inventory : IComparer<Item>
     {
         private List<Item> _inventory = new List<Item>();
+        public uint Golds { get; private set; }
 
         public void AddSomeItems(Item[] items)
         {
@@ -79,7 +80,17 @@ namespace Shop
             foreach (var item in _inventory)
             {
                 item.Show();
-            }
+            }            
+        }
+
+        public void TakeGold(uint golds)
+        {
+            Golds += golds;
+        }
+
+        public void GiveGold(uint golds)
+        {
+            Golds -= golds;
         }
 
         public bool TryFindItem(out Item item, string itemName)
@@ -136,6 +147,7 @@ namespace Shop
             };
 
             _inventory.AddSomeItems(items);
+            _inventory.TakeGold(1000);
         }
 
         public void CallMenu(Player player)
@@ -151,6 +163,7 @@ namespace Shop
                 Console.WriteLine("Выбирай!\n");
                 _inventory.Sort();
                 _inventory.ShowItems();
+                Console.WriteLine($"\nЗолото у торговца: {_inventory.Golds}.\tВаше золото: {player.ShowBalance()}");
                 Console.WriteLine($"\nВведите название товара, чтобы купить его, \n{ExitCommand} - чтобы закончить покупки.\n\nКупить: ");
                 command = Console.ReadLine();
 
@@ -169,8 +182,17 @@ namespace Shop
         {
             if (_inventory.TryFindItem(out Item item, itemName))
             {
-                player.BuyItem(item);
-                _inventory.DeleteItem(item);
+                if (player.ShowBalance() >= item.Cost)
+                {
+                    player.BuyItem(item);
+                    _inventory.TakeGold(item.Cost);
+                    _inventory.DeleteItem(item);
+                }
+                else
+                {
+                    Console.WriteLine("Недостаточно золота.");
+                    Console.ReadKey();
+                }
             }
             else
             {
@@ -184,9 +206,20 @@ namespace Shop
     {
         private Inventory _inventory = new Inventory();
 
+        public Player()
+        {
+            _inventory.TakeGold(200);
+        }
+
         public void BuyItem(Item item)
         {
+            _inventory.GiveGold(item.Cost); 
             _inventory.AddItem(item);
+        }
+
+        public uint ShowBalance()
+        {
+            return _inventory.Golds;
         }
 
         public void CallMenu()
@@ -202,6 +235,7 @@ namespace Shop
                 Console.WriteLine("Предметы в инвентаре:\n");
                 _inventory.Sort();
                 _inventory.ShowItems();
+                Console.WriteLine("\nВаше золото: " + ShowBalance());
                 Console.WriteLine($"\nВведите название предмета, чтобы использовать его, \n{ExitCommand} - чтобы закрыть инвентарь.\n\nИспользовать: ");
                 command = Console.ReadLine();
 
