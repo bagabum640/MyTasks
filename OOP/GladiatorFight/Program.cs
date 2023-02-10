@@ -59,7 +59,7 @@ namespace GladiatorFight
         }
     }
 
-    class Fighter
+    abstract class Fighter
     {        
         public string Name { get; private set; }
         public int MaxHealth { get; private set; }
