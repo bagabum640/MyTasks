@@ -10,12 +10,16 @@ namespace Test
     {
         static void Main(string[] args)
         {
-            List<int> numbers = new List<int>(1);
+            List<int> numbers = new List<int>();
+
             numbers.Add(2);
-            numbers[0] = 3;
+            numbers.Add(2);
+            numbers.Add(2);           
 
+            Console.WriteLine(numbers.Count);
 
-            Console.WriteLine(numbers[0]);
+            numbers.Clear();
+            Console.WriteLine(numbers.Count);
         }
     }
 }
