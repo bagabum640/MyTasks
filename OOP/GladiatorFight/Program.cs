@@ -12,7 +12,7 @@ namespace GladiatorFight
             const string ResetCommand = "сбросить выбор";
             const string StartCombatCommand = "начать бой";
             const string ExitCommand = "выйти";
-
+            
             bool isPlay = true;
             string command;
             string[] commands = { ShowFightersCommand, ChooseFighterCommand, ResetCommand, StartCombatCommand, ExitCommand };
