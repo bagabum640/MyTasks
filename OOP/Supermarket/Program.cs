@@ -12,37 +12,39 @@ namespace Supermarket
         {
             Supermarket supermarket = new Supermarket();
 
-            supermarket.ServingCustomers();
+            supermarket.ServeCustomers();
         }
     }
 
     class Supermarket
     {
         private int _money;
-        private int _customersNumber;
         private Random _random = new Random();
         private Queue<Customer> _customers = new Queue<Customer>();
-        private Product[] _products =
-            {
-                new Product("Мыло", 20), new Product("Веревка", 35), new Product("Водка", 70), new Product("Пиво", 50),
-                new Product("Макароны", 60), new Product("Рис", 65), new Product("Вода", 30), new Product("Капуста", 40),
-            };
+        private Product[] _products;
 
         public Supermarket()
         {
-            _customersNumber = _random.Next(10, 13);
+            int minCustomerQuantity = 10;
+            int maxCustomerQuantity = 13;
+            int customersQuntity = _random.Next(minCustomerQuantity, maxCustomerQuantity);
 
-            for (int i = 0; i < _customersNumber; i++)
+            _products = new Product[]
+            { new Product("Мыло", 20), new Product("Веревка", 35), new Product("Водка", 70), new Product("Пиво", 50),
+              new Product("Макароны", 60), new Product("Рис", 65), new Product("Вода", 30), new Product("Капуста", 40),
+            };
+
+            for (int i = 0; i < customersQuntity; i++)
             {
                 _customers.Enqueue(new Customer(_random.Next(120, 200), GenerateProductBasket()));
             }
         }
 
-        public void ServingCustomers()
+        public void ServeCustomers()
         {
             while (_customers.Count > 0)
             {
-                Console.WriteLine($"Денег в кассе: {_money}.\t\t Клиентов в очереди: {_customersNumber}.");
+                Console.WriteLine($"Денег в кассе: {_money}.\t\t Клиентов в очереди: {_customers.Count - 1}.");
                 ServeCustomer(_customers.Dequeue());
             }
 
@@ -52,15 +54,14 @@ namespace Supermarket
         private void ServeCustomer(Customer customer)
         {
             Console.WriteLine("\nКлиент подходит к кассе.\n");
-            _money += customer.TryBuyProducts();
+            _money += customer.BuyProducts();
             Console.WriteLine("\nКлиент покидает магазин.");
-            _customersNumber--;
             Console.ReadKey();
             Console.Clear();
         }
 
         private List<Product> GenerateProductBasket()
-        {          
+        {
             List<Product> productbasket = new List<Product>();
 
             for (int i = 0; i < _random.Next(1, _products.Length); i++)
@@ -84,18 +85,18 @@ namespace Supermarket
             _basket.AddRange(products);
         }
 
-        public int TryBuyProducts()
+        public int BuyProducts()
         {
             CalculateBasketPrice();
 
             if (_money >= _basketPrice)
             {
-                BuyProduct();                
+                ToPayBasket();
             }
             else
             {
                 LayOutRandomProduct();
-                TryBuyProducts();
+                BuyProducts();
             }
 
             return _basketPrice;
@@ -116,7 +117,7 @@ namespace Supermarket
             Console.ReadKey();
         }
 
-        private void BuyProduct()
+        private void ToPayBasket()
         {
             _money -= _basketPrice;
             _basket.Clear();
@@ -135,14 +136,14 @@ namespace Supermarket
 
     class Product
     {
-        public string Name { get; private set; }
-        public int Price { get; private set; }
-
         public Product(string name, int price)
         {
             Name = name;
             Price = price;
         }
+
+        public string Name { get; private set; }
+        public int Price { get; private set; }
 
         public void ShowInfo()
         {
