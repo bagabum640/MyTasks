@@ -12,21 +12,19 @@ namespace GladiatorFight
             const string ResetCommand = "сбросить выбор";
             const string StartCombatCommand = "начать бой";
             const string ExitCommand = "выйти";
-            
+
             bool isPlay = true;
             string command;
             string[] commands = { ShowFightersCommand, ChooseFighterCommand, ResetCommand, StartCombatCommand, ExitCommand };
 
             Arena arena = new Arena();
-            ArenaController arenaController = new ArenaController();
-            Menu menu = new Menu();            
 
-            menu.ShowGreeting();
-            
+            arena.ShowGreeting();
+
             while (isPlay)
             {
-                menu.ShowMainBar(arenaController);
-                command = menu.ChooseCommand(commands);
+                arena.ShowMainBar();
+                command = arena.ChooseCommand(commands);
 
                 switch (command)
                 {
@@ -35,22 +33,19 @@ namespace GladiatorFight
                         break;
 
                     case ChooseFighterCommand:
-                        arenaController.ChooseFighters(arena, menu);
+                        arena.ChooseFighters();
                         break;
 
                     case ResetCommand:
-                        arenaController.ResetFightersChoice();
+                        arena.ResetFightersChoice();
                         break;
 
                     case StartCombatCommand:
-                        arenaController.StartCombat(menu, arenaController);
+                        arena.StartCombat();
                         break;
 
                     case ExitCommand:
                         isPlay = false;
-                        break;
-
-                    default:
                         break;
                 }
 
@@ -60,13 +55,7 @@ namespace GladiatorFight
     }
 
     abstract class Fighter
-    {        
-        public string Name { get; private set; }
-        public int MaxHealth { get; private set; }
-        public int CurrentHealth { get; private set; }
-        public int Damage { get; private set; }
-        public int Armor { get; private set; }
-
+    {
         public Fighter(string name, int health, int damage, int armor)
         {
             Name = name;
@@ -76,10 +65,16 @@ namespace GladiatorFight
             Armor = armor;
         }
 
-        public virtual int Attack()
+        public string Name { get; private set; }
+        public int MaxHealth { get; private set; }
+        public int CurrentHealth { get; private set; }
+        public int Damage { get; private set; }
+        public int Armor { get; private set; }
+
+        public virtual void Attack(Fighter target)
         {
             Console.WriteLine($"{Name} машет мечом и наносит {Damage} единиц урона.");
-            return Damage;
+            target.TakeDamage(Damage);
         }
 
         public virtual void TakeDamage(int damage)
@@ -90,10 +85,10 @@ namespace GladiatorFight
             if (damage > 0)
             {
                 Console.WriteLine($"Броня смягчает урон, {Name} получает {resultingDamage} единиц урона.");
-            }            
+            }
         }
 
-        public virtual void RestoreHealh(int quantityHealth)
+        public virtual void RestoreCharacteristics(int quantityHealth)
         {
             if (MaxHealth - CurrentHealth < quantityHealth)
             {
@@ -113,33 +108,38 @@ namespace GladiatorFight
 
     class Barbarian : Fighter
     {
-        public Barbarian() : base ("Варвар", 400, 60, 15) { }
+        private double _criticalDamageMultiplier = 2.5;
+        private int _criticalStrikeChance = 40;
+        private int _strikeChance = 100;
 
-        public override int Attack()
+        public Barbarian() : base("Варвар", 400, 60, 15) { }
+
+        public override void Attack(Fighter target)
         {
             Random random = new Random();
-            int criticalDamage = (int)(Damage * 2.5);
-            
-            if (random.Next(10) > 6)
+            int criticalDamage = (int)(Damage * _criticalDamageMultiplier);
+
+            if (random.Next(_strikeChance) < _criticalStrikeChance)
             {
                 Console.WriteLine($"{Name} кружится в смертельном танце, рассекая врага и нанося {criticalDamage} единиц урона!");
-                return criticalDamage;
+                target.TakeDamage(criticalDamage);
+                return;
             }
 
             Console.WriteLine($"{Name} рубит с плеча нанося {Damage} единиц урона.");
-            return Damage;
+            target.TakeDamage(Damage);
         }
     }
 
     class Knight : Fighter
     {
-        public Knight() : base ("Рыцарь", 550, 45, 30) { }
+        public Knight() : base("Рыцарь", 550, 45, 30) { }
 
         public override void TakeDamage(int damage)
         {
             Random random = new Random();
 
-            if (random.Next(10) > 5 && damage >0)
+            if (random.Next(10) > 5 && damage > 0)
             {
                 Console.WriteLine($"{Name} укрывается за щитом, уменьшая повреждения на половину!");
                 damage /= 2;
@@ -155,32 +155,33 @@ namespace GladiatorFight
         private int _currentMana = _maxMana;
         private int _regenerationMana = 15;
         private int _magicDamage = 180;
-        private int _fireBallCost = 25;   
+        private int _fireBallCost = 25;
 
-        public Mag() : base("Маг", 300, 35, 10) { }        
+        public Mag() : base("Маг", 300, 35, 10) { }
 
-        public override int Attack()
-        {       
+        public override void Attack(Fighter target)
+        {
             if (TryCastFireBall())
             {
-                return _magicDamage;
+                target.TakeDamage(_magicDamage);
+                return;
             }
 
             Console.WriteLine($"{Name} размахивает своим посохом, нанося {Damage} единиц урона и восстанавливая {_regenerationMana} маны.");
             _currentMana += _regenerationMana;
-            return Damage;
+            target.TakeDamage(Damage);
         }
 
-        public override void RestoreHealh(int quantityHealth)
-        {            
+        public override void RestoreCharacteristics(int quantityHealth)
+        {
             _currentMana = _maxMana;
-            base.RestoreHealh(quantityHealth);
+            base.RestoreCharacteristics(quantityHealth);
         }
 
         private bool TryCastFireBall()
         {
             if (_currentMana >= _fireBallCost)
-            {         
+            {
                 Console.WriteLine($"{Name} бросает огненый шар, нанося {_magicDamage} единиц урона.");
                 _currentMana -= _fireBallCost;
                 return true;
@@ -191,46 +192,49 @@ namespace GladiatorFight
     }
 
     class CrossbowMan : Fighter
-    {        
+    {
         private bool _isCrossbowLoaded = true;
 
-        public CrossbowMan() : base ("Арбалетчик", 380, 120, 20) { }
+        public CrossbowMan() : base("Арбалетчик", 380, 120, 20) { }
 
-        public override int Attack()
+        public override void Attack(Fighter target)
         {
             if (_isCrossbowLoaded)
             {
                 _isCrossbowLoaded = false;
                 Console.WriteLine($"{Name} стреляет в противника и наносит {Damage} единиц урона.");
-                return Damage;
+                target.TakeDamage(Damage);
+                return;
             }
 
             Console.WriteLine($"{Name} перезаряжает арбалет.");
             _isCrossbowLoaded = true;
-            return 0;            
+            target.TakeDamage(0);
         }
     }
 
     class Priest : Fighter
     {
-        int _healingPower = 90;
+        private int _healingPower = 90;
+        private int _chanceToCastPray = 60;
+        private int _generalChanceOfPull = 100;
 
         public Priest() : base("Жрец", 320, 50, 15) { }
 
         public override void TakeDamage(int damage)
         {
             base.TakeDamage(damage);
-            Pray();  
+            Pray();
         }
 
         private void Pray()
         {
             Random random = new Random();
 
-            if (random.Next(9) > 4)
+            if (random.Next(_generalChanceOfPull) < _chanceToCastPray)
             {
                 Console.WriteLine($"{Name} вздымает руки к небу и Боги внемлят его молитвам восстанавливая здоровье.");
-                RestoreHealh(_healingPower);
+                RestoreCharacteristics(_healingPower);
             }
             else
             {
@@ -241,7 +245,11 @@ namespace GladiatorFight
 
     class Arena
     {
-        private List<Fighter> _fighters = new List<Fighter>();        
+        private int _cursorPositionX;
+        private int _cursorPositionY;
+        private Fighter _firstFighter;
+        private Fighter _secondFighter;
+        private List<Fighter> _fighters = new List<Fighter>();
 
         public Arena()
         {
@@ -254,8 +262,11 @@ namespace GladiatorFight
 
         public void ShowFighters()
         {
-            Console.SetCursorPosition(0, 5);
-                        
+            int cursorPositionX = 0;
+            int cursorPositionY = 5;
+
+            Console.SetCursorPosition(cursorPositionX, cursorPositionY);
+
             foreach (var fighter in _fighters)
             {
                 if (fighter.CurrentHealth > 0)
@@ -281,10 +292,10 @@ namespace GladiatorFight
             {
                 if (name == fighter.Name)
                 {
-                    if (CheckAlive(fighter))
+                    if (IsAlive(fighter))
                     {
                         return fighter;
-                    }                                   
+                    }
                 }
             }
 
@@ -303,163 +314,75 @@ namespace GladiatorFight
             return names;
         }
 
-        private bool CheckAlive (Fighter fighter)
-        {
-            if (fighter.CurrentHealth > 0)
-            {
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Боец мертв!");
-                Console.ReadKey();
-                return false;
-            }
-        }
-    }
-
-    class ArenaController
-    {
-        public Fighter FirstFighter { get ;  private set; }
-        public Fighter SecondFighter { get; private set; }
-
-        public void ChooseFighters(Arena arena, Menu menu)
+        public void ChooseFighters()
         {
             const string FirstFighterCommand = "первый боец";
             const string SecondFighterCommand = "второй боец";
 
             string[] fighters = { FirstFighterCommand, SecondFighterCommand };
-            string fighterNumber;            
+            string fighterNumber;
 
-            fighterNumber = menu.ChooseCommand(fighters);
+            fighterNumber = ChooseCommand(fighters);
 
             if (fighterNumber == FirstFighterCommand)
             {
-                TryChooseFighter(arena, menu, FirstFighter, SecondFighter);                
+                TryChooseFighter(_firstFighter, _secondFighter);
             }
             else if (fighterNumber == SecondFighterCommand)
             {
-                TryChooseFighter(arena, menu, SecondFighter, FirstFighter);                
+                TryChooseFighter(_secondFighter, _firstFighter);
             }
         }
 
         public void ResetFightersChoice()
         {
-            FirstFighter = null;
-            SecondFighter = null;
+            _firstFighter = null;
+            _secondFighter = null;
         }
 
-        public void StartCombat(Menu menu, ArenaController arenaController)
+        public void StartCombat()
         {
             if (CheckFighters())
             {
                 int roundNumber = 1;
-                int cursorPositionX = 0;
-                int cursorPositionY = 4;
+                _cursorPositionX = 0;
+                _cursorPositionY = 4;
 
                 Console.Clear();
-                menu.ShowMainBar(arenaController);
+                ShowMainBar();
 
-                while (FirstFighter.CurrentHealth > 0 && SecondFighter.CurrentHealth > 0)
-                {                    
-                    Console.SetCursorPosition(cursorPositionX, cursorPositionY);
-                    RunRound(roundNumber, ref cursorPositionX, ref cursorPositionY);
-                    menu.ShowMainBar(arenaController);                    
+                while (_firstFighter.CurrentHealth > 0 && _secondFighter.CurrentHealth > 0)
+                {
+                    Console.SetCursorPosition(_cursorPositionX, _cursorPositionY);
+                    RunRound(roundNumber);
+                    ShowMainBar();
                     roundNumber++;
                     Console.ReadKey();
                 }
 
-                CongraduationToWinner();
+                CongratulateTheWinner();
                 Console.ReadKey();
                 ResetFightersChoice();
-            }            
-        }
-
-        private void RunRound (int roundNumber, ref int cursorPositionX, ref int cursorPositionY)
-        {
-            Console.WriteLine($"---------------Раунд {roundNumber}---------------\n");
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            SecondFighter.TakeDamage(FirstFighter.Attack());
-            Console.ForegroundColor = ConsoleColor.Blue;
-            FirstFighter.TakeDamage(SecondFighter.Attack());
-            Console.ResetColor();
-            cursorPositionX = Console.CursorLeft;
-            cursorPositionY = Console.CursorTop + 1;
-        }
-
-        private void CongraduationToWinner()
-        {
-            Console.Clear();
-
-            if (FirstFighter.CurrentHealth > 0 && SecondFighter.CurrentHealth <= 0)
-            {
-                Console.WriteLine($"И у нас победитель!!! Это {FirstFighter.Name}!!!");
-                FirstFighter.RestoreHealh(FirstFighter.MaxHealth);
-            }
-            else if (SecondFighter.CurrentHealth > 0 && FirstFighter.CurrentHealth <= 0)
-            {
-                Console.WriteLine($"И у нас победитель!!! Это {SecondFighter.Name}!!!");
-                SecondFighter.RestoreHealh(SecondFighter.MaxHealth);
-            }
-            else if (FirstFighter.CurrentHealth <= 0 && SecondFighter.CurrentHealth <= 0)
-            {
-                Console.WriteLine("Ох, какая жалость! Они убили друг друга!");
             }
         }
 
-        private bool CheckFighters()
+        public void ShowMainBar()
         {
-            if (FirstFighter != null && SecondFighter != null)
-            {
-                return true;
-            }
-            else
-            {
-                Console.WriteLine("Выберите бойцов для боя!");
-                Console.ReadKey();
-
-                return false;
-            }
-        }
-
-        private void TryChooseFighter(Arena arena, Menu menu, Fighter trueFighter, Fighter wrongFighter)
-        {
-            Fighter fighter = arena.FindFighter(menu.ChooseCommand(arena.ShowFightersNames()));
-            
-            if (fighter == wrongFighter && wrongFighter!= null)
-            {
-                Console.WriteLine("Боец уже выбран!");
-                Console.ReadKey();
-            }
-            else
-            {
-                if (trueFighter == FirstFighter)
-                {
-                    FirstFighter = fighter;
-                }
-                else if (trueFighter == SecondFighter)
-                {
-                    SecondFighter = fighter;
-                }                                
-            }
-        }
-    }
-
-    class Menu
-    {      
-        public void ShowMainBar(ArenaController arenaController)
-        {
+            int firstFighterPositionX = 0;
+            int firstFighterPositionY = 0;
+            int secondFighterPositionX = 40;
+            int secondFighterPositionY = 0;
             char borderSymbol = '_';
             uint borderLength = 55;
             int borderStringNumber = 2;
             int nextTextStringNumber = borderStringNumber + 2;
 
-            Console.SetCursorPosition(0, 0);
+            Console.SetCursorPosition(firstFighterPositionX, firstFighterPositionY);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            CheckNull(arenaController.FirstFighter);
-            Console.SetCursorPosition(40, 0);
+            CheckNull(_firstFighter);
+            Console.SetCursorPosition(secondFighterPositionX, secondFighterPositionY);
             Console.ForegroundColor = ConsoleColor.Blue;
-            CheckNull(arenaController.SecondFighter);
+            CheckNull(_secondFighter);
             Console.ResetColor();
             Console.SetCursorPosition(0, borderStringNumber);
 
@@ -554,5 +477,88 @@ namespace GladiatorFight
                 fighter.ShowInfo();
             }
         }
-    }        
+
+        private bool IsAlive(Fighter fighter)
+        {
+            if (fighter.CurrentHealth > 0)
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Боец мертв!");
+                Console.ReadKey();
+                return false;
+            }
+        }
+
+        private void RunRound(int roundNumber)
+        {
+            Console.WriteLine($"---------------Раунд {roundNumber}---------------\n");
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            _firstFighter.Attack(_secondFighter);
+            Console.ForegroundColor = ConsoleColor.Blue;
+            _secondFighter.Attack(_firstFighter);
+            Console.ResetColor();
+            _cursorPositionX = Console.CursorLeft;
+            _cursorPositionY = Console.CursorTop + 1;
+        }
+
+        private void CongratulateTheWinner()
+        {
+            Console.Clear();
+
+            if (_firstFighter.CurrentHealth > 0 && _secondFighter.CurrentHealth <= 0)
+            {
+                Console.WriteLine($"И у нас победитель!!! Это {_firstFighter.Name}!!!");
+                _firstFighter.RestoreCharacteristics(_firstFighter.MaxHealth);
+            }
+            else if (_secondFighter.CurrentHealth > 0 && _firstFighter.CurrentHealth <= 0)
+            {
+                Console.WriteLine($"И у нас победитель!!! Это {_secondFighter.Name}!!!");
+                _secondFighter.RestoreCharacteristics(_secondFighter.MaxHealth);
+            }
+            else if (_firstFighter.CurrentHealth <= 0 && _secondFighter.CurrentHealth <= 0)
+            {
+                Console.WriteLine("Ох, какая жалость! Они убили друг друга!");
+            }
+        }
+
+        private bool CheckFighters()
+        {
+            if (_firstFighter != null && _secondFighter != null)
+            {
+                return true;
+            }
+            else
+            {
+                Console.WriteLine("Выберите бойцов для боя!");
+                Console.ReadKey();
+
+                return false;
+            }
+        }
+
+        private void TryChooseFighter(Fighter trueFighter, Fighter wrongFighter)
+        {
+            Fighter fighter = FindFighter(ChooseCommand(ShowFightersNames()));
+
+            if (fighter == wrongFighter && wrongFighter != null)
+            {
+                Console.WriteLine("Боец уже выбран!");
+                Console.ReadKey();
+            }
+            else
+            {
+                if (trueFighter == _firstFighter)
+                {
+                    _firstFighter = fighter;
+                }
+                else if (trueFighter == _secondFighter)
+                {
+                    _secondFighter = fighter;
+                }
+            }
+        }
+    }
 }
