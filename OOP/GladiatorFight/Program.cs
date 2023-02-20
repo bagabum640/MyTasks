@@ -133,16 +133,19 @@ namespace GladiatorFight
 
     class Knight : Fighter
     {
+        private int _blockChance = 50;
+        private double _blockDamageMultiplier = 0.5;
+
         public Knight() : base("Рыцарь", 550, 45, 30) { }
 
         public override void TakeDamage(int damage)
         {
             Random random = new Random();
 
-            if (random.Next(10) > 5 && damage > 0)
+            if (random.Next(100) > 100-_blockChance && damage > 0)
             {
                 Console.WriteLine($"{Name} укрывается за щитом, уменьшая повреждения на половину!");
-                damage /= 2;
+                damage = (int)(_blockDamageMultiplier*damage);
             }
 
             base.TakeDamage(damage);
