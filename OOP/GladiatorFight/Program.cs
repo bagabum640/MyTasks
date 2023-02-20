@@ -109,8 +109,7 @@ namespace GladiatorFight
     class Barbarian : Fighter
     {
         private double _criticalDamageMultiplier = 2.5;
-        private int _criticalStrikeChance = 40;
-        private int _strikeChance = 100;
+        private int _criticalStrikeChance = 40;        
 
         public Barbarian() : base("Варвар", 400, 60, 15) { }
 
@@ -119,7 +118,7 @@ namespace GladiatorFight
             Random random = new Random();
             int criticalDamage = (int)(Damage * _criticalDamageMultiplier);
 
-            if (random.Next(_strikeChance) < _criticalStrikeChance)
+            if (random.Next(100) >= 100-_criticalStrikeChance)
             {
                 Console.WriteLine($"{Name} кружится в смертельном танце, рассекая врага и нанося {criticalDamage} единиц урона!");
                 target.TakeDamage(criticalDamage);
@@ -142,7 +141,7 @@ namespace GladiatorFight
         {
             Random random = new Random();
 
-            if (random.Next(100) > 100-_blockChance && damage > 0)
+            if (random.Next(100) >= 100-_blockChance && damage > 0)
             {
                 Console.WriteLine($"{Name} укрывается за щитом, уменьшая повреждения на половину!");
                 damage = (int)(_blockDamageMultiplier*damage);
@@ -219,8 +218,7 @@ namespace GladiatorFight
     class Priest : Fighter
     {
         private int _healingPower = 90;
-        private int _chanceToCastPray = 60;
-        private int _generalChanceOfPull = 100;
+        private int _chanceToCastPray = 60;        
 
         public Priest() : base("Жрец", 320, 50, 15) { }
 
@@ -234,7 +232,7 @@ namespace GladiatorFight
         {
             Random random = new Random();
 
-            if (random.Next(_generalChanceOfPull) < _chanceToCastPray)
+            if (random.Next(100) >= 100-_chanceToCastPray)
             {
                 Console.WriteLine($"{Name} вздымает руки к небу и Боги внемлят его молитвам восстанавливая здоровье.");
                 RestoreCharacteristics(_healingPower);
