@@ -10,110 +10,91 @@ namespace Trains
     {
         static void Main(string[] args)
         {
-            const string CommandCreateRoute = "создать";
-            const string CommandSendedTrains = "показать";
-            const string CommandExit = "выйти";
-
-            bool isExit = false;
-            string command;
             ControlPanel controlPanel = new ControlPanel();
 
-            while (isExit != true)
-            {
-                Console.Clear();
-                Console.WriteLine($"Введите\n{CommandCreateRoute} - для создания нового маршрута\n{CommandSendedTrains} - показать ушедшие поезда\n" +
-                    $"{CommandExit} - чтобы покинуть терминал\n");
-                command = Console.ReadLine();
-
-                switch (command)
-                {
-                    case CommandCreateRoute:
-                        controlPanel.CallMenu();
-                        break;
-
-                    case CommandSendedTrains:
-                        controlPanel.ShowSendedTrains();
-                        break;
-
-                    case CommandExit:
-                        isExit = true;
-                        break;
-
-                    default:
-                        Console.WriteLine("Неверная команда!");
-                        break;
-                }
-            }            
+            controlPanel.CallMenu();
         }
     }
 
     class ControlPanel
     {
-        private Route _route;        
-        private BillBoard _billBoard = new BillBoard();
-        private List<Train> _sendedTrains = new List<Train>();
+        private Route _route;
+        private List<Route> _complitedRoutes = new List<Route>();
 
         public void CallMenu()
         {
-            const string CommandSellTickets = "продать";
-            const string CommandAddTrainCar = "добавить";
-            const string CommandSendTrain = "отправить";
-            const string CommandSeatPassengers = "рассадить";
+            const string CommandCreateRoute = "Создать маршрут";
+            const string CommandShowSendedTrains = "Показать отправленные поезда";
+            const string CommandSellTickets = "Продать билеты по заявленному маршруту";
+            const string CommandCreateTrain = "Создать поезд";
+            const string CommandAddTrainCar = "Добавить вагон";
+            const string CommandSeatPessengers = "Рассадить пассажиров";
+            const string CommandSendTrain = "Отправить поезд";
+            const string CommandDeleteRoute = "Отменить отправку поезда";
+            const string CommandExit = "выйти";
 
-            string command;            
+            string[] commands = { CommandCreateRoute, CommandShowSendedTrains, CommandSellTickets,
+                                  CommandCreateTrain, CommandAddTrainCar, CommandSeatPessengers, CommandSendTrain, CommandDeleteRoute, CommandExit };
+            bool isExit = false;
+            string command;
 
-            Console.Clear();            
-            CreateDirection();
-            _route.CreateTrain();            
-
-            while (_route.Train.IsSend != true)
+            while (isExit != true)
             {
                 Console.Clear();
-                _billBoard.ShowRouteInformation(_route);
-                _billBoard.ShowTrainInformation(_route.Train);
 
-                Console.WriteLine($"\nВведите\n{CommandSellTickets} - для продажи билетов\n{CommandAddTrainCar} - чтобы добавить вагон к поезду" +
-                    $"\n{CommandSeatPassengers} - чтобы рассадить пассажиров на ищеющиеся места" +
-                    $"\n{CommandSendTrain} - чтобы отправить поезд, если все пассажиры рассажены\n\n");
-                command = Console.ReadLine();
+                if (_route != null) _route.ShowInformation();
+
+                command = ChooseCommand(commands);
 
                 switch (command)
                 {
+                    case CommandCreateRoute:
+                        CreateRoute();
+                        break;
+
+                    case CommandShowSendedTrains:
+                        ShowComplitedRoutes();
+                        break;
+
                     case CommandSellTickets:
-                        SellTickets();
+                        if (IsRouteNotNull()) _route.SellTickets();
+
+                        break;
+
+                    case CommandCreateTrain:
+                        if (IsRouteNotNull()) _route.CreateTrain();
                         break;
 
                     case CommandAddTrainCar:
-                        AddTrainCar();
+                        if (IsRouteNotNull()) AddTrainCar();
                         break;
 
-                    case CommandSeatPassengers:
-                        _route.SeatPassengers();
+                    case CommandSeatPessengers:
+                        if (IsRouteNotNull()) _route.SeatPassengers();
                         break;
 
                     case CommandSendTrain:
                         SendTrain();
                         break;
 
-                    default:
-                        Console.WriteLine("Неверная команда!");
+                    case CommandDeleteRoute:
+                        _route = null;
+                        break;
+
+                    case CommandExit:
+                        isExit = true;
                         break;
                 }
             }
         }
 
-        public void AddTrain(Train train)
+        private void ShowComplitedRoutes()
         {
-            _sendedTrains.Add(train);
-        }
-
-        public void ShowSendedTrains()
-        {
-            if (_sendedTrains.Count > 0)
-            {                
-                foreach (var sendedTrain in _sendedTrains)
+            if (_complitedRoutes.Count > 0)
+            {
+                foreach (var complitedRoute in _complitedRoutes)
                 {
-                    _billBoard.ShowTrainInformation(sendedTrain);                    
+                    complitedRoute.ShowInformation();
                 }
 
                 Console.ReadKey();
@@ -125,178 +106,313 @@ namespace Trains
             }
         }
 
-        private Route CreateDirection()
+        private Route CreateRoute()
         {
+            Console.Clear();
             Console.WriteLine("Введите станцию отправления: ");
             string departureStation = Console.ReadLine();
             Console.WriteLine("Введите станцию прибытия: ");
-            string arrivalStation = Console.ReadLine();            
-            Console.Clear();
+            string arrivalStation = Console.ReadLine();
             return _route = new Route(departureStation, arrivalStation);
         }
 
-        private void SellTickets()
+        private void SendTrain()
         {
-            if (_route.Tickets == 0 && _route.Train.Passengers == 0)
+            if (IsRouteNotNull())
             {
-                _route.SellTickets();
-            }
-            else
-            {
-                Console.WriteLine("Билеты уже проданы!");
-                Console.ReadKey();
+                if (_route.TrySendTrain())
+                {
+                    _complitedRoutes.Add(_route);
+                    _route = null;
+                }
             }
         }
 
         private void AddTrainCar()
         {
-            Console.WriteLine("Введите вместимость вагона: ");
+            const string CommandAddSmallTrainCar = "Добавить маленький вагон";
+            const string CommandAddMediumTrainCar = "Добавить средний вагон";
+            const string CommandAddLadgeTrainCar = "Добавить большой вагон";
 
-            if (uint.TryParse(Console.ReadLine(), out uint passengers))
+            string[] commands = { CommandAddSmallTrainCar, CommandAddMediumTrainCar, CommandAddLadgeTrainCar};
+
+            string command = ChooseCommand(commands);
+
+            switch (command)
             {
-                _route.Train.AddTrainCar(passengers);                
-            }
-            else
-            {
-                Console.WriteLine("Недопустимое значение!");
-                Console.ReadKey();
+                case CommandAddSmallTrainCar:
+                    _route.AddTrainCar(10);
+                    break;
+
+                case CommandAddMediumTrainCar:
+                    _route.AddTrainCar(20);
+                    break;
+
+                case CommandAddLadgeTrainCar:
+                    _route.AddTrainCar(30);
+                    break;
             }
         }
 
-        private void SendTrain()
+        private string ChooseCommand(string[] commands)
         {
-            if (_route.Tickets == 0)
+            bool isLeaveMenu = false;
+            int numberString = 0;
+            int CursorPositionX = Console.CursorLeft;
+            int CursorPositionY = Console.CursorTop;
+
+            while (!isLeaveMenu)
             {
-                _route.Train.Send();
-                Console.WriteLine("Поезд отправлен.");
-                AddTrain(_route.Train);
-                Console.ReadKey();
+                Console.SetCursorPosition(CursorPositionX, CursorPositionY);
+
+                for (int i = 0; i < numberString; i++)
+                {
+                    Console.WriteLine(commands[i]);
+                }
+
+                Console.ForegroundColor = ConsoleColor.DarkGreen;
+                Console.WriteLine(commands[numberString]);
+                Console.ResetColor();
+
+                for (int i = numberString + 1; i < commands.Length; i++)
+                {
+                    Console.WriteLine(commands[i]);
+                }
+
+                ConsoleKeyInfo key = Console.ReadKey(true);
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.Enter:
+                        isLeaveMenu = true;
+                        break;
+
+                    case ConsoleKey.DownArrow:
+                        numberString = (numberString + 1 < commands.Length) ? numberString + 1 : 0;
+                        break;
+
+                    case ConsoleKey.UpArrow:
+                        numberString = (numberString - 1 >= 0) ? numberString - 1 : commands.Length - 1;
+                        break;
+                }
             }
-            else
+
+            ClearPartOfConsole(CursorPositionX, CursorPositionY, commands);
+            return commands[numberString];
+        }
+
+        private void ClearPartOfConsole(int CursorPositionX, int CursorPositionY, string[] commands)
+        {
+            Console.SetCursorPosition(CursorPositionX, CursorPositionY);
+
+            for (int i = 0; i < commands.Length; i++)
             {
-                Console.WriteLine("Недостаточно вагонов для размещения всех пассажиров! Добавьте еще вагонов перед отправлением.");
-                Console.ReadKey();
+                for (int j = 0; j < commands[i].Length; j++)
+                {
+                    Console.Write(' ');
+                }
+
+                Console.WriteLine();
             }
+
+            Console.SetCursorPosition(CursorPositionX, CursorPositionY);
+        }
+
+        private bool IsRouteNotNull()
+        {
+            if (_route == null)
+            {
+                Console.WriteLine("Для начала создайте маршрут!");
+                Console.ReadKey();
+                return false;
+            }
+
+            return true;
         }
     }
 
     class Route
-    {        
-        public string DepartureStation { get; private set; }
-        public string ArrivalStation { get; private set; }
-        public uint Tickets { get; private set; }
-        public Train Train { get; private set; }
+    {
+        private int _tickets = 0;
+        private string _departureStation;
+        private string _arrivalStation;
+        private Train _train;
 
         public Route(string town1, string town2)
         {
-            DepartureStation = town1;
-            ArrivalStation = town2;
+            _departureStation = town1;
+            _arrivalStation = town2;
         }
 
         public Train CreateTrain()
         {
+            Console.Clear();
             Console.WriteLine("Введите название поезда: ");
             string trainName = Console.ReadLine();
-            Console.Clear();
-            return Train = new Train(trainName);
+            _train = new Train(trainName);
+            _train.TotalQuntityPassengers = _tickets;
+            return _train;
         }
 
         public void SellTickets()
         {
-            int minNumberOfPassengers = 50;
-            int maxNumberOfPassengers = 100;
-            Random random = new Random();
+            if (_tickets == 0)
+            {
+                int minQuntityOfPassengers = 50;
+                int maxQuantityOfPassengers = 100;
+                Random random = new Random();
 
-            Tickets = (uint)random.Next(minNumberOfPassengers, maxNumberOfPassengers);
+                _tickets = random.Next(minQuntityOfPassengers, maxQuantityOfPassengers);
+
+                if (_train != null) 
+                    _train.TotalQuntityPassengers = _tickets;
+            }
+            else
+            {
+                Console.WriteLine("Билеты уже проданы!");
+            }
+        }
+
+        public void AddTrainCar(int capasity)
+        {
+            if (IsTrainNotNull())
+                _train.AddTrainCar(capasity);
         }
 
         public void SeatPassengers()
         {
-            if (Tickets <= Train.Capasity)
-            {
-                Train.SeatPassengers(Tickets);
-                Tickets = 0;               
-            }
-            else
-            {
-                Tickets -= Train.Capasity;
-                Train.SeatPassengers(Train.Capasity);                                
-            }
-        }
-    }
-
-    class BillBoard
-    {
-        public void ShowRouteInformation(Route route)
-        {
-            Console.WriteLine($"Маршрут {route.DepartureStation} - {route.ArrivalStation}. Нерассаженых пасажиров {route.Tickets}.");
+            if (IsTrainNotNull())
+                _train.SeatPassengers();
         }
 
-        public void ShowTrainInformation(Train train)
+        public bool TrySendTrain()
         {
-            Console.WriteLine($"\nСкорый поезд: {train.Name}. Длина состава: {train.Length} вагонов. Рассажено пасажиров: {train.Passengers}. Остаточная вместимость поезда: {train.Capasity}\n");
-            train.ShowComposition();
+            if (IsTrainNotNull())
+            {
+                if (_train.TrySend())
+                    return true;
+            }
+
+            return false;
+        }
+
+        public void ShowInformation()
+        {
+            Console.WriteLine($"Маршрут: {_departureStation} - {_arrivalStation}. Всего продано билетов: {_tickets}.\n");
+
+            if (_train != null) _train.ShowComposition();
+        }
+
+        private bool IsTrainNotNull()
+        {
+            if (_train == null)
+            {
+                Console.WriteLine("Сперва создайте поезд!");
+                Console.ReadKey();
+                return false;
+            }
+
+            return true;
         }
     }
 
     class Train
     {
-        private List<TrainCar> _trainCars = new List<TrainCar>();
+        private int _seatedPassengers;
+        private int _capasity;
+        private string _name;
 
-        public string Name { get; private set; }
-        public uint Length { get; private set; }
-        public bool IsSend { get; private set; }
-        public uint Passengers { get; private set; }
-        public uint Capasity { get; private set; }
+        private List<TrainCar> _trainCars = new List<TrainCar>();
 
         public Train(string name)
         {
-            Name = name;
-            IsSend = false;
+            _name = name;
         }
+        
+        public int TotalQuntityPassengers { get; set; }
 
-        public void AddTrainCar(uint passengers)
+        public void AddTrainCar(int capasity)
         {
-            Length++;
-            TrainCar trainCar = new TrainCar(Length, passengers);
+            TrainCar trainCar = new TrainCar(_trainCars.Count() + 1, capasity);
             _trainCars.Add(trainCar);
-            Capasity += passengers;
+            _capasity += capasity;
         }
 
-        public void SeatPassengers(uint passengers)
+        public void SeatPassengers()
         {
-            Capasity -= passengers;
-            Passengers += passengers;
+            if (_capasity > TotalQuntityPassengers)
+            {
+                _seatedPassengers += TotalQuntityPassengers;
+                _capasity -= TotalQuntityPassengers;
+                TotalQuntityPassengers = 0;
+            }
+            else
+            {
+                _seatedPassengers += _capasity;
+                TotalQuntityPassengers -= _capasity;
+                _capasity = 0;
+            }
         }
 
         public void ShowComposition()
         {
+            Console.WriteLine($"Поезд {_name}. Общая вместимость: {_capasity + _seatedPassengers} человек. " +
+                $"Содержит: {_seatedPassengers} пассажиров. Свободных мест: {_capasity}.\n");
+
             foreach (var trainCar in _trainCars)
             {
                 trainCar.ShowInformation();
             }
+
+            Console.WriteLine();
         }
 
-        public void Send()
+        public bool TrySend()
         {
-            IsSend = true;
-        }                
+            if (TotalQuntityPassengers > _capasity)
+            {
+                Console.Clear();
+                Console.WriteLine("Недостаточно вагонов для размещения всех пассажиров!");
+                Console.ReadKey();
+                return false;                
+            }
+            else if (TotalQuntityPassengers > 0)
+            {
+                Console.Clear();
+                Console.WriteLine("Не все пассажиры рассажены!");
+                Console.ReadKey();
+                return false;
+            }
+            else if (TotalQuntityPassengers == 0 && _seatedPassengers == 0)
+            {
+                Console.Clear();
+                Console.WriteLine("Поезд пуст! Продайте билеты и рассадите пассажиров!");
+                Console.ReadKey();
+                return false;
+            }
+            else 
+            {
+                Console.Clear();
+                Console.WriteLine("Поезд ушел.");
+                Console.ReadKey();
+                return true;
+            }
+        }
     }
 
     class TrainCar
     {
-        public uint Capasity { get; private set; }
-        public uint Number { get; private set; }
-
-        public TrainCar(uint number, uint passengers)
+        private int _number;
+        private int _capasity;
+        public TrainCar(int number, int capasity)
         {
-            Number = number;
-            Capasity = passengers;
-        }
+            _number = number;
+            _capasity = capasity;
+        }   
 
         public void ShowInformation()
         {
-            Console.WriteLine($"Вагон №{Number} - вместимость {Capasity}");
+            Console.WriteLine($"Вагон № {_number} - вместимость {_capasity} человек.");
         }
     }
 }
