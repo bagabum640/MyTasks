@@ -12,19 +12,12 @@ namespace War
         {
             BattleGround battleGround = new BattleGround();
 
-            battleGround.StartBattle();
+            battleGround.CalculateBattle();
         }
     }
 
     abstract class Fighter
     {
-        public string Name { get; private set; }
-        public int MaxHealth { get; private set; }
-        public int CurrentHealth { get; private set; }
-        public int Damage { get; private set; }
-        public int Armor { get; private set; }
-        public bool Melee { get; private set; }
-
         public Fighter(string name, int health, int damage, int armor, bool melee)
         {
             Name = name;
@@ -35,10 +28,17 @@ namespace War
             Melee = melee;
         }
 
-        public virtual int Attack()
+        public string Name { get; private set; }
+        public int MaxHealth { get; private set; }
+        public int CurrentHealth { get; private set; }
+        public int Damage { get; private set; }
+        public int Armor { get; private set; }
+        public bool Melee { get; private set; }
+
+        public virtual void Attack(Fighter target)
         {
             Console.WriteLine($"{Name} машет мечом и наносит {Damage} единиц урона.");
-            return Damage;
+            target.TakeDamage(Damage);
         }
 
         public virtual void TakeDamage(int damage)
@@ -57,7 +57,7 @@ namespace War
             }
         }
 
-        public virtual void RestoreHealh(int quantityHealth)
+        public virtual void RestoreCharacteristics(int quantityHealth)
         {
             if (MaxHealth - CurrentHealth < quantityHealth)
             {
@@ -71,42 +71,55 @@ namespace War
 
         public void ShowInfo()
         {
+            if (CurrentHealth > 0)
+                Console.ForegroundColor = ConsoleColor.Green;
+            else
+                Console.ForegroundColor = ConsoleColor.Red;
+
             Console.Write($"{Name} {CurrentHealth}/{MaxHealth}    ");
+            Console.ResetColor();            
         }
     }
 
     class Barbarian : Fighter
     {
+        private double _criticalDamageMultiplier = 2.5;
+        private int _criticalStrikeChance = 40;        
+
         public Barbarian(string name) : base(name, 400, 60, 15, true) { }
 
-        public override int Attack()
+        public override void Attack(Fighter target)
         {
             Random random = new Random();
-            int criticalDamage = (int)(Damage * 2.5);
+            int criticalDamage = (int)(Damage * _criticalDamageMultiplier);
 
-            if (random.Next(10) > 6)
+            if (random.Next(100) >= 100 - _criticalStrikeChance)
             {
                 Console.WriteLine($"{Name} кружится в смертельном танце, рассекая врага и нанося {criticalDamage} единиц урона!");
-                return criticalDamage;
+                target.TakeDamage(criticalDamage);
+                return;
             }
 
             Console.WriteLine($"{Name} рубит с плеча нанося {Damage} единиц урона.");
-            return Damage;
+            target.TakeDamage(Damage);
         }
     }
 
     class Knight : Fighter
     {
+        private int _blockChance = 50;
+        private double _blockDamageMultiplier = 0.5;
+
         public Knight(string name) : base(name, 550, 45, 30, true) { }
 
         public override void TakeDamage(int damage)
         {
             Random random = new Random();
 
-            if (random.Next(10) > 5 && damage > 0)
+            if (random.Next(100) >= 100 - _blockChance && damage > 0)
             {
                 Console.WriteLine($"{Name} укрывается за щитом, уменьшая повреждения на половину!");
-                damage /= 2;
+                damage = (int)(_blockDamageMultiplier * damage);
             }
 
             base.TakeDamage(damage);
@@ -123,22 +136,23 @@ namespace War
 
         public Mag(string name) : base(name, 300, 35, 10, false) { }
 
-        public override int Attack()
+        public override void Attack(Fighter target)
         {
             if (TryCastFireBall())
             {
-                return _magicDamage;
+                target.TakeDamage(_magicDamage);
+                return;
             }
 
             Console.WriteLine($"{Name} размахивает своим посохом, нанося {Damage} единиц урона и восстанавливая {_regenerationMana} маны.");
             _currentMana += _regenerationMana;
-            return Damage;
+            target.TakeDamage(Damage);
         }
 
-        public override void RestoreHealh(int quantityHealth)
+        public override void RestoreCharacteristics(int quantityHealth)
         {
             _currentMana = _maxMana;
-            base.RestoreHealh(quantityHealth);
+            base.RestoreCharacteristics(quantityHealth);
         }
 
         private bool TryCastFireBall()
@@ -160,24 +174,26 @@ namespace War
 
         public CrossbowMan(string name) : base(name, 380, 120, 20, false) { }
 
-        public override int Attack()
+        public override void Attack(Fighter target)
         {
             if (_isCrossbowLoaded)
             {
                 _isCrossbowLoaded = false;
                 Console.WriteLine($"{Name} стреляет в противника и наносит {Damage} единиц урона.");
-                return Damage;
+                target.TakeDamage(Damage);
+                return;
             }
 
             Console.WriteLine($"{Name} перезаряжает арбалет.");
             _isCrossbowLoaded = true;
-            return 0;
+            target.TakeDamage(0);
         }
     }
 
     class Priest : Fighter
     {
-        int _healingPower = 90;
+        private int _healingPower = 80;
+        private int _chanceToCastPray = 50;
 
         public Priest(string name) : base(name, 320, 50, 15, false) { }
 
@@ -191,10 +207,10 @@ namespace War
         {
             Random random = new Random();
 
-            if (random.Next(9) > 4)
+            if (random.Next(100) >= 100 - _chanceToCastPray)
             {
                 Console.WriteLine($"{Name} вздымает руки к небу и Боги внемлят его молитвам восстанавливая здоровье.");
-                RestoreHealh(_healingPower);
+                RestoreCharacteristics(_healingPower);
             }
             else
             {
@@ -203,58 +219,23 @@ namespace War
         }
     }
 
-    class BattleGround
+    class Squad
     {
-        private List<Fighter> _whiteFighters = new List<Fighter>();
-        private List<Fighter> _blackFighters = new List<Fighter>();
-        private List<Fighter> _targets = new List<Fighter>();
-        private Random random = new Random();            
+        private int _fighterIndex = 0;
+        private Random _random = new Random();
+        private List<Fighter> _fighters = new List<Fighter>();
+        private List<Fighter> _fightersAtGunpoint = new List<Fighter>();
 
-        public BattleGround()
+        public Squad(string squadname)
         {
-            _whiteFighters.Add(new Barbarian("Белый варвар"));
-            _whiteFighters.Add(new Knight("Белый рыцарь"));
-            _whiteFighters.Add(new Mag("Белый маг"));
-            _whiteFighters.Add(new CrossbowMan("Белый арбалетчик"));
-            _whiteFighters.Add(new Priest("Белый жрец"));
-            _blackFighters.Add(new Barbarian("Черный варвар"));
-            _blackFighters.Add(new Knight("Черный рыцарь"));
-            _blackFighters.Add(new Mag("Черный маг"));
-            _blackFighters.Add(new CrossbowMan("Черный арбалетчик"));
-            _blackFighters.Add(new Priest("Черный жрец"));
+            _fighters.Add(new Barbarian($"{squadname} варвар"));
+            _fighters.Add(new Knight($"{squadname} рыцарь"));
+            _fighters.Add(new Mag($"{squadname} маг"));
+            _fighters.Add(new CrossbowMan($"{squadname} арбалетчик"));
+            _fighters.Add(new Priest($"{squadname} жрец"));
         }
 
-        public void StartBattle()
-        {
-            ShowFighters();
-
-            while (CheckToAlive(_whiteFighters) && CheckToAlive(_blackFighters))
-            {
-                RunRound();
-            }
-
-            CongraduationToWinner();
-        }
-
-        private void CongraduationToWinner()
-        {
-            Console.Clear();
-
-            if (CheckToAlive(_whiteFighters) == true && CheckToAlive(_blackFighters) == false)
-            {
-                Console.WriteLine("Победа за белыми! Они сокрушили врага!");
-            }
-            else if (CheckToAlive(_whiteFighters) == false && CheckToAlive(_blackFighters) == true)
-            {
-                Console.WriteLine("Победа за черными! Они сокрушили врага!");
-            }
-            else if (CheckToAlive(_whiteFighters) == false && CheckToAlive(_blackFighters) == false)
-            {
-                Console.WriteLine("Какой ужас, все мертвы!");
-            }
-        }
-
-        private bool CheckToAlive(List<Fighter> _fighters)
+        public bool IsAlive()
         {
             foreach (var fighter in _fighters)
             {
@@ -267,118 +248,152 @@ namespace War
             return false;
         }
 
-        private void RunRound()
+        public void ShowFighters(int cursorStringNumber, int cursorOffset)
         {
-            Fighter fighter;
-
-            for (int i = 0; i < _whiteFighters.Count; i++)
+            for (int i = 0; i < _fighters.Count; i++)
             {
-                if (_whiteFighters[i].CurrentHealth > 0)
-                {
-                    fighter = ChooseTarget(_blackFighters, _whiteFighters[i]);
-
-                    if (fighter != null)
-                        fighter.TakeDamage(_whiteFighters[i].Attack());
-                }
-
-                Console.WriteLine();
-
-                if (_blackFighters[i].CurrentHealth > 0)
-                {
-                    fighter = ChooseTarget(_whiteFighters, _blackFighters[i]);
-
-                    if (fighter != null)                    
-                        fighter.TakeDamage(_blackFighters[i].Attack());   
-                }
-
-                Console.ReadKey();
-                Console.Clear();
-                ShowFighters();
+                Console.SetCursorPosition(cursorOffset, cursorStringNumber);
+                _fighters[i].ShowInfo();                
+                cursorStringNumber++;
             }
         }
 
-        private Fighter ChooseTarget(List<Fighter> targets, Fighter attackingFighter)
+        public void Attack (Squad targets)
         {
-            Fighter fighter;
-
-            if (attackingFighter.Melee)
+            if (_fighters[_fighterIndex].CurrentHealth > 0)
             {
-                if (TryFindMeleeTargets(targets) != true)
-                    FindTarget(targets);
+                Fighter target = targets.ProvideTarget(_fighters[_fighterIndex].Melee);
+
+                if (target != null)
+                    _fighters[_fighterIndex].Attack(target);
+            }
+
+            CountFighterIndex();
+        }              
+
+        public Fighter ProvideTarget(bool isMeleeAttack)
+        {
+            Fighter target;
+
+            if (isMeleeAttack)
+            {
+                if (TryFindMeleeTargets() != true)
+                    FindTarget();
             }
             else
             {
-                FindTarget(targets);
+                FindTarget();
             }
 
-            if (_targets.Count > 0)
+            if (_fightersAtGunpoint.Count > 0)
             {
-                fighter = _targets[random.Next(_targets.Count)];
+                target = _fightersAtGunpoint[_random.Next(_fightersAtGunpoint.Count)];
             }
             else
             {
-                fighter = null;
+                target = null;
             }
-            
-            return fighter;
+
+            return target;
         }
 
-        private bool TryFindMeleeTargets(List<Fighter> targets)
+        private bool TryFindMeleeTargets()
         {
-            _targets.Clear();
+            _fightersAtGunpoint.Clear();
 
-            foreach (var fighter in targets)
-            {                
+            foreach (var fighter in _fighters)
+            {
                 if (fighter.Melee && fighter.CurrentHealth > 0)
                 {
-                    _targets.Add(fighter);                    
+                    _fightersAtGunpoint.Add(fighter);
                 }
             }
 
-            if (_targets.Count > 0)            
-                return true;                            
-            else            
-                return false;                            
+            if (_fightersAtGunpoint.Count > 0)
+                return true;
+            else
+                return false;
         }
 
-        private void FindTarget(List<Fighter> targets)
+        private void FindTarget()
         {
-            _targets.Clear();
+            _fightersAtGunpoint.Clear();
 
-            foreach (var fighter in targets)
+            foreach (var fighter in _fighters)
             {
                 if (fighter.CurrentHealth > 0)
                 {
-                    _targets.Add(fighter);
+                    _fightersAtGunpoint.Add(fighter);
                 }
             }
         }
 
+        private void CountFighterIndex()
+        {
+            _fighterIndex++;
+
+            if (_fighterIndex >= _fighters.Count())
+            {
+                _fighterIndex = 0;
+            }            
+        }
+    }
+
+    class BattleGround
+    {
+        private Squad _whiteFighters;
+        private Squad _blackFighters;
+        private int _battlelogStringNumber = 10;
+
+        public BattleGround()
+        {
+            _whiteFighters = new Squad("Белый");
+            _blackFighters = new Squad("Черный");            
+        }
+
+        public void CalculateBattle()
+        {
+            ShowFighters();
+
+            while (_whiteFighters.IsAlive() && _blackFighters.IsAlive())
+            {
+                Console.Clear();
+                Console.SetCursorPosition(0, _battlelogStringNumber);
+                _whiteFighters.Attack(_blackFighters);
+                Console.WriteLine();
+                _blackFighters.Attack(_whiteFighters);
+                ShowFighters();
+                Console.ReadKey();                
+            }
+
+            CongraduationToWinner();
+        }
+
+        private void CongraduationToWinner()
+        {
+            Console.Clear();
+
+            if (_whiteFighters.IsAlive() == true && _blackFighters.IsAlive() == false)
+            {
+                Console.WriteLine("Победа за белыми! Они сокрушили врага!");
+            }
+            else if (_whiteFighters.IsAlive() == false && _blackFighters.IsAlive() == true)
+            {
+                Console.WriteLine("Победа за черными! Они сокрушили врага!");
+            }
+            else if (_whiteFighters.IsAlive() == false && _blackFighters.IsAlive() == false)
+            {
+                Console.WriteLine("Какой ужас, все мертвы!");
+            }
+        }
+                        
         private void ShowFighters()
         {
             int cursorStringNumber = 0;
             int cursorOffset = 50;
 
-            for (int i = 0; i < _whiteFighters.Count; i++)
-            {
-                Console.SetCursorPosition(0, cursorStringNumber);
-
-                if (_whiteFighters[i].CurrentHealth > 0)
-                    Console.ForegroundColor = ConsoleColor.Green;
-                else
-                    Console.ForegroundColor = ConsoleColor.Red;
-
-                _whiteFighters[i].ShowInfo();
-                Console.SetCursorPosition(cursorOffset, cursorStringNumber);
-
-                if (_blackFighters[i].CurrentHealth > 0)
-                    Console.ForegroundColor = ConsoleColor.Green;
-                else
-                    Console.ForegroundColor = ConsoleColor.Red;
-
-                _blackFighters[i].ShowInfo();
-                cursorStringNumber++;
-            }
+            _whiteFighters.ShowFighters(cursorStringNumber, 0);
+            _blackFighters.ShowFighters(cursorStringNumber, cursorOffset);
 
             Console.WriteLine("\n");
             Console.ResetColor();
