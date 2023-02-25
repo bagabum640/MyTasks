@@ -11,16 +11,16 @@ namespace Aquarium
         static void Main(string[] args)
         {
             Aquarium aquarium = new Aquarium();
-
-            aquarium.Lifing();
+            
+            aquarium.Work();
         }
     }
 
     class Aquarium
     {
-        const string AddFishCommand = "Добавить рыбку";
-        const string RemoveFishCommand = "Убрать рыбку";
-        const string ExitCommand = "Отойти от аквариума";
+        private const string AddFishCommand = "Добавить рыбку";
+        private const string RemoveFishCommand = "Убрать рыбку";
+        private const string ExitCommand = "Отойти от аквариума";
 
         private string[] _commands = { AddFishCommand, RemoveFishCommand, ExitCommand };
         private string _command;
@@ -28,23 +28,26 @@ namespace Aquarium
         private uint _aquariumCapacity = 10;
         private Menu _menu;
         private bool _isWatch = true;
+        private FishBuilder _fishBuilder;
 
         public Aquarium()
         {
+            int initialQuntityOfFish = 5;
             _menu = new Menu();
+            _fishBuilder = new FishBuilder();
 
-            for (int i = 0; i < 5; i++)
+            for (int i = 0; i < initialQuntityOfFish; i++)
             {
-                _fishes.Add(new Fish());
+                _fishes.Add(_fishBuilder.BuildFish());
             }
         }
 
-        public void Lifing()
+        public void Work()
         {
             while (_isWatch)
             {
                 ShowFishes();
-                ShipYear();
+                SkipYear();
                 _command = _menu.ChooseCommand(_commands);
 
                 switch (_command)
@@ -73,7 +76,7 @@ namespace Aquarium
         {            
             Console.Write("Введите номер рыбки, от которой хотите избавиться: ");
 
-            if (int.TryParse(Console.ReadLine(), out int fishNumber) && fishNumber-1 < _fishes.Count)
+            if (int.TryParse(Console.ReadLine(), out int fishNumber) && fishNumber-1 < _fishes.Count && fishNumber > 0)
             {
                 _fishes.RemoveAt(fishNumber - 1);
             }                
@@ -84,13 +87,12 @@ namespace Aquarium
                 Console.ReadLine();
             }
         }
-
-        
-        private void ShipYear()
+                
+        private void SkipYear()
         {
             foreach (var fish in _fishes)
             {
-                fish.ToGrow();
+                fish.Grow();
             }
         }
 
@@ -116,28 +118,41 @@ namespace Aquarium
         private void AddFish()
         {
             if(_fishes.Count < _aquariumCapacity)
-                _fishes.Add(new Fish());
+                _fishes.Add(_fishBuilder.BuildFish());
             else
                 Console.WriteLine("Аквариум полон!");
         }
     }
 
-    class Fish
+    class FishBuilder
     {
-        private static Random random = new Random();
-        private uint _maxAge;
-        private uint _currentAge;
-        private string _name;
-        private string [] _possibleNames = {"Джимми", "Робби","Немо", "Цуи","Фанни","Пиппи","Ломс"};        
         private int _minLifeExpectancy = 10;
         private int _maxLifeExpectancy = 15;
+        private string[] _possibleNames = { "Джимми", "Робби", "Немо", "Цуи", "Фанни", "Пиппи", "Ломс" };
+        private static Random _random = new Random();
+
+        public Fish BuildFish()
+        {
+            Fish fish = new Fish(_possibleNames[_random.Next(_possibleNames.Length)], (uint)_random.Next(_minLifeExpectancy, _maxLifeExpectancy));
+
+            return fish;
+        }
+    }
+
+    class Fish
+    {              
+        private uint _currentAge = 0;
+        private uint _maxAge;
+        private string _name;
+
+        public Fish(string name, uint maxAge)
+        {
+            _name = name;
+            _maxAge = maxAge;
+            IsAlive = true;
+        }
 
         public bool IsAlive { get; private set; }
-
-        public Fish()
-        {
-            ToBorn();
-        }
 
         public void ShowInfo()
         {
@@ -147,23 +162,15 @@ namespace Aquarium
                 Console.WriteLine($"Рыбка {_name}. Умерла в возрасте {_maxAge} лет.");            
         }
 
-        public void ToGrow()
+        public void Grow()
         {
             _currentAge++;
-            CheckToAlive();
-        }
+            KillFish();
+        }                
 
-        private void ToBorn()
+        private void KillFish()
         {
-            _name = _possibleNames[random.Next(_possibleNames.Length)];
-            _currentAge = 0;
-            IsAlive = true;
-            _maxAge = (uint)random.Next(_minLifeExpectancy, _maxLifeExpectancy);
-        }
-
-        private void CheckToAlive()
-        {
-            IsAlive = (_currentAge >= _maxAge) ? false : true; 
+            IsAlive = _currentAge < _maxAge; 
         }
     }
 
@@ -171,12 +178,12 @@ namespace Aquarium
     {
         public string ChooseCommand(string[] commands)
         {
-            bool isLeaveMenu = false;
+            bool isWork = true;
             int numberString = 0;
             int CursorPositionX = 0;
             int CursorPositionY = Console.CursorTop + 2;
 
-            while (!isLeaveMenu)
+            while (isWork)
             {
                 Console.SetCursorPosition(CursorPositionX, CursorPositionY);
 
@@ -199,7 +206,7 @@ namespace Aquarium
                 switch (key.Key)
                 {
                     case ConsoleKey.Enter:
-                        isLeaveMenu = true;
+                        isWork = false;
                         break;
 
                     case ConsoleKey.DownArrow:
