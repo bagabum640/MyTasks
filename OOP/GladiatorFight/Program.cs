@@ -163,9 +163,8 @@ namespace GladiatorFight
 
         public override void Attack(Fighter target)
         {
-            if (TryCastFireBall())
-            {
-                target.TakeDamage(_magicDamage);
+            if (TryCastFireBall(target))
+            {                
                 return;
             }
 
@@ -180,12 +179,13 @@ namespace GladiatorFight
             base.RestoreCharacteristics(quantityHealth);
         }
 
-        private bool TryCastFireBall()
+        private bool TryCastFireBall(Fighter target)
         {
             if (_currentMana >= _fireBallCost)
             {
                 Console.WriteLine($"{Name} бросает огненый шар, нанося {_magicDamage} единиц урона.");
                 _currentMana -= _fireBallCost;
+                target.TakeDamage(_magicDamage);
                 return true;
             }
 
@@ -343,7 +343,7 @@ namespace GladiatorFight
 
         public void StartCombat()
         {
-            if (CheckFighters())
+            if (IsFightersNotNull())
             {
                 int roundNumber = 1;
                 _cursorPositionX = 0;
@@ -361,7 +361,7 @@ namespace GladiatorFight
                     Console.ReadKey();
                 }
 
-                CongratulateTheWinner();
+                CongratulateWinner();
                 Console.ReadKey();
                 ResetFightersChoice();
             }
@@ -380,10 +380,10 @@ namespace GladiatorFight
 
             Console.SetCursorPosition(firstFighterPositionX, firstFighterPositionY);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            CheckNull(_firstFighter);
+            ShowFighterInfo(_firstFighter);
             Console.SetCursorPosition(secondFighterPositionX, secondFighterPositionY);
             Console.ForegroundColor = ConsoleColor.Blue;
-            CheckNull(_secondFighter);
+            ShowFighterInfo(_secondFighter);
             Console.ResetColor();
             Console.SetCursorPosition(0, borderStringNumber);
 
@@ -467,7 +467,7 @@ namespace GladiatorFight
             }
         }
 
-        private void CheckNull(Fighter fighter)
+        private void ShowFighterInfo(Fighter fighter)
         {
             if (fighter == null)
             {
@@ -505,7 +505,7 @@ namespace GladiatorFight
             _cursorPositionY = Console.CursorTop + 1;
         }
 
-        private void CongratulateTheWinner()
+        private void CongratulateWinner()
         {
             Console.Clear();
 
@@ -525,7 +525,7 @@ namespace GladiatorFight
             }
         }
 
-        private bool CheckFighters()
+        private bool IsFightersNotNull()
         {
             if (_firstFighter != null && _secondFighter != null)
             {
