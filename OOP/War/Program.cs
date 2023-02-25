@@ -138,9 +138,8 @@ namespace War
 
         public override void Attack(Fighter target)
         {
-            if (TryCastFireBall())
-            {
-                target.TakeDamage(_magicDamage);
+            if (TryCastFireBall(target))
+            {                
                 return;
             }
 
@@ -155,12 +154,13 @@ namespace War
             base.RestoreCharacteristics(quantityHealth);
         }
 
-        private bool TryCastFireBall()
+        private bool TryCastFireBall(Fighter target)
         {
             if (_currentMana >= _fireBallCost)
             {
                 Console.WriteLine($"{Name} бросает огненый шар, нанося {_magicDamage} единиц урона.");
                 _currentMana -= _fireBallCost;
+                target.TakeDamage(_magicDamage);
                 return true;
             }
 
