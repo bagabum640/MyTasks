@@ -91,7 +91,7 @@ namespace Supermarket
 
             if (_money >= _basketPrice)
             {
-                ToPayBasket();
+                PayBasket();
             }
             else
             {
@@ -117,7 +117,7 @@ namespace Supermarket
             Console.ReadKey();
         }
 
-        private void ToPayBasket()
+        private void PayBasket()
         {
             _money -= _basketPrice;
             _basket.Clear();
