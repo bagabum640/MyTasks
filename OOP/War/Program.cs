@@ -18,6 +18,9 @@ namespace War
 
     abstract class Fighter
     {
+        protected int _chancePool = 100;
+        protected Random _random = new Random();
+
         public Fighter(string name, int health, int damage, int armor, bool melee)
         {
             Name = name;
@@ -84,16 +87,15 @@ namespace War
     class Barbarian : Fighter
     {
         private double _criticalDamageMultiplier = 2.5;
-        private int _criticalStrikeChance = 40;        
+        private int _criticalStrikeChance = 50;        
 
         public Barbarian(string name) : base(name, 400, 60, 15, true) { }
 
         public override void Attack(Fighter target)
-        {
-            Random random = new Random();
+        {            
             int criticalDamage = (int)(Damage * _criticalDamageMultiplier);
 
-            if (random.Next(100) >= 100 - _criticalStrikeChance)
+            if (_random.Next(_chancePool) >= _chancePool - _criticalStrikeChance)
             {
                 Console.WriteLine($"{Name} кружится в смертельном танце, рассекая врага и нанося {criticalDamage} единиц урона!");
                 target.TakeDamage(criticalDamage);
@@ -114,9 +116,7 @@ namespace War
 
         public override void TakeDamage(int damage)
         {
-            Random random = new Random();
-
-            if (random.Next(100) >= 100 - _blockChance && damage > 0)
+            if (_random.Next(_chancePool) >= _chancePool - _blockChance && damage > 0)
             {
                 Console.WriteLine($"{Name} укрывается за щитом, уменьшая повреждения на половину!");
                 damage = (int)(_blockDamageMultiplier * damage);
@@ -128,13 +128,16 @@ namespace War
 
     class Mag : Fighter
     {
-        private static int _maxMana = 60;
-        private int _currentMana = _maxMana;
+        private int _maxMana = 60;
+        private int _currentMana;
         private int _regenerationMana = 15;
         private int _magicDamage = 180;
         private int _fireBallCost = 25;
 
-        public Mag(string name) : base(name, 300, 35, 10, false) { }
+        public Mag(string name) : base(name, 300, 35, 10, false) 
+        { 
+            _currentMana = _maxMana; 
+        }
 
         public override void Attack(Fighter target)
         {
@@ -205,9 +208,7 @@ namespace War
 
         private void Pray()
         {
-            Random random = new Random();
-
-            if (random.Next(100) >= 100 - _chanceToCastPray)
+            if (_random.Next(_chancePool) >= _chancePool - _chanceToCastPray)
             {
                 Console.WriteLine($"{Name} вздымает руки к небу и Боги внемлят его молитвам восстанавливая здоровье.");
                 RestoreCharacteristics(_healingPower);
@@ -284,15 +285,8 @@ namespace War
             {
                 FindTarget();
             }
-
-            if (_fightersAtGunpoint.Count > 0)
-            {
-                target = _fightersAtGunpoint[_random.Next(_fightersAtGunpoint.Count)];
-            }
-            else
-            {
-                target = null;
-            }
+                        
+            target = _fightersAtGunpoint[_random.Next(_fightersAtGunpoint.Count)];
 
             return target;
         }
@@ -366,10 +360,10 @@ namespace War
                 Console.ReadKey();                
             }
 
-            CongraduationToWinner();
+            CongratulateWinner();
         }
 
-        private void CongraduationToWinner()
+        private void CongratulateWinner()
         {
             Console.Clear();
 

@@ -26,7 +26,6 @@ namespace CarService
         private int _refusalPenalty = 1000;
         private int _errorPenalty = 300;
         private int _debtBankruptcy = -3000;
-        bool _isWork = true;
 
         public void Work()
         {
@@ -38,13 +37,18 @@ namespace CarService
             const string CommandExit = "Выйти из автосервиса";
 
             string command;
+            bool isWork = true;
             string[] commands = { CommandInviteClient, CommandReplacePart, CommandLookAtStorage, CommandRefuseClient, CommandFinishService, CommandExit };
 
-            while (_isWork)
+            while (isWork)
             {
+                if (IsBankruptcy())
+                    break;
+
                 Console.WriteLine($"Баланс автосервиса: {_money} рублей. \tЦена текущего обслуживания: {_servicePrice} рублей.\n");
 
-                if (_car != null) _car.ShowInfo();
+                if (_car != null)
+                    _car.ShowInfo();
 
                 command = ChooseCommand(commands);
 
@@ -55,7 +59,8 @@ namespace CarService
                         break;
 
                     case CommandReplacePart:
-                        if (IsCarNotNull()) ReplacePart();
+                        if (IsCarNotNull())
+                            ReplacePart();
                         break;
 
                     case CommandLookAtStorage:
@@ -63,15 +68,17 @@ namespace CarService
                         break;
 
                     case CommandRefuseClient:
-                        if (IsCarNotNull()) RefuseClient();
+                        if (IsCarNotNull())
+                            RefuseClient();
                         break;
 
                     case CommandFinishService:
-                        if (IsCarNotNull()) FinishService();
+                        if (IsCarNotNull())
+                            FinishService();
                         break;
 
                     case CommandExit:
-                        _isWork = false;
+                        isWork = false;
                         break;
                 }
             }
@@ -88,17 +95,16 @@ namespace CarService
             }
 
             Detail detail = _detailStorage.GetDetail(ChooseCommand(partNamesOfDetailStorage));
+            int workPrice = (int)(detail.Price * _multiplierWorkCostFromPartPrice);
 
             if (_car.TryChangeDetail(detail))
             {
-                ShowMessage($"Вы успешно заменили {detail.Name}. Цена за работу: {(int)(detail.Price * _multiplierWorkCostFromPartPrice)}. " +
-                    $"Цена за деталь: {detail.Price}.");
-                _servicePrice += (int)(detail.Price * (1 + _multiplierWorkCostFromPartPrice));
+                ShowMessage($"Вы успешно заменили {detail.Name}. Цена за работу: {workPrice}. Цена за деталь: {detail.Price}.");
+                _servicePrice += (int)(detail.Price + workPrice);
             }
             else
             {
                 _servicePrice -= _errorPenalty;
-                IsBankruptcy();
             }
         }
 
@@ -108,7 +114,6 @@ namespace CarService
             _money -= _refusalPenalty - _servicePrice;
             _servicePrice = 0;
             ShowMessage("Вы со скандалом прогоняете клиента!");
-            IsBankruptcy();
         }
 
         private bool IsBankruptcy()
@@ -116,7 +121,6 @@ namespace CarService
             if (_money <= _debtBankruptcy)
             {
                 ShowMessage("Ваш автосервис слишком убыточен! Его закрывают за долги!");
-                _isWork = false;
                 return true;
             }
 
@@ -144,7 +148,7 @@ namespace CarService
 
         private void FinishService()
         {
-            if (_car.IsCarWorked())
+            if (_car.IsWorked())
             {
                 _money += _servicePrice;
                 _servicePrice = 0;
@@ -166,53 +170,56 @@ namespace CarService
 
         private string ChooseCommand(string[] commands)
         {
+            const ConsoleKey PreviousString = ConsoleKey.UpArrow;
+            const ConsoleKey NextString = ConsoleKey.DownArrow;
+            const ConsoleKey SelectString = ConsoleKey.Enter;
+
             bool isWork = true;
             int numberString = 0;
             int CursorPositionX = 0;
             int CursorPositionY;
-            int CorsorTopWithClient = 10;
-            int CorsorTopWithoutClient = 2;
+            int CursorTopWithClient = 10;
+            int CursorTopWithoutClient = 2;
+            ConsoleKeyInfo key;
 
-            CursorPositionY = (_car == null) ? CorsorTopWithoutClient : CorsorTopWithClient;
+            CursorPositionY = (_car == null) ? CursorTopWithoutClient : CursorTopWithClient;
 
             while (isWork)
             {
                 Console.SetCursorPosition(CursorPositionX, CursorPositionY);
-
-                for (int i = 0; i < numberString; i++)
-                {
-                    Console.WriteLine(commands[i]);
-                }
-
+                WriteStrings(0, numberString, commands);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine(commands[numberString]);
                 Console.ResetColor();
-
-                for (int i = numberString + 1; i < commands.Length; i++)
-                {
-                    Console.WriteLine(commands[i]);
-                }
-
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                WriteStrings(numberString + 1, commands.Length, commands);
+                key = Console.ReadKey(true);
 
                 switch (key.Key)
                 {
-                    case ConsoleKey.Enter:
+                    case SelectString:
                         isWork = false;
                         break;
 
-                    case ConsoleKey.DownArrow:
+                    case NextString:
                         numberString = (numberString + 1 < commands.Length) ? numberString + 1 : 0;
                         break;
 
-                    case ConsoleKey.UpArrow:
+                    case PreviousString:
                         numberString = (numberString - 1 >= 0) ? numberString - 1 : commands.Length - 1;
-                        break;                    
+                        break;
                 }
             }
 
             ClearPartOfConsole(CursorPositionX, CursorPositionY, commands);
             return commands[numberString];
+        }
+
+        private void WriteStrings(int firstString, int lastString, string[] strings)
+        {
+            for (int i = firstString; i < lastString; i++)
+            {
+                Console.WriteLine(strings[i]);
+            }
         }
 
         private void ClearPartOfConsole(int CursorPositionX, int CursorPositionY, string[] commands)
@@ -236,15 +243,15 @@ namespace CarService
     class Car
     {
         private Random _random = new Random();
-        private List<Detail> _carSystem = new List<Detail>();
+        private List<Detail> _systems = new List<Detail>();
 
         public Car()
         {
-            _carSystem.Add(new Detail("Колесо", 100, 30));
-            _carSystem.Add(new Detail("Двигатель", 3000, 50));
-            _carSystem.Add(new Detail("Фара", 350, 20));
-            _carSystem.Add(new Detail("Руль", 600, 25));
-            _carSystem.Add(new Detail("Вентилятор", 450, 15));
+            _systems.Add(new Detail("Колесо", 100, 30));
+            _systems.Add(new Detail("Двигатель", 3000, 50));
+            _systems.Add(new Detail("Фара", 350, 20));
+            _systems.Add(new Detail("Руль", 600, 25));
+            _systems.Add(new Detail("Вентилятор", 450, 15));
             BreakDetails();
         }
 
@@ -252,7 +259,7 @@ namespace CarService
         {
             Console.WriteLine("Состояние систем автомобиля:\n");
 
-            foreach (var detail in _carSystem)
+            foreach (var detail in _systems)
             {
                 Console.Write($"{detail.Name}: ");
 
@@ -269,9 +276,9 @@ namespace CarService
             }
         }
 
-        public bool IsCarWorked()
+        public bool IsWorked()
         {
-            foreach (var detail in _carSystem)
+            foreach (var detail in _systems)
             {
                 if (detail.IsWorken == false)
                 {
@@ -284,11 +291,11 @@ namespace CarService
 
         public bool TryChangeDetail(Detail detail)
         {
-            for (int i = 0; i < _carSystem.Count; i++)
+            for (int i = 0; i < _systems.Count; i++)
             {
-                if (detail.Name == _carSystem[i].Name)
+                if (detail.Name == _systems[i].Name)
                 {
-                    if (_carSystem[i].IsWorken)
+                    if (_systems[i].IsWorken)
                     {
                         Console.Clear();
                         Console.WriteLine("Вы попытались заменить рабочую деталь! Клиент в ярости!");
@@ -298,7 +305,7 @@ namespace CarService
                     }
                     else
                     {
-                        _carSystem[i] = detail;
+                        _systems[i] = detail;
                         return true;
                     }
                 }
@@ -312,7 +319,7 @@ namespace CarService
         {
             int brokenDetails = 0;
 
-            foreach (var detail in _carSystem)
+            foreach (var detail in _systems)
             {
                 if (_random.Next(2) == 0)
                 {
@@ -332,11 +339,14 @@ namespace CarService
         private int _occupiedVolume = 0;
         private Random _random = new Random();
         private List<Detail> _detailsInStock = new List<Detail>();
-        private Detail[] _details = { new Detail("Колесо", 100, 30), new Detail("Двигатель", 3000, 50), new Detail("Фара", 350, 20),
-                              new Detail("Руль", 600, 25), new Detail("Вентилятор", 450, 15) };
+        Detail[] _details;
+
 
         public DetailStorage()
         {
+            _details = new Detail[] { new Detail("Колесо", 100, 30), new Detail("Двигатель", 3000, 50), new Detail("Фара", 350, 20),
+                         new Detail("Руль", 600, 25), new Detail("Вентилятор", 450, 15)};
+
             int minDetailVolume = FindDetailWithMinVolume().Volume;
             bool isFreePlace = true;
             Detail detail;

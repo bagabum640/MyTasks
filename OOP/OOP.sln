@@ -27,6 +27,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "War", "War\War.csproj", "{9
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aquarium", "Aquarium\Aquarium.csproj", "{04D8B4D8-51C3-4C00-B64E-EE90529966B4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Zoo", "Zoo\Zoo.csproj", "{CD9BFFF0-B05B-4485-9AA3-AAEECF5A91F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarService", "CarService\CarService.csproj", "{EB5C3F7F-DF0F-4D7A-8AED-8AE03663A522}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -81,6 +85,14 @@ Global
 		{04D8B4D8-51C3-4C00-B64E-EE90529966B4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{04D8B4D8-51C3-4C00-B64E-EE90529966B4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{04D8B4D8-51C3-4C00-B64E-EE90529966B4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD9BFFF0-B05B-4485-9AA3-AAEECF5A91F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD9BFFF0-B05B-4485-9AA3-AAEECF5A91F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD9BFFF0-B05B-4485-9AA3-AAEECF5A91F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD9BFFF0-B05B-4485-9AA3-AAEECF5A91F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB5C3F7F-DF0F-4D7A-8AED-8AE03663A522}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB5C3F7F-DF0F-4D7A-8AED-8AE03663A522}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB5C3F7F-DF0F-4D7A-8AED-8AE03663A522}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB5C3F7F-DF0F-4D7A-8AED-8AE03663A522}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -18,14 +18,18 @@ namespace Zoo
 
     class Zoo
     {
-        private Dictionary<string, string> _aviaries = new Dictionary<string, string>();        
+        const string CommandExit = "exit";
+
+        private Dictionary<string, string> _aviaries = new Dictionary<string, string>();
         private Menu _menu;
+        string _description;
+        bool isWork = true;
 
         public Zoo()
         {
             _menu = new Menu();
             Aviary aviary;
-            aviary = new Aviary ("Клетка с обезьянами", "Обезьяна", 3, 2, "У-у");
+            aviary = new Aviary("Клетка с обезьянами", "Обезьяна", 3, 2, "У-у");
             _aviaries.Add(aviary.Name, aviary.ShowDescription());
             aviary = new Aviary("Клетка с бегемотами", "Бегемот", 1, 1, "Мэ-мэ");
             _aviaries.Add(aviary.Name, aviary.ShowDescription());
@@ -35,16 +39,25 @@ namespace Zoo
             _aviaries.Add(aviary.Name, aviary.ShowDescription());
             aviary = new Aviary("Клетка с попугаями", "Попугай", 7, 8, "Чик-чирик");
             _aviaries.Add(aviary.Name, aviary.ShowDescription());
+            _aviaries.Add("Выход", CommandExit);
         }
 
         public void ShowAviary()
         {
-            while (true)
+            while (isWork)
             {
-                Console.WriteLine(_aviaries[_menu.ChooseCommand(_aviaries.Keys.ToArray())]);
+                _description = _aviaries[_menu.ChooseCommand(_aviaries.Keys.ToArray())];
+
+                if (_description == CommandExit)
+                {
+                    isWork = false;
+                    break;
+                }
+
+                Console.WriteLine(_description);
                 Console.ReadKey();
                 Console.Clear();
-            }            
+            }
         }
     }
 
@@ -65,7 +78,7 @@ namespace Zoo
         }
 
         public string Name { get; private set; }
-                        
+
         public string ShowDescription()
         {
             string description = $"{Name}\nВ клетке содержится животное: {_animalName}\n" +
@@ -75,51 +88,43 @@ namespace Zoo
             return description;
         }
     }
-    
+
     class Menu
     {
         public string ChooseCommand(string[] commands)
         {
+            const ConsoleKey PreviousString = ConsoleKey.UpArrow;
+            const ConsoleKey NextString = ConsoleKey.DownArrow;
+            const ConsoleKey SelectString = ConsoleKey.Enter;
+
             bool isWork = true;
             int numberString = 0;
             int CursorPositionX = 0;
             int CursorPositionY = Console.CursorTop;
+            ConsoleKeyInfo key;
 
             while (isWork)
             {
                 Console.SetCursorPosition(CursorPositionX, CursorPositionY);
-
-                for (int i = 0; i < numberString; i++)
-                {
-                    Console.WriteLine(commands[i]);
-                }
-
+                WriteStrings(0, numberString, commands);
                 Console.ForegroundColor = ConsoleColor.Yellow;
                 Console.WriteLine(commands[numberString]);
                 Console.ResetColor();
-
-                for (int i = numberString + 1; i < commands.Length; i++)
-                {
-                    Console.WriteLine(commands[i]);
-                }
-
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                WriteStrings(numberString + 1, commands.Length, commands);
+                key = Console.ReadKey(true);
 
                 switch (key.Key)
                 {
-                    case ConsoleKey.Enter:
+                    case SelectString:
                         isWork = false;
                         break;
 
-                    case ConsoleKey.DownArrow:
+                    case NextString:
                         numberString = (numberString + 1 < commands.Length) ? numberString + 1 : 0;
                         break;
 
-                    case ConsoleKey.UpArrow:
+                    case PreviousString:
                         numberString = (numberString - 1 >= 0) ? numberString - 1 : commands.Length - 1;
-                        break;
-
-                    default:
                         break;
                 }
             }
@@ -127,6 +132,14 @@ namespace Zoo
             ClearPartOfConsole(CursorPositionX, CursorPositionY, commands);
             Console.SetCursorPosition(0, 0);
             return commands[numberString];
+        }
+
+        private void WriteStrings(int firstString, int lastString, string[] strings)
+        {
+            for (int i = firstString; i < lastString; i++)
+            {
+                Console.WriteLine(strings[i]);
+            }
         }
 
         private void ClearPartOfConsole(int CursorPositionX, int CursorPositionY, string[] commands)

@@ -16,7 +16,6 @@ namespace GladiatorFight
             bool isPlay = true;
             string command;
             string[] commands = { ShowFightersCommand, ChooseFighterCommand, ResetCommand, StartCombatCommand, ExitCommand };
-
             Arena arena = new Arena();
 
             arena.ShowGreeting();
@@ -41,7 +40,7 @@ namespace GladiatorFight
                         break;
 
                     case StartCombatCommand:
-                        arena.StartCombat();
+                        arena.Combat();
                         break;
 
                     case ExitCommand:
@@ -56,6 +55,9 @@ namespace GladiatorFight
 
     abstract class Fighter
     {
+        protected int _chancePool = 100;
+        protected Random _random = new Random();
+
         public Fighter(string name, int health, int damage, int armor)
         {
             Name = name;
@@ -81,6 +83,11 @@ namespace GladiatorFight
         {
             int resultingDamage = (damage - Armor <= 0) ? 0 : damage - Armor;
             CurrentHealth -= resultingDamage;
+
+            if (CurrentHealth < 0)
+            {
+                CurrentHealth = 0;
+            }
 
             if (damage > 0)
             {
@@ -114,11 +121,10 @@ namespace GladiatorFight
         public Barbarian() : base("Варвар", 400, 60, 15) { }
 
         public override void Attack(Fighter target)
-        {
-            Random random = new Random();
+        {            
             int criticalDamage = (int)(Damage * _criticalDamageMultiplier);
 
-            if (random.Next(100) >= 100-_criticalStrikeChance)
+            if (_random.Next(_chancePool) >= _chancePool - _criticalStrikeChance)
             {
                 Console.WriteLine($"{Name} кружится в смертельном танце, рассекая врага и нанося {criticalDamage} единиц урона!");
                 target.TakeDamage(criticalDamage);
@@ -132,16 +138,14 @@ namespace GladiatorFight
 
     class Knight : Fighter
     {
-        private int _blockChance = 50;
+        private int _blockChance = 50;        
         private double _blockDamageMultiplier = 0.5;
 
         public Knight() : base("Рыцарь", 550, 45, 30) { }
 
         public override void TakeDamage(int damage)
         {
-            Random random = new Random();
-
-            if (random.Next(100) >= 100-_blockChance && damage > 0)
+            if (_random.Next(_chancePool) >= _chancePool - _blockChance && damage > 0)
             {
                 Console.WriteLine($"{Name} укрывается за щитом, уменьшая повреждения на половину!");
                 damage = (int)(_blockDamageMultiplier*damage);
@@ -230,9 +234,7 @@ namespace GladiatorFight
 
         private void Pray()
         {
-            Random random = new Random();
-
-            if (random.Next(100) >= 100-_chanceToCastPray)
+            if (_random.Next(_chancePool) >= _chancePool - _chanceToCastPray)
             {
                 Console.WriteLine($"{Name} вздымает руки к небу и Боги внемлят его молитвам восстанавливая здоровье.");
                 RestoreCharacteristics(_healingPower);
@@ -341,7 +343,7 @@ namespace GladiatorFight
             _secondFighter = null;
         }
 
-        public void StartCombat()
+        public void Combat()
         {
             if (IsFightersNotNull())
             {
@@ -404,52 +406,52 @@ namespace GladiatorFight
 
         public string ChooseCommand(string[] commands)
         {
-            bool isLeaveMenu = false;
+            const ConsoleKey PreviousString = ConsoleKey.UpArrow;
+            const ConsoleKey NextString = ConsoleKey.DownArrow;
+            const ConsoleKey SelectString = ConsoleKey.Enter;
+
+            bool isWork = true;
             int numberString = 0;
             int CursorPositionX = 0;
             int CursorPositionY = 5;
+            ConsoleKeyInfo key;
 
-            while (!isLeaveMenu)
+            while (isWork)
             {
                 Console.SetCursorPosition(CursorPositionX, CursorPositionY);
-
-                for (int i = 0; i < numberString; i++)
-                {
-                    Console.WriteLine(commands[i]);
-                }
-
+                WriteStrings(0, numberString, commands);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine(commands[numberString]);
                 Console.ResetColor();
-
-                for (int i = numberString + 1; i < commands.Length; i++)
-                {
-                    Console.WriteLine(commands[i]);
-                }
-
-                ConsoleKeyInfo key = Console.ReadKey(true);
+                WriteStrings(numberString + 1, commands.Length, commands);
+                key = Console.ReadKey(true);
 
                 switch (key.Key)
                 {
-                    case ConsoleKey.Enter:
-                        isLeaveMenu = true;
+                    case SelectString:
+                        isWork = false;
                         break;
 
-                    case ConsoleKey.DownArrow:
+                    case NextString:
                         numberString = (numberString + 1 < commands.Length) ? numberString + 1 : 0;
                         break;
 
-                    case ConsoleKey.UpArrow:
+                    case PreviousString:
                         numberString = (numberString - 1 >= 0) ? numberString - 1 : commands.Length - 1;
-                        break;
-
-                    default:
                         break;
                 }
             }
 
             ClearPartOfConsole(CursorPositionX, CursorPositionY, commands);
             return commands[numberString];
+        }
+
+        private void WriteStrings(int firstString, int lastString, string[] strings)
+        {
+            for (int i = firstString; i < lastString; i++)
+            {
+                Console.WriteLine(strings[i]);
+            }
         }
 
         private void ClearPartOfConsole(int CursorPositionX, int CursorPositionY, string[] commands)
