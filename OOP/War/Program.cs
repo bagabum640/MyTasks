@@ -18,8 +18,8 @@ namespace War
 
     abstract class Fighter
     {
-        protected int _chancePool = 100;
-        protected Random _random = new Random();
+        protected int ChancePool = 100;
+        protected Random RandomNumber = new Random();
 
         public Fighter(string name, int health, int damage, int armor, bool melee)
         {
@@ -95,7 +95,7 @@ namespace War
         {            
             int criticalDamage = (int)(Damage * _criticalDamageMultiplier);
 
-            if (_random.Next(_chancePool) >= _chancePool - _criticalStrikeChance)
+            if (RandomNumber.Next(ChancePool) >= ChancePool - _criticalStrikeChance)
             {
                 Console.WriteLine($"{Name} кружится в смертельном танце, рассекая врага и нанося {criticalDamage} единиц урона!");
                 target.TakeDamage(criticalDamage);
@@ -116,7 +116,7 @@ namespace War
 
         public override void TakeDamage(int damage)
         {
-            if (_random.Next(_chancePool) >= _chancePool - _blockChance && damage > 0)
+            if (RandomNumber.Next(ChancePool) >= ChancePool - _blockChance && damage > 0)
             {
                 Console.WriteLine($"{Name} укрывается за щитом, уменьшая повреждения на половину!");
                 damage = (int)(_blockDamageMultiplier * damage);
@@ -208,7 +208,7 @@ namespace War
 
         private void Pray()
         {
-            if (_random.Next(_chancePool) >= _chancePool - _chanceToCastPray)
+            if (RandomNumber.Next(ChancePool) >= ChancePool - _chanceToCastPray)
             {
                 Console.WriteLine($"{Name} вздымает руки к небу и Боги внемлят его молитвам восстанавливая здоровье.");
                 RestoreCharacteristics(_healingPower);
@@ -224,8 +224,7 @@ namespace War
     {
         private int _fighterIndex = 0;
         private Random _random = new Random();
-        private List<Fighter> _fighters = new List<Fighter>();
-        private List<Fighter> _fightersAtGunpoint = new List<Fighter>();
+        private List<Fighter> _fighters = new List<Fighter>();        
 
         public Squad(string squadname)
         {
@@ -275,49 +274,47 @@ namespace War
         public Fighter ProvideTarget(bool isMeleeAttack)
         {
             Fighter target;
+            List<Fighter> fightersAtGunpoint = new List<Fighter>();
 
             if (isMeleeAttack)
             {
-                if (TryFindMeleeTargets() != true)
-                    FindTarget();
+                if (TryFindMeleeTargets(fightersAtGunpoint) != true)
+                    FindTarget(fightersAtGunpoint);
             }
             else
             {
-                FindTarget();
+                FindTarget(fightersAtGunpoint);
             }
                         
-            target = _fightersAtGunpoint[_random.Next(_fightersAtGunpoint.Count)];
+            target = fightersAtGunpoint[_random.Next(fightersAtGunpoint.Count)];
 
             return target;
         }
 
-        private bool TryFindMeleeTargets()
+        private bool TryFindMeleeTargets(List<Fighter> fightersAtGunpoint)
         {
-            _fightersAtGunpoint.Clear();
+            fightersAtGunpoint.Clear();
 
             foreach (var fighter in _fighters)
             {
                 if (fighter.Melee && fighter.CurrentHealth > 0)
                 {
-                    _fightersAtGunpoint.Add(fighter);
+                    fightersAtGunpoint.Add(fighter);
                 }
             }
-
-            if (_fightersAtGunpoint.Count > 0)
-                return true;
-            else
-                return false;
+                       
+            return (fightersAtGunpoint.Count > 0);
         }
 
-        private void FindTarget()
+        private void FindTarget(List<Fighter> fightersAtGunpoint)
         {
-            _fightersAtGunpoint.Clear();
+            fightersAtGunpoint.Clear();
 
             foreach (var fighter in _fighters)
             {
                 if (fighter.CurrentHealth > 0)
                 {
-                    _fightersAtGunpoint.Add(fighter);
+                    fightersAtGunpoint.Add(fighter);
                 }
             }
         }
