@@ -341,12 +341,10 @@ namespace CarService
         private List<Detail> _detailsInStock = new List<Detail>();
         Detail[] _details;
 
-
         public DetailStorage()
         {
             _details = new Detail[] { new Detail("Колесо", 100, 30), new Detail("Двигатель", 3000, 50), new Detail("Фара", 350, 20),
                          new Detail("Руль", 600, 25), new Detail("Вентилятор", 450, 15)};
-
             int minDetailVolume = FindDetailWithMinVolume().Volume;
             bool isFreePlace = true;
             Detail detail;
