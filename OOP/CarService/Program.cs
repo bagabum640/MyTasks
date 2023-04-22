@@ -339,7 +339,7 @@ namespace CarService
         private int _occupiedVolume = 0;
         private Random _random = new Random();
         private List<Detail> _detailsInStock = new List<Detail>();
-        Detail[] _details;
+        private Detail[] _details;
 
         public DetailStorage()
         {
