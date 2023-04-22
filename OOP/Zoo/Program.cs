@@ -20,8 +20,8 @@ namespace Zoo
     {
         private const string CommandExit = "Выход";
 
-        private List<Aviary> _aviaries = new List<Aviary>();
-        private List<string> _commands = new List<string>();
+        private readonly List<Aviary> _aviaries = new List<Aviary>();
+        private readonly List<string> _commands = new List<string>();
 
         public Zoo()
         {
