@@ -12,86 +12,86 @@ namespace Zoo
         {
             Zoo zoo = new Zoo();
 
-            zoo.ShowAviary();
+            zoo.Work();
         }
     }
 
     class Zoo
     {
-        const string CommandExit = "exit";
+        private const string CommandExit = "Выход";
 
-        private Dictionary<string, string> _aviaries = new Dictionary<string, string>();
-        private Menu _menu;
-        string _description;
-        bool isWork = true;
+        private List<Aviary> _aviaries = new List<Aviary>();
+        private List<string> _commands = new List<string>();
 
         public Zoo()
         {
-            _menu = new Menu();
             Aviary aviary;
+
             aviary = new Aviary("Клетка с обезьянами", "Обезьяна", 3, 2, "У-у");
-            _aviaries.Add(aviary.Name, aviary.ShowDescription());
+            _aviaries.Add(aviary);
             aviary = new Aviary("Клетка с бегемотами", "Бегемот", 1, 1, "Мэ-мэ");
-            _aviaries.Add(aviary.Name, aviary.ShowDescription());
+            _aviaries.Add(aviary);
             aviary = new Aviary("Клетка с петухами", "Петух", 3, 2, "Ку-ка-ре-ку");
-            _aviaries.Add(aviary.Name, aviary.ShowDescription());
+            _aviaries.Add(aviary);
             aviary = new Aviary("Клетка с морскими котиками", "Морской котик", 3, 2, "Мяу (по-морскому)");
-            _aviaries.Add(aviary.Name, aviary.ShowDescription());
+            _aviaries.Add(aviary);
             aviary = new Aviary("Клетка с попугаями", "Попугай", 7, 8, "Чик-чирик");
-            _aviaries.Add(aviary.Name, aviary.ShowDescription());
-            _aviaries.Add("Выход", CommandExit);
+            _aviaries.Add(aviary);
+            FillCommandList();
         }
 
-        public void ShowAviary()
+        public void Work()
         {
+            string command;
+            bool isWork = true;
+            Aviary aviary;
+
             while (isWork)
             {
-                _description = _aviaries[_menu.ChooseCommand(_aviaries.Keys.ToArray())];
+                command = ChooseCommand(_commands.ToArray());
 
-                if (_description == CommandExit)
+                if (command == CommandExit)
                 {
                     isWork = false;
-                    break;
+                    continue;
                 }
 
-                Console.WriteLine(_description);
-                Console.ReadKey();
+                aviary = FindAviary(command);
+
+                if (aviary != null)
+                    aviary.ShowDescription();
+
                 Console.Clear();
             }
         }
-    }
 
-    class Aviary
-    {
-        private string _animalName;
-        private uint _maleQuantity;
-        private uint _femaleQuantity;
-        private string _emittedSound;
-
-        public Aviary(string cageName, string animalName, uint maleQuantity, uint femaleQuantity, string emittedSound)
+        private Aviary FindAviary(string aviaryName)
         {
-            Name = cageName;
-            _animalName = animalName;
-            _maleQuantity = maleQuantity;
-            _femaleQuantity = femaleQuantity;
-            _emittedSound = emittedSound;
+            Aviary findedAviary;
+
+            foreach (Aviary aviary in _aviaries)
+            {
+                if (aviary.Name == aviaryName)
+                {
+                    findedAviary = aviary;
+                    return findedAviary;
+                }
+            }
+
+            return null;
         }
 
-        public string Name { get; private set; }
-
-        public string ShowDescription()
+        private void FillCommandList()
         {
-            string description = $"{Name}\nВ клетке содержится животное: {_animalName}\n" +
-                $"Количество самцов в клетке: {_maleQuantity}\nКоличество самок в клетке: {_femaleQuantity}\n" +
-                $"Животное издает звук: {_emittedSound}\n\n";
+            foreach (var aviary in _aviaries)
+            {
+                _commands.Add(aviary.Name);
+            }
 
-            return description;
+            _commands.Add(CommandExit);
         }
-    }
 
-    class Menu
-    {
-        public string ChooseCommand(string[] commands)
+        private string ChooseCommand(string[] commands)
         {
             const ConsoleKey PreviousString = ConsoleKey.UpArrow;
             const ConsoleKey NextString = ConsoleKey.DownArrow;
@@ -155,6 +155,35 @@ namespace Zoo
 
                 Console.WriteLine();
             }
+        }
+    }
+
+    class Aviary
+    {
+        private string _animalName;
+        private uint _maleQuantity;
+        private uint _femaleQuantity;
+        private string _emittedSound;
+
+        public Aviary(string cageName, string animalName, uint maleQuantity, uint femaleQuantity, string emittedSound)
+        {
+            Name = cageName;
+            _animalName = animalName;
+            _maleQuantity = maleQuantity;
+            _femaleQuantity = femaleQuantity;
+            _emittedSound = emittedSound;
+        }
+
+        public string Name { get; private set; }
+
+        public void ShowDescription()
+        {
+            string description = $"{Name}\nВ клетке содержится животное: {_animalName}\n" +
+                $"Количество самцов в клетке: {_maleQuantity}\nКоличество самок в клетке: {_femaleQuantity}\n" +
+                $"Животное издает звук: {_emittedSound}\n\n";
+
+            Console.WriteLine(description);
+            Console.ReadKey();
         }
     }
 }
