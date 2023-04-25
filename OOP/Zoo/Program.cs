@@ -25,18 +25,11 @@ namespace Zoo
 
         public Zoo()
         {
-            Aviary aviary;
-
-            aviary = new Aviary("Клетка с обезьянами", "Обезьяна", 3, 2, "У-у");
-            _aviaries.Add(aviary);
-            aviary = new Aviary("Клетка с бегемотами", "Бегемот", 1, 1, "Мэ-мэ");
-            _aviaries.Add(aviary);
-            aviary = new Aviary("Клетка с петухами", "Петух", 3, 2, "Ку-ка-ре-ку");
-            _aviaries.Add(aviary);
-            aviary = new Aviary("Клетка с морскими котиками", "Морской котик", 3, 2, "Мяу (по-морскому)");
-            _aviaries.Add(aviary);
-            aviary = new Aviary("Клетка с попугаями", "Попугай", 7, 8, "Чик-чирик");
-            _aviaries.Add(aviary);
+            _aviaries.Add(new Aviary("Клетка с обезьянами", "Обезьяна", 3, 2, "У-у"));
+            _aviaries.Add(new Aviary("Клетка с бегемотами", "Бегемот", 1, 1, "Мэ-мэ"));
+            _aviaries.Add(new Aviary("Клетка с петухами", "Петух", 3, 2, "Ку-ка-ре-ку"));
+            _aviaries.Add(new Aviary("Клетка с морскими котиками", "Морской котик", 3, 2, "Мяу (по-морскому)"));
+            _aviaries.Add(new Aviary("Клетка с попугаями", "Попугай", 7, 8, "Чик-чирик"));            
             FillCommandList();
         }
 
@@ -66,15 +59,12 @@ namespace Zoo
         }
 
         private Aviary FindAviary(string aviaryName)
-        {
-            Aviary findedAviary;
-
+        {        
             foreach (Aviary aviary in _aviaries)
             {
                 if (aviary.Name == aviaryName)
-                {
-                    findedAviary = aviary;
-                    return findedAviary;
+                {                    
+                    return aviary;
                 }
             }
 
