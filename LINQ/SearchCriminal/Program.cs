@@ -328,11 +328,11 @@ namespace SearcheCriminal
             switch (ChooseCommand(commands))
             {
                 case CommandDeleteHeightFilter:
-                    RemoveBiometricsFilter(CommandDeleteHeightFilter);
+                    RemoveHeightFilter();
                     break;
 
                 case CommandDeleteWeightFilter:
-                    RemoveBiometricsFilter(CommandDeleteWeightFilter);
+                    RemoveWeightFilter();
                     break;
 
                 case CommandDeleteNationalityFilter:
@@ -346,25 +346,20 @@ namespace SearcheCriminal
             }
         }
 
-        private void RemoveBiometricsFilter(string biometrics)
+        private void RemoveHeightFilter()
         {
-            string heightFilter = "Удалить фильтр по росту.";
-            string weightFilter = "Удалить фильтр по весу.";
+            if (TryFindFilter(FilterHeightMore, out Filter filter))
+                _filters.Remove(filter);
+            if (TryFindFilter(FilterHeightLess, out filter))
+                _filters.Remove(filter);
+        }
 
-            if (biometrics == heightFilter)
-            {
-                if (TryFindFilter(FilterHeightMore, out Filter filter))
-                    _filters.Remove(filter);
-                if (TryFindFilter(FilterHeightLess, out filter))
-                    _filters.Remove(filter);
-            }
-            else if (biometrics == weightFilter)
-            {                
-                if (TryFindFilter(FilterWeightMore, out Filter filter))
-                    _filters.Remove(filter);
-                if (TryFindFilter(FilterWeightLess, out filter))
-                    _filters.Remove(filter);
-            }
+        private void RemoveWeightFilter()
+        {            
+            if (TryFindFilter(FilterWeightMore, out Filter filter))
+                _filters.Remove(filter);
+            if (TryFindFilter(FilterWeightLess, out filter))
+                _filters.Remove(filter);
         }
 
         private void ShowFilters()
