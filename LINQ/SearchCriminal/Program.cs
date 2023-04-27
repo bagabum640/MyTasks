@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Test
+namespace SearcheCriminal
 {
     class Program
     {
@@ -26,8 +26,6 @@ namespace Test
         private readonly List<Criminal> _criminals = new List<Criminal>();
         private readonly List<Criminal> _filteredCriminals = new List<Criminal>();
         private readonly List<Filter> _filters = new List<Filter>();
-        private int _cursorPositionX;
-        private int _cursorPositionY;
 
         public CriminalDatabase()
         {
@@ -59,8 +57,6 @@ namespace Test
 
                 if (isShowCriminals)
                     ShowCriminals();
-
-                ReadCursorPosition();
 
                 switch (ChooseCommand(commands))
                 {
@@ -95,8 +91,6 @@ namespace Test
             string[] commands = { CommandSwitchHidePrisoners, CommandHeightFilter, CommandWeightFilter, CommandNationalityFilter };
             string heightParameter = "height";
             string weightParameter = "weight";
-
-            ReadCursorPosition();
 
             switch (ChooseCommand(commands))
             {
@@ -214,7 +208,6 @@ namespace Test
             }
 
             Console.Clear();
-            ReadCursorPosition();
             command = ChooseCommand(commands);
             Console.Write("Введите параметр: ");
 
@@ -301,6 +294,14 @@ namespace Test
                     filter.Message = "Пойманные преступники скрыты.";
                     break;
 
+                case FilterHeightMore:
+                    filter.Message = $"Включен фильтр по росту. Показаны преступники чей рост > {filter.Value} см.";
+                    break;
+
+                case FilterHeightLess:
+                    filter.Message = $"Включен фильтр по росту. Показаны преступники чей рост < {filter.Value} см.";
+                    break;
+
                 case FilterWeightMore:
                     filter.Message = $"Включен фильтр по весу. Показаны преступники чей вес > {filter.Value} кг.";
                     break;
@@ -308,24 +309,62 @@ namespace Test
                 case FilterWeightLess:
                     filter.Message = $"Включен фильтр по весу. Показаны преступники чей вес < {filter.Value} кг.";
                     break;
-
-                case FilterHeightMore:
-                    filter.Message = $"Включен фильтр по росту. Показаны преступники чей вес > {filter.Value} кг.";
-                    break;
-
-                case FilterHeightLess:
-                    filter.Message = $"Включен фильтр по росту. Показаны преступники чей вес < {filter.Value} кг.";
-                    break;
-
+                         
                 case NationalityFilter:
-                    filter.Message = $"Включен фильтр по национальности. Показаны преступники с нации {filter.Value}.";
+                    filter.Message = $"Включен фильтр по национальности. Показаны преступники нации {filter.Value}.";
                     break;
             }
         }
 
         private void RemoveFilters()
         {
-            _filters.Clear();
+            const string CommandDeleteHeightFilter = "Удалить фильтр по росту.";
+            const string CommandDeleteWeightFilter = "Удалить фильтр по весу.";
+            const string CommandDeleteNationalityFilter = "Удалить фильтр по национальности.";
+            const string CommandDeleteFilters = "Удалить все фильтры.";
+
+            string[] commands = { CommandDeleteHeightFilter, CommandDeleteWeightFilter, CommandDeleteNationalityFilter, CommandDeleteFilters };
+
+            switch (ChooseCommand(commands))
+            {
+                case CommandDeleteHeightFilter:
+                    RemoveBiometricsFilter(CommandDeleteHeightFilter);
+                    break;
+
+                case CommandDeleteWeightFilter:
+                    RemoveBiometricsFilter(CommandDeleteWeightFilter);
+                    break;
+
+                case CommandDeleteNationalityFilter:
+                    if (TryFindFilter(NationalityFilter, out Filter filter))
+                        _filters.Remove(filter);
+                    break;
+
+                case CommandDeleteFilters:
+                    _filters.Clear();
+                    break;
+            }
+        }
+
+        private void RemoveBiometricsFilter(string biometrics)
+        {
+            string heightFilter = "Удалить фильтр по росту.";
+            string weightFilter = "Удалить фильтр по весу.";
+
+            if (biometrics == heightFilter)
+            {
+                if (TryFindFilter(FilterHeightMore, out Filter filter))
+                    _filters.Remove(filter);
+                if (TryFindFilter(FilterHeightLess, out filter))
+                    _filters.Remove(filter);
+            }
+            else if (biometrics == weightFilter)
+            {                
+                if (TryFindFilter(FilterWeightMore, out Filter filter))
+                    _filters.Remove(filter);
+                if (TryFindFilter(FilterWeightLess, out filter))
+                    _filters.Remove(filter);
+            }
         }
 
         private void ShowFilters()
@@ -349,7 +388,10 @@ namespace Test
 
         private void ShowCriminals()
         {
-            Console.WriteLine("Список преступников:");
+            if (_filteredCriminals.Count <= 0)
+                Console.WriteLine("Преступников с заданными параметрами не найдено.");
+            else
+                Console.WriteLine("Список преступников:");
 
             foreach (var criminal in _filteredCriminals)
             {
@@ -367,11 +409,13 @@ namespace Test
 
             bool isWork = true;
             int numberString = 0;
+            int cursorPositionX = Console.CursorLeft;
+            int cursorPositionY = Console.CursorTop;
             ConsoleKeyInfo key;
 
             while (isWork)
             {
-                Console.SetCursorPosition(_cursorPositionX, _cursorPositionY);
+                Console.SetCursorPosition(cursorPositionX, cursorPositionY);
                 WriteStrings(0, numberString, commands);
                 Console.ForegroundColor = ConsoleColor.DarkGreen;
                 Console.WriteLine(commands[numberString]);
@@ -395,7 +439,7 @@ namespace Test
                 }
             }
 
-            ClearPartOfConsole(_cursorPositionX, _cursorPositionY, commands);
+            ClearPartOfConsole(cursorPositionX, cursorPositionY, commands);
             return commands[numberString];
         }
 
@@ -422,12 +466,6 @@ namespace Test
             }
 
             Console.Clear();
-        }
-
-        private void ReadCursorPosition()
-        {
-            _cursorPositionX = Console.CursorLeft;
-            _cursorPositionY = Console.CursorTop;
         }
 
         private void ShowValueError()
