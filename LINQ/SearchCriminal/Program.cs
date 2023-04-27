@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace SearcheCriminal
+namespace SearchCriminal
 {
     class Program
     {
@@ -53,7 +53,7 @@ namespace SearcheCriminal
 
             while (isWork)
             {
-                ShowFilters();
+                ShowFiltersMessages();
 
                 if (isShowCriminals)
                     ShowCriminals();
@@ -168,6 +168,20 @@ namespace SearcheCriminal
             return false;
         }
 
+        private void SwitchHidePrisonersFilter()
+        {
+            if (TryFindFilter(FilterHidePrisoner, out Filter filter))
+            {
+                _filters.Remove(filter);
+            }
+            else
+            {
+                filter = new Filter(FilterHidePrisoner);
+                SetMessage(filter);
+                _filters.Add(filter);
+            }
+        }
+
         private void DesignateFilterValue(string filterName, int parameter)
         {
             if (TryFindFilter(filterName, out Filter filter))
@@ -240,20 +254,6 @@ namespace SearcheCriminal
             }
         }
 
-        private void SwitchHidePrisonersFilter()
-        {
-            if (TryFindFilter(FilterHidePrisoner, out Filter filter))
-            {
-                _filters.Remove(filter);
-            }
-            else
-            {
-                filter = new Filter(FilterHidePrisoner);
-                SetMessage(filter);
-                _filters.Add(filter);
-            }
-        }
-
         private void CreateNationalityFilter()
         {
             if (TryFindFilter(NationalityFilter, out Filter filter))
@@ -280,10 +280,53 @@ namespace SearcheCriminal
 
             var differentNationalities = nationalities.Distinct();
 
-            if (differentNationalities.Count() > 0)
-                return ChooseCommand(differentNationalities.ToArray());
+            return ChooseCommand(differentNationalities.ToArray());            
+        }
+                
+        private void RemoveFilters()
+        {
+            const string CommandDeleteHeightFilter = "Удалить фильтр по росту.";
+            const string CommandDeleteWeightFilter = "Удалить фильтр по весу.";
+            const string CommandDeleteNationalityFilter = "Удалить фильтр по национальности.";
+            const string CommandDeleteFilters = "Удалить все фильтры.";
+            
+            string[] commands = { CommandDeleteHeightFilter, CommandDeleteWeightFilter, CommandDeleteNationalityFilter, CommandDeleteFilters };
 
-            return null;
+            switch (ChooseCommand(commands))
+            {
+                case CommandDeleteHeightFilter:
+                    RemoveHeightFilters();
+                    break;
+
+                case CommandDeleteWeightFilter:
+                    RemoveWeightFilters();
+                    break;
+
+                case CommandDeleteNationalityFilter:
+                    if (TryFindFilter(NationalityFilter, out Filter filter))
+                        _filters.Remove(filter);
+                    break;
+
+                case CommandDeleteFilters:
+                    _filters.Clear();
+                    break;
+            }
+        }
+
+        private void RemoveHeightFilters()
+        {
+            if (TryFindFilter(FilterHeightMore, out Filter filter))
+                _filters.Remove(filter);
+            if (TryFindFilter(FilterHeightLess, out filter))
+                _filters.Remove(filter);
+        }
+
+        private void RemoveWeightFilters()
+        {
+            if (TryFindFilter(FilterWeightMore, out Filter filter))
+                _filters.Remove(filter);
+            if (TryFindFilter(FilterWeightLess, out filter))
+                _filters.Remove(filter);
         }
 
         private void SetMessage(Filter filter)
@@ -309,60 +352,14 @@ namespace SearcheCriminal
                 case FilterWeightLess:
                     filter.Message = $"Включен фильтр по весу. Показаны преступники чей вес < {filter.Value} кг.";
                     break;
-                         
+
                 case NationalityFilter:
                     filter.Message = $"Включен фильтр по национальности. Показаны преступники нации {filter.Value}.";
                     break;
             }
         }
 
-        private void RemoveFilters()
-        {
-            const string CommandDeleteHeightFilter = "Удалить фильтр по росту.";
-            const string CommandDeleteWeightFilter = "Удалить фильтр по весу.";
-            const string CommandDeleteNationalityFilter = "Удалить фильтр по национальности.";
-            const string CommandDeleteFilters = "Удалить все фильтры.";
-
-            string[] commands = { CommandDeleteHeightFilter, CommandDeleteWeightFilter, CommandDeleteNationalityFilter, CommandDeleteFilters };
-
-            switch (ChooseCommand(commands))
-            {
-                case CommandDeleteHeightFilter:
-                    RemoveHeightFilter();
-                    break;
-
-                case CommandDeleteWeightFilter:
-                    RemoveWeightFilter();
-                    break;
-
-                case CommandDeleteNationalityFilter:
-                    if (TryFindFilter(NationalityFilter, out Filter filter))
-                        _filters.Remove(filter);
-                    break;
-
-                case CommandDeleteFilters:
-                    _filters.Clear();
-                    break;
-            }
-        }
-
-        private void RemoveHeightFilter()
-        {
-            if (TryFindFilter(FilterHeightMore, out Filter filter))
-                _filters.Remove(filter);
-            if (TryFindFilter(FilterHeightLess, out filter))
-                _filters.Remove(filter);
-        }
-
-        private void RemoveWeightFilter()
-        {            
-            if (TryFindFilter(FilterWeightMore, out Filter filter))
-                _filters.Remove(filter);
-            if (TryFindFilter(FilterWeightLess, out filter))
-                _filters.Remove(filter);
-        }
-
-        private void ShowFilters()
+        private void ShowFiltersMessages()
         {
             foreach (var filter in _filters)
             {
@@ -408,6 +405,9 @@ namespace SearcheCriminal
             int cursorPositionY = Console.CursorTop;
             ConsoleKeyInfo key;
 
+            if (IsWrongArray(commands))
+                return null;
+
             while (isWork)
             {
                 Console.SetCursorPosition(cursorPositionX, cursorPositionY);
@@ -436,6 +436,20 @@ namespace SearcheCriminal
 
             ClearPartOfConsole(cursorPositionX, cursorPositionY, commands);
             return commands[numberString];
+        }
+
+        private bool IsWrongArray(string[] array)
+        {
+            if (array == null || array.Length == 0)
+                return true;
+
+            foreach (var command in array)
+            {
+                if (command == null)
+                    return true;
+            }
+
+            return false;
         }
 
         private void WriteStrings(int firstString, int lastString, string[] strings)
