@@ -16,16 +16,7 @@ namespace SearchCriminal
 
     class CriminalDatabase
     {
-        private const string FilterHidePrisoner = "hidePrisoner";
-        private const string FilterWeightMore = "weightMore";
-        private const string FilterWeightLess = "weightLess";
-        private const string FilterHeightMore = "heightMore";
-        private const string FilterHeightLess = "heightLess";
-        private const string NationalityFilter = "nationality";
-
-        private readonly List<Criminal> _criminals = new List<Criminal>();
-        private readonly List<Criminal> _filteredCriminals = new List<Criminal>();
-        private readonly List<Filter> _filters = new List<Filter>();
+        private readonly List<Criminal> _criminals = new List<Criminal>();        
 
         public CriminalDatabase()
         {
@@ -36,237 +27,70 @@ namespace SearchCriminal
             _criminals.Add(new Criminal("Василий Комок Блох", false, 173, 70, "Русский"));
             _criminals.Add(new Criminal("Артем Крестный Отец", false, 187, 90, "Русский"));
             _criminals.Add(new Criminal("Радик Закатанный Таз", true, 162, 53, "Русский"));
-            _criminals.Add(new Criminal("Сэмюэль Желтый Снег", false, 191, 87, "Англичанин"));
-            _filteredCriminals.AddRange(_criminals);
+            _criminals.Add(new Criminal("Сэмюэль Желтый Снег", false, 191, 87, "Англичанин"));            
         }
 
         public void Work()
         {
-            const string CommandShowCriminals = "Показать/скрыть преступников.";
-            const string CommandCreateFilter = "Фильтровать.";
-            const string CommandResetFilters = "Удалить фильтры.";
-            const string CommandExit = "Выход.";
+            const string CommandFilter = "Фильтровать";
+            const string CommandExit = "Выйти";
 
-            bool isShowCriminals = false;
             bool isWork = true;
-            string[] commands = { CommandShowCriminals, CommandCreateFilter, CommandResetFilters, CommandExit };
+            string[] commands = { CommandFilter, CommandExit };
 
             while (isWork)
             {
-                ShowFiltersMessages();
-
-                if (isShowCriminals)
-                    ShowCriminals();
+                ShowCriminals(_criminals.ToArray());
 
                 switch (ChooseCommand(commands))
                 {
-                    case CommandShowCriminals:
-                        isShowCriminals ^= true;
-                        break;
-
-                    case CommandCreateFilter:
-                        ChooseFilters();
-                        break;
-
-                    case CommandResetFilters:
-                        RemoveFilters();
+                    case CommandFilter:
+                        Filter();
                         break;
 
                     case CommandExit:
                         isWork = false;
                         break;
                 }
-
-                ApplyFilters();
             }
         }
 
-        private void ChooseFilters()
-        {
-            const string CommandSwitchHidePrisoners = "Показать/скрыть пойманных преступников.";
-            const string CommandHeightFilter = "Фильтровать по росту.";
-            const string CommandWeightFilter = "Фильтровать по весу.";
-            const string CommandNationalityFilter = "Фильтровать по национальности.";
+        private void Filter()
+        {                  
+            RequestParameter("Введите минимальный рост: ", out int minHeight);           
+            RequestParameter("Введите максимальный рост: ", out int maxHeight);  
+            RequestParameter("Введите минимальный вес: ", out int minWeight);
+            RequestParameter("Введите максимальный вес: ", out int maxWeight);            
+            Console.WriteLine("Выберите национальность: ");
+            string nationality = DetermineNationality();
+            
+            var filteredCriminals = from Criminal criminal in _criminals
+                                    where criminal.IsPrisoner == false
+                                    where criminal.Height > minHeight
+                                    where criminal.Height < maxHeight
+                                    where criminal.Weight > minWeight
+                                    where criminal.Weight < maxWeight
+                                    where criminal.Nationality == nationality
+                                    select criminal;
 
-            string[] commands = { CommandSwitchHidePrisoners, CommandHeightFilter, CommandWeightFilter, CommandNationalityFilter };
-            string heightParameter = "height";
-            string weightParameter = "weight";
-
-            switch (ChooseCommand(commands))
-            {
-                case CommandSwitchHidePrisoners:
-                    SwitchHidePrisonersFilter();
-                    break;
-
-                case CommandHeightFilter:
-                    DesignateBiometrics(heightParameter);
-                    break;
-
-                case CommandWeightFilter:
-                    DesignateBiometrics(weightParameter);
-                    break;
-
-                case CommandNationalityFilter:
-                    CreateNationalityFilter();
-                    break;
-            }
+            Console.WriteLine();
+            ShowCriminals(filteredCriminals.ToArray());            
         }
 
-        private void ApplyFilters()
+        private bool RequestParameter(string message, out int volue)
         {
-            WriteFilteredCriminals(_criminals);
+            Console.Write(message);
 
-            if (TryFindFilter(FilterHidePrisoner, out Filter filter))
+            if (int.TryParse(Console.ReadLine(), out volue))
             {
-                var filteredCriminals = _filteredCriminals.Where(criminal => criminal.IsPrisoner == false);
-                WriteFilteredCriminals(filteredCriminals.ToList());
-            }
-
-            if (TryFindFilter(FilterHeightMore, out filter))
-            {
-                var filteredCriminals = _filteredCriminals.Where(criminal => criminal.Height > Convert.ToInt32(filter.Value));
-                WriteFilteredCriminals(filteredCriminals.ToList());
-            }
-
-            if (TryFindFilter(FilterHeightLess, out filter))
-            {
-                var filteredCriminals = _filteredCriminals.Where(criminal => criminal.Height < Convert.ToInt32(filter.Value));
-                WriteFilteredCriminals(filteredCriminals.ToList());
-            }
-
-            if (TryFindFilter(FilterWeightMore, out filter))
-            {
-                var filteredCriminals = _filteredCriminals.Where(criminal => criminal.Weight > Convert.ToInt32(filter.Value));
-                WriteFilteredCriminals(filteredCriminals.ToList());
-            }
-
-            if (TryFindFilter(FilterWeightLess, out filter))
-            {
-                var filteredCriminals = _filteredCriminals.Where(criminal => criminal.Weight < Convert.ToInt32(filter.Value));
-                WriteFilteredCriminals(filteredCriminals.ToList());
-            }
-
-            if (TryFindFilter(NationalityFilter, out filter))
-            {
-                var filteredCriminals = _filteredCriminals.Where(criminal => criminal.Nationality == filter.Value);
-                WriteFilteredCriminals(filteredCriminals.ToList());
-            }
-        }
-
-        private bool TryFindFilter(string filterName, out Filter findedFilter)
-        {
-            foreach (var filter in _filters)
-            {
-                if (filter.Name == filterName)
-                {
-                    findedFilter = filter;
-                    return true;
-                }
-            }
-
-            findedFilter = null;
-            return false;
-        }
-
-        private void SwitchHidePrisonersFilter()
-        {
-            if (TryFindFilter(FilterHidePrisoner, out Filter filter))
-            {
-                _filters.Remove(filter);
-            }
-            else
-            {
-                filter = new Filter(FilterHidePrisoner);
-                SetMessage(filter);
-                _filters.Add(filter);
-            }
-        }
-
-        private void DesignateFilterValue(string filterName, int parameter)
-        {
-            if (TryFindFilter(filterName, out Filter filter))
-            {
-                filter.Value = parameter.ToString();
-                SetMessage(filter);
-            }
-            else
-            {
-                filter = new Filter(filterName) { Value = parameter.ToString() };
-                SetMessage(filter);
-                _filters.Add(filter);
-            }
-        }
-
-        private void DesignateBiometrics(string biometrics)
-        {
-            const string CommandHeightMoreThen = "Показать преступников, чей рост больше заданного.";
-            const string CommandHeightLessThen = "Показать преступников, чей рост меньше заданного.";
-            const string CommandWeightMoreThen = "Показать преступников, чей вес больше заданного.";
-            const string CommandWeightLessThen = "Показать преступников, чей вес меньше заданного.";
-            const string ParameterHeight = "height";
-            const string ParameterWeight = "weight";
-
-            string command;
-            int quntityCommand = 2;
-            string[] commands = new string[quntityCommand];
-
-            switch (biometrics)
-            {
-                case ParameterHeight:
-                    commands = new string[] { CommandHeightMoreThen, CommandHeightLessThen };
-                    break;
-
-                case ParameterWeight:
-                    commands = new string[] { CommandWeightMoreThen, CommandWeightLessThen };
-                    break;
+                return true;
             }
 
             Console.Clear();
-            command = ChooseCommand(commands);
-            Console.Write("Введите параметр: ");
-
-            if (int.TryParse((Console.ReadLine()), out int parameter))
-            {
-                Console.Clear();
-
-                switch (command)
-                {
-                    case CommandHeightMoreThen:
-                        DesignateFilterValue(FilterHeightMore, parameter);
-                        break;
-
-                    case CommandHeightLessThen:
-                        DesignateFilterValue(FilterHeightLess, parameter);
-                        break;
-
-                    case CommandWeightMoreThen:
-                        DesignateFilterValue(FilterWeightMore, parameter);
-                        break;
-
-                    case CommandWeightLessThen:
-                        DesignateFilterValue(FilterWeightLess, parameter);
-                        break;
-                }
-            }
-            else
-            {
-                ShowValueError();
-            }
-        }
-
-        private void CreateNationalityFilter()
-        {
-            if (TryFindFilter(NationalityFilter, out Filter filter))
-            {
-                filter.Value = DetermineNationality();
-                SetMessage(filter);
-            }
-            else
-            {
-                filter = new Filter(NationalityFilter) { Value = DetermineNationality() };
-                SetMessage(filter);
-                _filters.Add(filter);
-            }
+            Console.WriteLine("Не удается определить значение!");
+            Console.ReadKey(true);
+            Console.Clear();
+            return false;
         }
 
         private string DetermineNationality()
@@ -280,117 +104,24 @@ namespace SearchCriminal
 
             var differentNationalities = nationalities.Distinct();
 
-            return ChooseCommand(differentNationalities.ToArray());            
-        }
-                
-        private void RemoveFilters()
-        {
-            const string CommandDeleteHeightFilter = "Удалить фильтр по росту.";
-            const string CommandDeleteWeightFilter = "Удалить фильтр по весу.";
-            const string CommandDeleteNationalityFilter = "Удалить фильтр по национальности.";
-            const string CommandDeleteFilters = "Удалить все фильтры.";
-            
-            string[] commands = { CommandDeleteHeightFilter, CommandDeleteWeightFilter, CommandDeleteNationalityFilter, CommandDeleteFilters };
-
-            switch (ChooseCommand(commands))
-            {
-                case CommandDeleteHeightFilter:
-                    RemoveHeightFilters();
-                    break;
-
-                case CommandDeleteWeightFilter:
-                    RemoveWeightFilters();
-                    break;
-
-                case CommandDeleteNationalityFilter:
-                    if (TryFindFilter(NationalityFilter, out Filter filter))
-                        _filters.Remove(filter);
-                    break;
-
-                case CommandDeleteFilters:
-                    _filters.Clear();
-                    break;
-            }
+            return ChooseCommand(differentNationalities.ToArray());
         }
 
-        private void RemoveHeightFilters()
+        private void ShowCriminals(Criminal [] criminals)
         {
-            if (TryFindFilter(FilterHeightMore, out Filter filter))
-                _filters.Remove(filter);
-            if (TryFindFilter(FilterHeightLess, out filter))
-                _filters.Remove(filter);
-        }
-
-        private void RemoveWeightFilters()
-        {
-            if (TryFindFilter(FilterWeightMore, out Filter filter))
-                _filters.Remove(filter);
-            if (TryFindFilter(FilterWeightLess, out filter))
-                _filters.Remove(filter);
-        }
-
-        private void SetMessage(Filter filter)
-        {
-            switch (filter.Name)
-            {
-                case FilterHidePrisoner:
-                    filter.Message = "Пойманные преступники скрыты.";
-                    break;
-
-                case FilterHeightMore:
-                    filter.Message = $"Включен фильтр по росту. Показаны преступники чей рост > {filter.Value} см.";
-                    break;
-
-                case FilterHeightLess:
-                    filter.Message = $"Включен фильтр по росту. Показаны преступники чей рост < {filter.Value} см.";
-                    break;
-
-                case FilterWeightMore:
-                    filter.Message = $"Включен фильтр по весу. Показаны преступники чей вес > {filter.Value} кг.";
-                    break;
-
-                case FilterWeightLess:
-                    filter.Message = $"Включен фильтр по весу. Показаны преступники чей вес < {filter.Value} кг.";
-                    break;
-
-                case NationalityFilter:
-                    filter.Message = $"Включен фильтр по национальности. Показаны преступники нации {filter.Value}.";
-                    break;
-            }
-        }
-
-        private void ShowFiltersMessages()
-        {
-            foreach (var filter in _filters)
-            {
-                Console.WriteLine(filter.Message);
-            }
-
-            if (_filters.Count > 0)
-            {
-                Console.WriteLine();
-            }
-        }
-
-        private void WriteFilteredCriminals(List<Criminal> filteredCriminals)
-        {
-            _filteredCriminals.Clear();
-            _filteredCriminals.AddRange(filteredCriminals);
-        }
-
-        private void ShowCriminals()
-        {
-            if (_filteredCriminals.Count <= 0)
+            if (criminals.Length <= 0)
                 Console.WriteLine("Преступников с заданными параметрами не найдено.");
             else
                 Console.WriteLine("Список преступников:");
 
-            foreach (var criminal in _filteredCriminals)
+            foreach (var criminal in criminals)
             {
                 criminal.ShowInfo();
             }
 
-            Console.WriteLine();
+            Console.WriteLine("\nНажмите любую клавишу, чтобы продолжить.");
+            Console.ReadKey(true);
+            Console.Clear();            
         }
 
         private string ChooseCommand(string[] commands)
@@ -474,28 +205,8 @@ namespace SearchCriminal
                 Console.WriteLine("");
             }
 
-            Console.Clear();
+            Console.SetCursorPosition(сursorPositionX, сursorPositionY);            
         }
-
-        private void ShowValueError()
-        {
-            Console.Clear();
-            Console.WriteLine("Не удается определить значение!");
-            Console.ReadKey(true);
-            Console.Clear();
-        }
-    }
-
-    class Filter
-    {
-        public Filter(string name)
-        {
-            Name = name;
-        }
-
-        public string Name { get; private set; }
-        public string Message { get; set; }
-        public string Value { get; set; }
     }
 
     class Criminal
