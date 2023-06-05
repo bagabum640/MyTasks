@@ -16,7 +16,7 @@ namespace SearchCriminal
 
     class CriminalDatabase
     {
-        private readonly List<Criminal> _criminals = new List<Criminal>();        
+        private readonly List<Criminal> _criminals = new List<Criminal>();
 
         public CriminalDatabase()
         {
@@ -27,7 +27,7 @@ namespace SearchCriminal
             _criminals.Add(new Criminal("Василий Комок Блох", false, 173, 70, "Русский"));
             _criminals.Add(new Criminal("Артем Крестный Отец", false, 187, 90, "Русский"));
             _criminals.Add(new Criminal("Радик Закатанный Таз", true, 162, 53, "Русский"));
-            _criminals.Add(new Criminal("Сэмюэль Желтый Снег", false, 191, 87, "Англичанин"));            
+            _criminals.Add(new Criminal("Сэмюэль Желтый Снег", false, 191, 87, "Англичанин"));
         }
 
         public void Work()
@@ -56,41 +56,41 @@ namespace SearchCriminal
         }
 
         private void Filter()
-        {                  
-            RequestParameter("Введите минимальный рост: ", out int minHeight);           
-            RequestParameter("Введите максимальный рост: ", out int maxHeight);  
-            RequestParameter("Введите минимальный вес: ", out int minWeight);
-            RequestParameter("Введите максимальный вес: ", out int maxWeight);            
-            Console.WriteLine("Выберите национальность: ");
+        {
+            int minHeight = RequestParameter("Введите минимальный рост: ");
+            int maxHeight = RequestParameter("Введите максимальный рост: ");
+            int minWeight = RequestParameter("Введите минимальный вес: ");
+            int maxWeight = RequestParameter("Введите максимальный вес: ");
             string nationality = DetermineNationality();
-            
+
             var filteredCriminals = from Criminal criminal in _criminals
-                                    where criminal.IsPrisoner == false
-                                    where criminal.Height > minHeight
-                                    where criminal.Height < maxHeight
-                                    where criminal.Weight > minWeight
-                                    where criminal.Weight < maxWeight
-                                    where criminal.Nationality == nationality
+                                    where criminal.IsPrisoner == false 
+                                    && criminal.Height > minHeight
+                                    && criminal.Height < maxHeight
+                                    && criminal.Weight > minWeight 
+                                    && criminal.Weight < maxWeight 
+                                    && criminal.Nationality == nationality
                                     select criminal;
 
             Console.WriteLine();
-            ShowCriminals(filteredCriminals.ToArray());            
+            ShowCriminals(filteredCriminals.ToArray());
         }
 
-        private bool RequestParameter(string message, out int volue)
+        private int RequestParameter(string message)
         {
+            int volue;
+
             Console.Write(message);
 
-            if (int.TryParse(Console.ReadLine(), out volue))
+            while (int.TryParse(Console.ReadLine(), out volue) != true)
             {
-                return true;
+                Console.Clear();
+                Console.WriteLine("Не удается определить значение!");
+                Console.ReadKey(true);
+                Console.Clear();
             }
 
-            Console.Clear();
-            Console.WriteLine("Не удается определить значение!");
-            Console.ReadKey(true);
-            Console.Clear();
-            return false;
+            return volue;
         }
 
         private string DetermineNationality()
@@ -103,11 +103,12 @@ namespace SearchCriminal
             }
 
             var differentNationalities = nationalities.Distinct();
+            Console.WriteLine("Выберите национальность: ");
 
             return ChooseCommand(differentNationalities.ToArray());
         }
 
-        private void ShowCriminals(Criminal [] criminals)
+        private void ShowCriminals(Criminal[] criminals)
         {
             if (criminals.Length <= 0)
                 Console.WriteLine("Преступников с заданными параметрами не найдено.");
@@ -121,7 +122,7 @@ namespace SearchCriminal
 
             Console.WriteLine("\nНажмите любую клавишу, чтобы продолжить.");
             Console.ReadKey(true);
-            Console.Clear();            
+            Console.Clear();
         }
 
         private string ChooseCommand(string[] commands)
@@ -205,7 +206,7 @@ namespace SearchCriminal
                 Console.WriteLine("");
             }
 
-            Console.SetCursorPosition(сursorPositionX, сursorPositionY);            
+            Console.SetCursorPosition(сursorPositionX, сursorPositionY);
         }
     }
 

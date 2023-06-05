@@ -10,7 +10,7 @@ namespace HospitalAnarchy
         {
             Hospital hospital = new Hospital();
 
-            hospital.Work();
+            hospital.Work();            
         }
     }
 
@@ -49,11 +49,11 @@ namespace HospitalAnarchy
                 switch (ChooseCommand(commands))
                 {
                     case CommandSortFullName:
-                        SortFullName();
+                        _patients = _patients.OrderBy(patient => patient.Name).ToList();
                         break;
 
                     case CommandSortAge:
-                        SortAge();
+                        _patients = _patients.OrderBy(patient => patient.Age).ToList(); 
                         break;
 
                     case CommandFilterDesease:
@@ -67,18 +67,6 @@ namespace HospitalAnarchy
 
                 Console.Clear();
             }
-        }
-
-        private void SortFullName()
-        {            
-            var sortedPatients = _patients.OrderBy(patient => patient.Name).ToList();
-            OverwriteList(sortedPatients);
-        }
-
-        private void SortAge()
-        {
-            var sortedPatients = _patients.OrderBy(patient => patient.Age).ToList();            
-            OverwriteList(sortedPatients);            
         }
 
         private void FilterDesease()
@@ -99,13 +87,7 @@ namespace HospitalAnarchy
 
             Console.ReadKey();            
         }
-
-        private void OverwriteList(List<Patient> patients)
-        {
-            _patients.Clear();
-            _patients.AddRange(patients);
-        }
-
+                
         private void ShowPatients(List<Patient> patients)
         {      
             foreach (var patient in patients)
@@ -194,7 +176,7 @@ namespace HospitalAnarchy
                     Console.Write(' ');
                 }
 
-                Console.WriteLine("");
+                Console.WriteLine();
             }
 
             Console.SetCursorPosition(сursorPositionX, сursorPositionY);
