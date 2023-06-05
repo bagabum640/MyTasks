@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Amnesty", "Amnesty\Amnesty.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HospitalAnarchy", "HospitalAnarchy\HospitalAnarchy.csproj", "{0088C375-A0E0-466E-A14A-4A3C428FA835}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PlayersTop", "PlayersTop\PlayersTop.csproj", "{9CBC6A6B-488B-49A2-A65F-70E23AEEA86C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PlayersTop", "PlayersTop\PlayersTop.csproj", "{9CBC6A6B-488B-49A2-A65F-70E23AEEA86C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DefinitionSpoiledProducts", "DefinitionSpoiledProducts\DefinitionSpoiledProducts.csproj", "{7CAC5F2D-2611-4A73-B627-19BF63D82D9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{9CBC6A6B-488B-49A2-A65F-70E23AEEA86C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9CBC6A6B-488B-49A2-A65F-70E23AEEA86C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9CBC6A6B-488B-49A2-A65F-70E23AEEA86C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7CAC5F2D-2611-4A73-B627-19BF63D82D9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7CAC5F2D-2611-4A73-B627-19BF63D82D9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7CAC5F2D-2611-4A73-B627-19BF63D82D9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7CAC5F2D-2611-4A73-B627-19BF63D82D9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
