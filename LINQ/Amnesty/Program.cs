@@ -16,7 +16,7 @@ namespace Amnesty
 
     class Prison
     {        
-        private readonly List<Prisoner> _prisoners = new List<Prisoner>();
+        private List<Prisoner> _prisoners = new List<Prisoner>();
 
         public Prison()
         {
@@ -34,17 +34,20 @@ namespace Amnesty
         {
             string offence = "Антиправительственное";
 
-            ShowPrisoners(_prisoners);
+            ShowPrisoners();
             StopShowing();
             Console.WriteLine("Проведена амнистия заключенных за антиправительственное престпуление!");            
-            StopShowing();            
-            ShowPrisoners(_prisoners.Except(_prisoners.Where(prisoner => prisoner.Offense == offence)).ToList());            
+            StopShowing();
+            _prisoners = _prisoners.Where(prisoner => prisoner.Offense != offence).ToList();            
+            ShowPrisoners();
             StopShowing();
         }
 
-        private void ShowPrisoners(List<Prisoner> prisoners)
+        private void ShowPrisoners()
         {
-            foreach (var prisoner in prisoners)
+            Console.WriteLine("Список заключенных:\n");
+
+            foreach (var prisoner in _prisoners)
             {
                 prisoner.Show();
             } 

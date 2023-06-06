@@ -16,8 +16,8 @@ namespace UnificationTroops
 
     class Army
     {
-        private readonly List<Soldier> _firstSquad = new List<Soldier>();
-        private readonly List<Soldier> _secondSquad = new List<Soldier>();
+        private List<Soldier> _firstSquad = new List<Soldier>();
+        private List<Soldier> _secondSquad = new List<Soldier>();
 
         public Army()
         {
@@ -35,26 +35,28 @@ namespace UnificationTroops
 
         public void Work()
         {
-            ShowSoldiers(_firstSquad, _secondSquad);
+            ShowSoldiers();
 
             Console.WriteLine("\nБойцы из первого отряда переведены во второй.\n");
 
-            ShowSoldiers(_firstSquad.Except(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList(), 
-                         _secondSquad.Union(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList());
+            _secondSquad = _secondSquad.Union(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList();
+            _firstSquad = _firstSquad.Except(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList();
+
+            ShowSoldiers();
         }
 
-        private void ShowSoldiers(List<Soldier> firstSquad, List<Soldier> secondSquad)
+        private void ShowSoldiers()
         {
             Console.WriteLine("Бойцы первого отряда:\n");
 
-            foreach (var soldier in firstSquad)
+            foreach (var soldier in _firstSquad)
             {
                 Console.WriteLine(soldier.Name);
             }
 
             Console.WriteLine("\nБойцы второго отряда:\n");
 
-            foreach (var soldier in secondSquad)
+            foreach (var soldier in _secondSquad)
             {
                 Console.WriteLine(soldier.Name);
             }
