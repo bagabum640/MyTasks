@@ -34,13 +34,11 @@ namespace Amnesty
         {
             string offence = "Антиправительственное";
 
-            ShowPrisoners();
-            StopShowing();
+            ShowPrisoners();            
             Console.WriteLine("Проведена амнистия заключенных за антиправительственное престпуление!");            
             StopShowing();
             _prisoners = _prisoners.Where(prisoner => prisoner.Offense != offence).ToList();            
-            ShowPrisoners();
-            StopShowing();
+            ShowPrisoners();            
         }
 
         private void ShowPrisoners()
@@ -50,7 +48,9 @@ namespace Amnesty
             foreach (var prisoner in _prisoners)
             {
                 prisoner.Show();
-            } 
+            }
+
+            StopShowing();
         }
 
         private void StopShowing()
