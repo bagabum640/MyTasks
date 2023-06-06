@@ -30,11 +30,16 @@ namespace ArmsReport
 
         public void Work()
         {
-            var soldierData = _soldiers.Select(soldier => soldier.Name +"\t: "+ soldier.Rank);
+            var soldierData = from Soldier soldier in _soldiers
+                              select new
+                              {
+                                  soldier.Name,
+                                  soldier.Rank,
+                              };
 
             foreach (var data in soldierData)
             {
-                Console.WriteLine(data);
+                Console.WriteLine($"Имя: {data.Name}. \tЗвание: {data.Rank}.");
             }
         }
     }
