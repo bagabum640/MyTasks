@@ -65,15 +65,19 @@ namespace PlayersTop
 
         private void ShowTopLvl()
         {
+            int countBestPlayers = 3;
+
             Console.Clear();
-            ShowPlayers(_players.OrderByDescending(player => player.Level).Take(3).ToList());
+            ShowPlayers(_players.OrderByDescending(player => player.Level).Take(countBestPlayers).ToList());
             StopShowing();
         }
 
         private void ShowTopPower()
         {
+            int countBestPlayers = 3;
+
             Console.Clear();
-            ShowPlayers(_players.OrderByDescending(player => player.Power).Take(3).ToList());
+            ShowPlayers(_players.OrderByDescending(player => player.Power).Take(countBestPlayers).ToList());
             StopShowing();
         }
 
