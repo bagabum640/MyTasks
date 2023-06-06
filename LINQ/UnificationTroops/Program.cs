@@ -34,10 +34,27 @@ namespace UnificationTroops
         }
 
         public void Work()
-        {      
-            var resultSquad = _secondSquad.Union(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б")));
+        {
+            ShowSoldiers(_firstSquad, _secondSquad);
 
-            foreach (var soldier in resultSquad)
+            Console.WriteLine("\nБойцы из первого отряда переведены во второй.\n");
+
+            ShowSoldiers(_firstSquad.Except(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList(), 
+                         _secondSquad.Union(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList());
+        }
+
+        private void ShowSoldiers(List<Soldier> firstSquad, List<Soldier> secondSquad)
+        {
+            Console.WriteLine("Бойцы первого отряда:\n");
+
+            foreach (var soldier in firstSquad)
+            {
+                Console.WriteLine(soldier.Name);
+            }
+
+            Console.WriteLine("\nБойцы второго отряда:\n");
+
+            foreach (var soldier in secondSquad)
             {
                 Console.WriteLine(soldier.Name);
             }
