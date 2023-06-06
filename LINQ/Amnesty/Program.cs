@@ -37,8 +37,8 @@ namespace Amnesty
             ShowPrisoners(_prisoners);
             StopShowing();
             Console.WriteLine("Проведена амнистия заключенных за антиправительственное престпуление!");            
-            StopShowing();
-            ShowPrisoners(_prisoners.Where(prisoner => prisoner.Offense != offence).ToList());
+            StopShowing();            
+            ShowPrisoners(_prisoners.Except(_prisoners.Where(prisoner => prisoner.Offense == offence)).ToList());            
             StopShowing();
         }
 
