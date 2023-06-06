@@ -35,12 +35,15 @@ namespace UnificationTroops
 
         public void Work()
         {
+            char firstLetter = 'Б';
+            var transferedSoldiers = _firstSquad.Where(soldier => soldier.Name.StartsWith(firstLetter));
+            
             ShowSoldiers();
 
             Console.WriteLine("\nБойцы из первого отряда переведены во второй.\n");
-
-            _secondSquad = _secondSquad.Union(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList();
-            _firstSquad = _firstSquad.Except(_firstSquad.Where(soldier => soldier.Name.StartsWith("Б"))).ToList();
+            
+            _secondSquad = _secondSquad.Union(transferedSoldiers).ToList();
+            _firstSquad = _firstSquad.Except(transferedSoldiers).ToList();
 
             ShowSoldiers();
         }
