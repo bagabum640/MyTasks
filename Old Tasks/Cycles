@@ -1,0 +1,23 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string userMessage;
+            int quantityIterations;
+
+            Console.Write("Введите сообщение: ");
+            userMessage = Console.ReadLine();
+            Console.Write("Сколько раз это повторить?: ");
+            quantityIterations = Convert.ToInt32(Console.ReadLine());
+
+            for (int i = 0; i < quantityIterations; i++)
+            {
+                Console.WriteLine(userMessage);
+            }
+        }
+    }
+}

@@ -1,0 +1,49 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int numbersCounter = 0;
+            int maxNumberCounter = 0;
+            int searchedNumber = 0;
+            int currentNumber;
+            int[] numbersArray = new int [30];
+            Random random = new Random();
+
+            for (int i = 0; i < numbersArray.Length; i++)
+            {
+                numbersArray[i] = random.Next(0, 10);
+                Console.Write(numbersArray[i] + "  ");
+            }
+                        
+            currentNumber = numbersArray[0];
+
+            for (int i = 0; i < numbersArray.Length; i++)
+            {                
+                if (numbersCounter > maxNumberCounter)
+                {
+                    searchedNumber = currentNumber;
+                    maxNumberCounter = numbersCounter;
+                }
+
+                if (currentNumber == numbersArray[i])
+                {
+                    numbersCounter++;
+                }
+                else
+                {
+                    numbersCounter = 0;
+                    currentNumber = numbersArray[i];
+                    numbersCounter++;
+                }
+            }
+
+            Console.WriteLine();
+            Console.WriteLine(searchedNumber);
+            Console.WriteLine(maxNumberCounter);
+        }
+    }
+}

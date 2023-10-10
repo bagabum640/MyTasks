@@ -1,0 +1,25 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int amountGold;
+            int amountCrystals;
+            int priceCrystal;
+            
+            priceCrystal = 13;
+
+            Console.WriteLine("Сколько у вас золота?");
+            amountGold = Convert.ToInt32(Console.ReadLine());
+            Console.WriteLine("Кристаллы сегодня по 13 золотых, сколько вы хотите купить?");
+            amountCrystals = Convert.ToInt32(Console.ReadLine());
+                        
+            amountGold -= amountCrystals * priceCrystal;
+
+            Console.WriteLine($"Куплено кристаллов: " + amountCrystals + "\nОстаток золота: " + amountGold);
+        }
+    }
+}

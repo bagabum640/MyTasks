@@ -1,0 +1,55 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int arrayLength = 30;
+            int[] numbers = new int[arrayLength];
+            int minNumber = 0;
+            int maxNumber = 100;
+            int currentNumber;
+            int previousNumber;
+            int nextNumber;
+            Random random = new Random();
+
+            for (int i = 0; i < numbers.Length; i++)
+            {
+                numbers[i] = random.Next(minNumber, maxNumber);
+                Console.Write(numbers[i] + "  ");
+            }
+
+            Console.WriteLine();
+            Console.WriteLine();
+
+            if (numbers[1] < numbers[0])
+            {
+                Console.Write(numbers[0] + "  ");
+            }
+
+            previousNumber = numbers[0];
+            nextNumber = numbers[1];
+
+            for (int i = 1; i < numbers.Length - 1; i++)
+            {
+                currentNumber = numbers[i];
+                previousNumber = numbers[i - 1];
+                nextNumber = numbers[i + 1];
+
+                if (currentNumber > nextNumber && currentNumber > previousNumber)
+                {
+                    Console.Write(currentNumber + "  ");
+                }
+            }
+
+            if (numbers[numbers.Length - 1] > numbers[numbers.Length - 2])
+            {
+                Console.Write(numbers[numbers.Length - 1]);
+            }
+
+            Console.WriteLine();
+        }
+    }
+}

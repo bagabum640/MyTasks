@@ -1,0 +1,18 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string givenText = "I have been learning C# for ten months.";
+            string [] wordsArray = givenText.Split();
+
+            foreach (var word in wordsArray)
+            {
+                Console.WriteLine(word);
+            }
+        }
+    }
+}

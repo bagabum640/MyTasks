@@ -1,0 +1,22 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string firstPart = "-Жанейро ";
+            string secondPart = "Рио-де";            
+            string bufferVariable;
+            
+            Console.WriteLine("Неправильное название города: " + firstPart + secondPart);
+
+            bufferVariable = firstPart;
+            firstPart = secondPart;
+            secondPart = bufferVariable;
+
+            Console.WriteLine("Правильное название города: " + firstPart + secondPart);
+        }
+    }
+}

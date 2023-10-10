@@ -1,0 +1,61 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            double[] currentArray = new double[0];                        
+            bool isExit = false;
+            string command;            
+
+            Console.WriteLine("Enter a number to add in a array\nEnter sum to see sum of array`s element\nEnter exit to exit from program\n");
+
+            while (isExit != true)
+            {
+                command = Console.ReadLine();
+                command = command.ToLower();
+
+                try
+                {
+                    double[] newArray = new double[currentArray.Length + 1];
+
+                    for (int i = 0; i < currentArray.Length; i++)
+                    {
+                        newArray[i] = currentArray[i];
+                    }
+
+                    currentArray = newArray;
+                    currentArray[^1] = Convert.ToDouble(command);
+                }
+                catch (Exception)
+                {
+                    switch (command)
+                    {
+                        case "sum":
+                            double sum = 0;
+
+                            for (int i = 0; i < currentArray.Length; i++)
+                            {
+                                sum += currentArray[i];
+                            }
+
+                            Console.WriteLine(sum);
+                            break;
+
+                        case "exit":
+                            isExit = true;
+                            break;
+
+                        default:
+                            Console.WriteLine("You didn`t enter a number!");
+                            break;
+                    }
+                }
+
+                Console.WriteLine();
+            }
+        }
+    }
+}

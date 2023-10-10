@@ -35,11 +35,9 @@ namespace CarService
             const string CommandRefuseClient = "Прогнать клиента";
             const string CommandFinishService = "Завершить обслуживание";
             const string CommandExit = "Выйти из автосервиса";
-
-            string command;
+                        
             bool isWork = true;
-            string[] commands = { CommandInviteClient, CommandReplacePart, CommandLookAtStorage, CommandRefuseClient, CommandFinishService, CommandExit };
-
+            
             while (isWork)
             {
                 if (IsBankruptcy())
@@ -49,10 +47,8 @@ namespace CarService
 
                 if (_car != null)
                     _car.ShowInfo();
-
-                command = ChooseCommand(commands);
-
-                switch (command)
+                                
+                switch (ChooseCommand(CommandInviteClient, CommandReplacePart, CommandLookAtStorage, CommandRefuseClient, CommandFinishService, CommandExit))
                 {
                     case CommandInviteClient:
                         InviteClient();
@@ -168,7 +164,7 @@ namespace CarService
             Console.Clear();
         }
 
-        private string ChooseCommand(string[] commands)
+        private string ChooseCommand(params string[] commands)
         {
             const ConsoleKey PreviousString = ConsoleKey.UpArrow;
             const ConsoleKey NextString = ConsoleKey.DownArrow;
@@ -176,13 +172,13 @@ namespace CarService
 
             bool isWork = true;
             int numberString = 0;
-            int CursorPositionX = 0;
-            int CursorPositionY;
-            int CursorTopWithClient = 10;
-            int CursorTopWithoutClient = 2;
+            int CursorPositionX = Console.CursorLeft;
+            int CursorPositionY = Console.CursorTop;
+            //int CursorTopWithClient = 10;
+            //int CursorTopWithoutClient = 2;
             ConsoleKeyInfo key;
 
-            CursorPositionY = (_car == null) ? CursorTopWithoutClient : CursorTopWithClient;
+            //CursorPositionY = (_car == null) ? CursorTopWithoutClient : CursorTopWithClient;
 
             while (isWork)
             {
@@ -274,6 +270,8 @@ namespace CarService
                     Console.ResetColor();
                 }
             }
+
+            Console.WriteLine();
         }
 
         public bool IsWorked()

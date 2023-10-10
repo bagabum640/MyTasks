@@ -1,0 +1,21 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            sbyte countVariable = 10;
+            string task = "Переменные";
+            bool isHomoSapiens = true;            
+            int studentAge = 29;
+            float studentWeight = 85.4f;
+            double studentHeight = 179.24;
+            byte fingersCount = 20;
+            char firstLetterSurname = 'P';
+            short eyesCount = 2;
+            ulong hairCount = 23458742;
+        }
+    }
+}

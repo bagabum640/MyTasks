@@ -1,0 +1,37 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string text = "(()()(()))";
+            int bracketsCount = 0;
+            int depthBrackets = 0;            
+
+            foreach (var symbol in text)
+            {
+                if (symbol == '(')
+                {
+                    bracketsCount++;
+                    
+                    if (bracketsCount > depthBrackets)                    
+                        depthBrackets++;                    
+                }
+                else
+                {
+                    bracketsCount--;
+                }
+
+                if (bracketsCount < 0)
+                    break;
+            }
+
+            if (bracketsCount == 0)
+                Console.WriteLine("Right string, depth is " + depthBrackets);
+            else
+                Console.WriteLine("Wrong string");
+        }
+    }
+}

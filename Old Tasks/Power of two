@@ -1,0 +1,27 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int powerNumber = 0;
+            int randomNumber;
+            double superiorNumber = 0;
+            double baseNumber = 2;
+            int minRandomNumber = 0;
+            int maxRandomNumber = 1000;
+
+            Random random = new Random();
+            randomNumber = random.Next(minRandomNumber, maxRandomNumber);
+
+            for (int i = 0; randomNumber >= superiorNumber; i++)
+            {
+                superiorNumber = Math.Pow(baseNumber, i);
+                powerNumber = i;
+            }
+            Console.WriteLine(randomNumber + " " + superiorNumber + " " + powerNumber);
+        }
+    }
+}

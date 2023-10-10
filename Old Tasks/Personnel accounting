@@ -1,0 +1,164 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            string[] fullName = new string[0];
+            string[] positionInCompany = new string[0];    
+            ConsoleKeyInfo key;
+            bool isExit = false;
+
+            Console.WriteLine("Press:\n1 - to add new file\n2 - to show all files\n3 - to delete file\n4 - to find file\n5 - to exit\n");
+
+            while (isExit == false)
+            {
+                key = Console.ReadKey();
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.NumPad1:
+                        AddFile(ref fullName, ref positionInCompany);
+                        break;
+
+                    case ConsoleKey.NumPad2:
+
+                        if (fullName.Length > 0)
+                        {
+                            ShowAllFiles(fullName, positionInCompany);
+                        }
+                        else
+                        {
+                            Console.WriteLine("Files not found.");
+                        }
+                        
+                        break;
+
+                    case ConsoleKey.NumPad3:
+                        DeleteFile(ref fullName, ref positionInCompany);
+                        break;
+
+                    case ConsoleKey.NumPad4:
+                        SearchByName(fullName, positionInCompany);
+                        break;
+
+                    case ConsoleKey.NumPad5:
+                        isExit = true;
+                        break;
+
+                    default:
+                        Console.WriteLine();
+                        break;
+                }
+            }            
+        }
+
+        static void AddFile(ref string[] fullName,  ref string[] positionInCompany)
+        {
+            string name, position;
+
+            Console.Write("\nEnter a name: ");
+            name = Console.ReadLine();
+            IncreaseArray(ref fullName, name);
+            Console.Write("Enter a position in company: ");
+            position = Console.ReadLine();
+            IncreaseArray(ref positionInCompany, position);
+        }
+
+        static void IncreaseArray(ref string[] writeableArray, string newData)
+        {
+            string[] bufferArray = writeableArray;                        
+            writeableArray = new string[writeableArray.Length + 1];
+
+            for (int i = 0; i < bufferArray.Length; i++)
+            {
+                writeableArray[i] = bufferArray[i];
+            }
+            
+            writeableArray[^1] = newData;
+        }
+
+        static void ShowAllFiles (string [] fullName, string [] positionInCompany)
+        {
+            Console.WriteLine();
+
+            for (int i = 0; i < fullName.Length; i++)
+            {
+                Console.Write((i+1) + "-" + fullName[i] + '-' + positionInCompany[i] + ' ');
+            }
+
+            Console.WriteLine();
+        }
+
+        static void DeleteFile (ref string[] fullName, ref string[] positionInCompany)
+        {
+            int index;
+
+            Console.Write("\nEnter index of file:");
+            index = Convert.ToInt32(Console.ReadLine()) - 1;
+
+            if (index >= 0 && index < fullName.Length)
+            {
+                ReduceArray(ref fullName, index);
+                ReduceArray(ref positionInCompany, index);
+            }
+            else
+            {
+                Console.WriteLine("\nEntered index not exist!");
+            }
+        }
+
+        static void ReduceArray (ref string [] reducedArray, int index)
+        {
+            string[] bufferArray = reducedArray;
+            reducedArray = new string[reducedArray.Length - 1];
+
+            for (int i = 0; i < index; i++)
+            {
+                reducedArray[i] = bufferArray[i];
+            }
+
+            for (int i = index; i < reducedArray.Length; i++)
+            {
+                reducedArray[i] = bufferArray[i+1];
+            }
+        }
+
+        static void SearchByName (string [] fullName, string[] positionInCompany)
+        {
+            string lastName;
+            string[] namesPerson;
+            bool isFound = false;
+            int foundNumber = 0;
+
+            Console.Write("\nEnter a last name: ");
+            lastName = Console.ReadLine();
+
+            for (int i = 0; i < fullName.Length; i++)
+            {
+                namesPerson = fullName[i].Split();
+
+                for (int j = 0; j < namesPerson.Length; j++)
+                {
+                    if (lastName.ToLower() == namesPerson[j].ToLower())
+                    {
+                        isFound = true;
+                        foundNumber = i;
+                        break;
+                    }
+                }                                         
+            }
+
+            if (isFound)
+            {
+                Console.WriteLine((foundNumber + 1) + "-" + fullName[foundNumber] + '-' + positionInCompany[foundNumber] + ' ');
+            }
+            else
+            {
+                Console.WriteLine("\nFile not found.");
+            }
+        }
+    }
+}

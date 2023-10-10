@@ -1,0 +1,301 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            float maxPlayerHealth = 1000;
+            float curentPlayerHealth = maxPlayerHealth;
+            float playerArmor = 1;
+            float maxBossHealth = 5000;
+            float curentBossHealth = maxBossHealth;
+            float bossArmor = 1;
+            int minBossDamage = 85;
+            int maxBossDamage = 116;
+            int defaultArmor = 1;
+
+            float flameArrowDamage = 200;
+            float flameArrowBurningDamage = 50;
+            int durationOfBurning = 5;
+            int timeOfBurning = 0;
+
+            float ifritDamage = 200;
+            float ifritHealth = 100;
+            float curentIfritHealth = ifritHealth;
+            float ifritExplosionDamage = 500;
+            int coolDownSummonIfrit = 4;
+            int remainingTimeOfCooldownSummonIfrite = 0;
+            int durationSummon = 7;
+            int remainingDurationSummon = 0;
+            
+            float amountOfStolenArmor = 0.3f;
+            int durationStolenArmor = 3;
+            int remainingDurationStolenArmor = 0;
+
+            int coolDownBodySwap = 4;
+            int remainingTimeOfCoolDownBodySwap = 0;
+
+            float inputDamage;
+            float outputDamage = 0;
+            float damageOfTime;
+            float damageSummon;
+
+            int heightCursorPosition = 12;
+            int offsetCursor = 5;
+
+            string usedAbility = null;
+            bool isBossAlive = true;
+            bool isPlayerAlive = true;
+            bool isIfritAlive = false;
+            bool isUsedBodySwap = false;
+            bool isUsedUnavailableAbility = false;
+            
+            ConsoleKeyInfo key;
+            Random random = new Random();
+
+            Console.WriteLine("Великий бой пироманта с архидемоном!" +
+                                "\n\nЗаклинания:" +
+                                $"\n1 - Огненная стрела - наносит {flameArrowDamage} урона огнем и поджигает противника на {durationOfBurning} ходов, нанося {flameArrowBurningDamage} урона огнем каждый ход." +
+                                $"\n2 - Призыв ифрита - призывает ифрита, сражающегося на вашей стороне {durationSummon} ходов. При смерти до истечения срока взрывается." +
+                                "\n3 - Кража брони - расплавляет броню соперника понижая его устойчивость к огню и повышая собственную защиту." +
+                                "\n4 - Обмен телами - если призванный ифрит жив, то следующая атака направленная против вас, будет получена им.");
+
+            while (isBossAlive && isPlayerAlive)
+            {
+                Console.WriteLine($"\n\nПиромант: {curentPlayerHealth}/{maxPlayerHealth} очков здоровья\tАрхидемон: {curentBossHealth}/{maxBossHealth} очков здоровья\n\nЛоги боя:\n");
+
+                Console.SetCursorPosition(0, heightCursorPosition);
+                key = Console.ReadKey();
+                Console.SetCursorPosition(0, heightCursorPosition);
+
+                switch (key.Key)
+                {
+                    case ConsoleKey.NumPad1:
+                        usedAbility = "Огненную стрелу";
+                        outputDamage = flameArrowDamage / bossArmor;
+                        timeOfBurning = durationOfBurning;
+                        break;
+
+                    case ConsoleKey.NumPad2:
+                        usedAbility = "Призыв ифрита";
+
+                        if (remainingTimeOfCooldownSummonIfrite <= 0)
+                        {
+                            isIfritAlive = true;
+                            curentIfritHealth = ifritHealth;
+                            remainingTimeOfCooldownSummonIfrite = coolDownSummonIfrit;
+                            remainingDurationSummon = durationSummon;
+                        }
+                        else
+                        {
+                            isUsedUnavailableAbility = true;
+                        }
+                        break;
+
+                    case ConsoleKey.NumPad3:
+                        usedAbility = "Кража брони";
+                        remainingDurationStolenArmor = durationStolenArmor;
+
+                        if (playerArmor == defaultArmor)
+                        {
+                            playerArmor += amountOfStolenArmor;
+                            bossArmor -= amountOfStolenArmor;
+                        }
+                        break;
+
+                    case ConsoleKey.NumPad4:
+
+                        if (remainingTimeOfCoolDownBodySwap <= 0)
+                        {
+                            usedAbility = "Обмен телами";
+
+                            if (isIfritAlive == true)
+                            {
+                                remainingTimeOfCoolDownBodySwap = coolDownBodySwap;
+                                isUsedBodySwap = true;
+                            }
+                            else
+                            {
+                                isUsedUnavailableAbility = true;
+                            }
+                        }
+                        else
+                        {
+                            isUsedUnavailableAbility = true;
+                        }
+                        break;
+
+                    default:
+                        break;
+                }
+
+                if (isUsedUnavailableAbility == false)
+                {                 
+                    if (timeOfBurning > 0)
+                    {
+                        damageOfTime = flameArrowBurningDamage / bossArmor;
+                    }
+                    else
+                    {
+                        damageOfTime = 0;
+                    }
+
+                    if (remainingDurationSummon > 0)
+                    {
+                        if (isIfritAlive == true)
+                        {
+                            damageSummon = ifritDamage / bossArmor;
+                            remainingDurationSummon--;
+                        }
+                        else
+                        {
+                            damageSummon = 0;
+                        }                        
+                    }
+                    else
+                    {
+                        damageSummon = 0;
+                        isIfritAlive = false;
+                    }                    
+
+                    inputDamage = random.Next(minBossDamage, maxBossDamage);
+
+                    if (isUsedBodySwap == true)
+                    {
+                        curentIfritHealth -= inputDamage;
+
+                        if (curentIfritHealth <= 0)
+                        {
+                            damageSummon = ifritExplosionDamage / bossArmor;
+                            isIfritAlive = false;
+                            Console.WriteLine($"Ифрит взрывается и умирает нанеся {damageSummon} урона.");
+                            offsetCursor++;
+                        }
+                    }
+                    else
+                    {
+                        curentPlayerHealth -= inputDamage / playerArmor;
+                    }
+
+                    curentBossHealth -= (outputDamage + damageOfTime + damageSummon);
+                    Console.ForegroundColor = ConsoleColor.Green;
+
+                    switch (usedAbility)
+                    {
+                        case "Огненную стрелу":
+                            Console.WriteLine($"Вы использовали {usedAbility} и нанесли {outputDamage} урона.");
+                            break;
+
+                        case "Призыв ифрита":
+                        case "Кража брони":
+                        case "Обмен телами":
+                            Console.WriteLine($"Вы использовали {usedAbility}.");
+                            break;
+
+                        default:
+                            Console.WriteLine("Пиромант замирает в ужасе!");
+                            break;
+                    }
+
+                    if (timeOfBurning > 0)
+                    {
+                        Console.WriteLine($"Демон горит и получает {damageOfTime} урона.");
+                        timeOfBurning--;
+                    }
+                    else
+                    {
+                        offsetCursor--;
+                    }
+
+                    if (isIfritAlive == true)
+                    {
+                        Console.WriteLine($"Ифрит наносит {damageSummon} урона.");
+                    }
+                    else
+                    {
+                        offsetCursor--;
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Red;
+
+                    if (isUsedBodySwap == false)
+                        Console.WriteLine($"Демон наносит игроку {inputDamage} урона.");
+                    else
+                        Console.WriteLine($"Демон наносит ифриту {inputDamage} урона.");
+
+                    Console.ResetColor();
+                    usedAbility = null;
+                    outputDamage = 0;
+
+                    if (remainingDurationStolenArmor > 0)
+                    {
+                        remainingDurationStolenArmor--;
+                    }
+                    else
+                    {
+                        playerArmor = defaultArmor;
+                        bossArmor = defaultArmor;
+                    }
+
+                    if (remainingTimeOfCooldownSummonIfrite > 0)
+                    {
+                        remainingTimeOfCooldownSummonIfrite--;
+                    }
+
+                    if (remainingTimeOfCoolDownBodySwap > 0)
+                    {
+                        remainingTimeOfCoolDownBodySwap--;
+                    }
+
+                    if (curentBossHealth <= 0)
+                    {
+                        isBossAlive = false;
+                    }
+
+                    if (curentPlayerHealth <= 0)
+                    {
+                        isPlayerAlive = false;
+                    }                    
+                }
+                else if (isUsedUnavailableAbility == true && usedAbility == "Обмен телами")
+                {
+                    Console.WriteLine("Ифрит не призван. Обмен телами не возможен.");
+                    offsetCursor--;
+                    offsetCursor--;
+                }
+                else
+                {
+                    Console.WriteLine($"Способность перезаряжается! Используйте другое заклинание!");
+                    offsetCursor--;
+                    offsetCursor--;
+                    offsetCursor--;
+                }
+
+                isUsedBodySwap = false;
+                isUsedUnavailableAbility = false;
+                heightCursorPosition += offsetCursor;
+                offsetCursor = 5;
+                Console.SetCursorPosition(0, 7);
+            }
+
+            Console.Clear();
+
+            if (isBossAlive == false && isPlayerAlive == false)
+            {
+                Console.WriteLine("На этот раз ничья. Попробуйте снова!");
+            }
+            else if (isPlayerAlive == false)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Пиромант мертв! Кто следующий?");
+            }
+            else if (isBossAlive == false)
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Демон мертв! Да здравствует пиромант!");
+            }            
+        }
+    }
+}

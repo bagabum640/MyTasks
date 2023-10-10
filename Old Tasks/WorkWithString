@@ -1,0 +1,44 @@
+using System;
+
+namespace Task
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+
+            string game;
+            string nickname;
+            string characterClass;
+            string ultimateSkill;
+            int ultimateSkillDamage;
+            int level;
+
+            Console.WriteLine("Здравствуйте! Назовите название игры и никнейм");
+            Console.Write("Название игры: ");
+            game = Console.ReadLine();
+            Console.Write("Никнейм: ");
+            nickname = Console.ReadLine();
+
+            Console.WriteLine("За какой класс вы играете?");            
+            Console.Write("Название класса: ");
+            characterClass = Console.ReadLine();
+
+            Console.WriteLine("Какого вы уровня?");            
+            Console.Write("Уровень: ");
+            level = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine("Какой ваш самый сильный навык?");            
+            Console.Write("Ультимативная способность: ");
+            ultimateSkill = Console.ReadLine();
+
+            Console.WriteLine("Интересно! А сколько урона он наносит?");            
+            Console.Write("Наносимый урон: ");
+            ultimateSkillDamage = Convert.ToInt32(Console.ReadLine());
+
+            Console.WriteLine($"Играющий в {game} игрок носит имя {nickname}. " +
+                $"Его персонаж класса {characterClass} и он достиг {level} уровня! " +
+                $"Его самая сильная способность {ultimateSkill} наносит {ultimateSkillDamage} урона!");
+        }
+    }
+}
