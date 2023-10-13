@@ -8,9 +8,9 @@ public class KillEnemy : MonoBehaviour
 {   
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<EnemyMovement>(out EnemyMovement enemyMovement))
+        if (collision.TryGetComponent<Enemy>(out Enemy enemy))
         {
-            enemyMovement.Die();
+            enemy.Die();
         }
     }
 }

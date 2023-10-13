@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class EnemyMovement : MonoBehaviour
+public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed = 150;
 
@@ -18,14 +18,14 @@ public class EnemyMovement : MonoBehaviour
 
     public void Die()
     {
-        _animator.SetTrigger(AnimatorEnemyController.Params.Death);
+        _animator.SetTrigger(CommonSoldier.Params.Death);
 
         StartCoroutine(Delete());
     }
 
     public void Win()
     {
-        _animator.SetTrigger(AnimatorEnemyController.Params.Win);
+        _animator.SetTrigger(CommonSoldier.Params.Win);
 
         StartCoroutine(Delete());
     }
@@ -47,9 +47,9 @@ public class EnemyMovement : MonoBehaviour
 
         float speed = _rigidBody.velocity.magnitude;
 
-        _animator.SetFloat(AnimatorEnemyController.Params.Horizontal, _directionX);
-        _animator.SetFloat(AnimatorEnemyController.Params.Vertical, _directionY);
-        _animator.SetFloat(AnimatorEnemyController.Params.Speed, speed);
+        _animator.SetFloat(CommonSoldier.Params.Horizontal, _directionX);
+        _animator.SetFloat(CommonSoldier.Params.Vertical, _directionY);
+        _animator.SetFloat(CommonSoldier.Params.Speed, speed);
     }
 
     private void Stop()
@@ -68,7 +68,7 @@ public class EnemyMovement : MonoBehaviour
     }
 }
 
-public static class AnimatorEnemyController
+public static class CommonSoldier
 {
     public static class Params
     {

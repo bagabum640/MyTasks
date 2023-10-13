@@ -37,11 +37,19 @@ public class Player : MonoBehaviour
     private void Move()
     {
         _charController.Move(_speed * Time.fixedDeltaTime * _moveDirection);
-        _animator.SetFloat("Speed", _speed * _moveDirection.magnitude);
+        _animator.SetFloat(CharAnimator.Params.Speed, _speed * _moveDirection.magnitude);
 
         if (_moveDirection.magnitude > 0)
         {
             transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.LookRotation(_moveDirection), Time.deltaTime * _rotationSpeed);
         }
+    }
+}
+
+public static class CharAnimator
+{
+    public static class Params
+    {        
+        public static readonly int Speed = Animator.StringToHash("Speed");        
     }
 }

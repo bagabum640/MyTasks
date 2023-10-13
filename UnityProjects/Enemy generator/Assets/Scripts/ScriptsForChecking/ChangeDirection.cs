@@ -15,7 +15,7 @@ public class ChangeDirection : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<EnemyMovement>(out EnemyMovement enemyMovement))
+        if (collision.TryGetComponent<Enemy>(out Enemy enemyMovement))
         {
             enemyMovement.SetDirection(_determineDirection.GetDirection());
         }
