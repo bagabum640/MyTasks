@@ -1,6 +1,9 @@
 using UnityEngine;
 using System.Collections;
 
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(Animator))]
+
 public class Enemy : MonoBehaviour
 {
     [SerializeField] private float _speed = 150;

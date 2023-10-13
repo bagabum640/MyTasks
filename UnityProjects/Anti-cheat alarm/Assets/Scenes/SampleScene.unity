@@ -3070,7 +3070,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f82961f5a077e4d9b94c3aefd7e813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _forceGrowthTime: 2
+  _duration: 5
 --- !u!114 &1596378938
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3078,7 +3078,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1596378926}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46a132e4c209f8843a63adcdb95d17b7, type: 3}
   m_Name: 
@@ -3180,19 +3180,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &1596378944
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1596378926}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5ed12749aecc2647b492d8b9008752d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _alarmColor: {r: 0.9150943, g: 0.02158241, b: 0.02158241, a: 0}
 --- !u!1 &1647022926
 GameObject:
   m_ObjectHideFlags: 0
@@ -3890,7 +3877,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f0f82961f5a077e4d9b94c3aefd7e813, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _forceGrowthTime: 2
+  _duration: 5
 --- !u!114 &2051338985
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3898,7 +3885,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1846955099}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 46a132e4c209f8843a63adcdb95d17b7, type: 3}
   m_Name: 
@@ -4000,19 +3987,6 @@ AudioSource:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
---- !u!114 &2051338987
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1846955099}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c5ed12749aecc2647b492d8b9008752d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _alarmColor: {r: 1, g: 0, b: 0, a: 0}
 --- !u!1 &2099447596
 GameObject:
   m_ObjectHideFlags: 0
