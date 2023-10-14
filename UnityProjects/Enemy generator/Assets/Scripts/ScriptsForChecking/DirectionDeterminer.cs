@@ -1,8 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class DetermineDirection : MonoBehaviour
+public class DirectionDeterminer : MonoBehaviour
 {
     [SerializeField] private Directions[] _directions;
 

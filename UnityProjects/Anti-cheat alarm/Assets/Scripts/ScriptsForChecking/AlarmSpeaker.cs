@@ -13,26 +13,6 @@ public class AlarmSpeaker : MonoBehaviour
     private AudioSource _audioSource;    
     private Coroutine _coroutine;
 
-    public void ChangeTargetVolume(float duration, bool isEnter)
-    {
-        float targetVolume;
-
-        if (_coroutine != null)
-            StopCoroutine(_coroutine);
-
-        if (isEnter)
-        {
-            _audioSource.Play();
-            targetVolume = _maxVolume;
-            _coroutine = StartCoroutine(ChangeVolume(duration, targetVolume));
-        }
-        else
-        {
-            targetVolume = _minVolume;
-            _coroutine = StartCoroutine(ChangeVolume(duration, targetVolume));
-        }
-    }
-
     private void Start()
     {
         _audioSource = GetComponent<AudioSource>();
@@ -45,8 +25,19 @@ public class AlarmSpeaker : MonoBehaviour
         }
     }
 
-    private IEnumerator ChangeVolume(float duration, float targetVolume)
+    public void ChangeTargetVolume(float duration, bool isEnter)
     {
+        if (_coroutine != null)
+            StopCoroutine(_coroutine);
+
+        _audioSource.Play();
+        _coroutine = StartCoroutine(ChangeVolume(duration, isEnter));
+    }
+        
+    private IEnumerator ChangeVolume(float duration, bool isEnter)
+    {
+        float targetVolume = isEnter ? _maxVolume : _minVolume;
+
         if (duration <= 0)
             duration = 1;
 

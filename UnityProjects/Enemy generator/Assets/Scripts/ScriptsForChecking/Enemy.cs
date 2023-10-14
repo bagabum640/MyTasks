@@ -13,6 +13,17 @@ public class Enemy : MonoBehaviour
     private float _directionX;
     private float _directionY;
 
+    private void Start()
+    {
+        _rigidBody = GetComponent<Rigidbody2D>();
+        _animator = GetComponent<Animator>();
+    }
+
+    private void FixedUpdate()
+    {
+        Move();
+    }
+
     public void SetDirection(Vector2 direction)
     {
         _directionX = direction.x;
@@ -31,17 +42,6 @@ public class Enemy : MonoBehaviour
         _animator.SetTrigger(CommonSoldier.Params.Win);
 
         StartCoroutine(Delete());
-    }
-
-    private void Start()
-    {
-        _rigidBody = GetComponent<Rigidbody2D>();
-        _animator = GetComponent<Animator>();
-    }
-        
-    private void FixedUpdate()
-    {
-        Move();
     }
 
     private void Move()

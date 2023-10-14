@@ -11,6 +11,13 @@ public class OpenDoor : MonoBehaviour, IInteractable
     private bool _isOpen = false;
     private AudioSource _audioSource;
 
+    private void Start()
+    {
+        _animator = _pivot.GetComponent<Animator>();
+        _audioSource = GetComponent<AudioSource>();
+        _audioSource.clip = _audioClip;
+    }
+
     public string GetDescription()
     {
         return gameObject.name;
@@ -29,12 +36,5 @@ public class OpenDoor : MonoBehaviour, IInteractable
 
         _audioSource.PlayOneShot(_audioClip);
         _isOpen = !_isOpen;
-    }
-
-    private void Start()
-    {
-        _animator = _pivot.GetComponent<Animator>();
-        _audioSource = GetComponent<AudioSource>();
-        _audioSource.clip = _audioClip;
     }
 }

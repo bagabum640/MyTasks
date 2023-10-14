@@ -1,12 +1,12 @@
 using UnityEngine;
 using System.Collections;
 
-public class EnemySpawn : MonoBehaviour
+public class Spawner : MonoBehaviour
 {
-    [SerializeField] private ChangeDirection[] _spawnPlace;
+    [SerializeField] private DirectionSetter[] _spawnPlace;
     [SerializeField] private Enemy _template;
 
-    private readonly float _delaySpawn = 2f;
+    private readonly float _delay = 2f;
     private bool _isWork = true;
     
     private void Start()
@@ -19,7 +19,7 @@ public class EnemySpawn : MonoBehaviour
         
     private IEnumerator SpawnEnemy()
     {
-        var waitForSeconds = new WaitForSeconds(_delaySpawn);
+        var waitForSeconds = new WaitForSeconds(_delay);
 
         while (_isWork)
         {
