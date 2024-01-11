@@ -18,11 +18,7 @@ public class AlarmSpeaker : MonoBehaviour
         _audioSource = GetComponent<AudioSource>();
         _audioSource.clip = _audioClip;
         _audioSource.volume = _minVolume;
-
-        if (_audioSource.loop == false)
-        {
-            _audioSource.loop = true;
-        }
+        _audioSource.loop = true;       
     }
 
     public void ChangeTargetVolume(float duration, bool isEnter)

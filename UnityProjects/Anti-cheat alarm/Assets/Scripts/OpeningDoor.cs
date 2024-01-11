@@ -2,7 +2,7 @@ using UnityEngine;
 
 [RequireComponent(typeof(AudioSource))]
 
-public class OpenDoor : MonoBehaviour, IInteractable
+public class OpeningDoor : MonoBehaviour, IInteractable
 {
     [SerializeField] private Transform _pivot;
     [SerializeField] private AudioClip _audioClip;
@@ -24,17 +24,17 @@ public class OpenDoor : MonoBehaviour, IInteractable
     }
 
     public void Interact()
-    {
-        if (_isOpen == false)
-        {
-            _animator.SetBool("IsOpen", true);
-        }
-        else
-        {
-            _animator.SetBool("IsOpen", false);
-        }
-
-        _audioSource.PlayOneShot(_audioClip);
+    {        
         _isOpen = !_isOpen;
+        _animator.SetBool(SwitchDoorAnimator.Params.IsOpen, _isOpen);
+        _audioSource.PlayOneShot(_audioClip);        
+    }
+}
+
+public static class SwitchDoorAnimator
+{
+    public static class Params
+    {
+        public static readonly int IsOpen = Animator.StringToHash("IsOpen");
     }
 }
