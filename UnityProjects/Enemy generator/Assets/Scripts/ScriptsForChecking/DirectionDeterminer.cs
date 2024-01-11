@@ -3,13 +3,7 @@ using UnityEngine;
 public class DirectionDeterminer : MonoBehaviour
 {
     [SerializeField] private Directions[] _directions;
-
-    private Vector2 _up = new (0, 1);
-    private Vector2 _down = new(0, -1);
-    private Vector2 _left = new(-1, 0);
-    private Vector2 _right = new(1, 0);
-    private Vector2 _stop = new(0, 0);
-
+        
     private enum Directions
     {
         up,
@@ -27,16 +21,16 @@ public class DirectionDeterminer : MonoBehaviour
             switch (direction)
             {
                 case Directions.up:
-                    return _up;
+                    return Vector2.up;
                 case Directions.down:
-                    return _down;
+                    return Vector2.down;
                 case Directions.left:
-                    return _left;
+                    return Vector2.left;
                 case Directions.right:
-                    return _right;
+                    return Vector2.right;
             }
         }
                 
-        return _stop;
+        return Vector2.zero;
     }
 }
