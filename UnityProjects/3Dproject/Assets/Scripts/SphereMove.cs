@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class SphereMove : MonoBehaviour
 {
-    private void Update()
-    {
-        transform.position += Vector3.forward * Time.deltaTime;        
-    }
+    [SerializeField] private float _speed;
+
+    private void Update() => transform.Translate(_speed * Time.deltaTime * Vector3.forward, Space.Self);
 }
