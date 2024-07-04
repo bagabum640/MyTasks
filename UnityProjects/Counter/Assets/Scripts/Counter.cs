@@ -7,6 +7,7 @@ public class Counter : MonoBehaviour
     [SerializeField] private TextMeshProUGUI _text;
 
     private bool _isCoroutineWork = false;
+    private float _time = 0;
    
     private void Update()
     {
@@ -15,23 +16,26 @@ public class Counter : MonoBehaviour
     }
 
     private void SwitchCoroutineState()
-    {
-        _isCoroutineWork = !_isCoroutineWork;
-
-        if (_isCoroutineWork == true)           
+    {     
+        if (_isCoroutineWork)
+        {
+            _isCoroutineWork = false;
+        }
+        else
+        {
+            _isCoroutineWork = true;
             StartCoroutine(CountSteps());
+        }
     }
 
     private IEnumerator CountSteps()
     {
-        float delayTime = 0.5f;
-        float step = 1f;
-
+        float delayTime = 0.5f;     
         WaitForSeconds delay = new(delayTime);
 
         while (_isCoroutineWork)
         {
-            _text.text = (float.Parse(_text.text) + step).ToString();
+            _text.text = (++_time).ToString();
 
             yield return delay;
         }
