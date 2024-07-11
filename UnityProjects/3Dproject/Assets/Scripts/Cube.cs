@@ -1,14 +1,15 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(CubeExplosion))]
+[RequireComponent(typeof(Rigidbody))]
+[RequireComponent(typeof(MeshRenderer))]
 
 public class Cube : MonoBehaviour
 {
     [HideInInspector]
     [SerializeField] private float _cloneChance = 100;
-    
+
     private CubeExplosion _explosion;
 
     public Rigidbody Rigidbody { get; private set; }
@@ -23,21 +24,21 @@ public class Cube : MonoBehaviour
 
     private void OnMouseUpAsButton()
     {
-        CreateCubes();       
+        CreateCubes();
         Destroy(gameObject);
-    } 
-   
+    }
+
     private void CreateCubes()
     {
         int chancePull = 100;
-        
+
         if (_cloneChance > Random.Range(0, chancePull))
         {
             float cloneChanceDecrease = 0.5f;
             float scaleDecrease = 0.5f;
             int minCubesQuantity = 2;
             int maxCubesQuantity = 6;
-            int cubesQuantity = Random.Range(minCubesQuantity, ++maxCubesQuantity);          
+            int cubesQuantity = Random.Range(minCubesQuantity, ++maxCubesQuantity);
             List<Rigidbody> createdCubes = new();
             Cube template = gameObject.GetComponent<Cube>();
 
@@ -47,11 +48,15 @@ public class Cube : MonoBehaviour
             {
                 Cube cube = Instantiate(template, transform.position, Quaternion.identity);
                 cube.transform.localScale = transform.localScale * scaleDecrease;
-                ChangeColor(cube.MeshRenderer);               
-                createdCubes.Add(cube.Rigidbody);                
+                ChangeColor(cube.MeshRenderer);
+                createdCubes.Add(cube.Rigidbody);
             }
 
-            _explosion.BlowUpCubes(createdCubes);
+            _explosion.Push(createdCubes);
+        }
+        else
+        {
+            _explosion.BlowUp(transform.localScale.magnitude);
         }
     }
 
