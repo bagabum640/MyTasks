@@ -1,13 +1,17 @@
 using System;
 using UnityEngine;
 
+[RequireComponent(typeof(MeshRenderer))]
+[RequireComponent(typeof(Rigidbody))]
+
 public class Cube : MonoBehaviour
 {
     public static Action<Cube> OnTouched;
+    public static Action<Cube> OnColorChanged;
 
     private MeshRenderer _cubeMesh;
-    private Rigidbody _rigidbody;  
-    private bool _isActive;
+    private Rigidbody _rigidbody;
+    public bool IsActive { get; private set; }
 
     private void Awake()
     {
@@ -15,29 +19,27 @@ public class Cube : MonoBehaviour
         _rigidbody = GetComponent<Rigidbody>();
     }
 
+    private void Start()
+    {
+        Reset();
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
-        const string PlatformTag = "Platform";
-
-        if (_isActive == false && collision.gameObject.CompareTag(PlatformTag))
+        if (IsActive == false && collision.gameObject.TryGetComponent<ColorChanger>(out ColorChanger colorChanger))
         {
-            _cubeMesh.material.color = GetColor();
+            _cubeMesh.material.color = colorChanger.GetColor();
             OnTouched?.Invoke(this);
-            _isActive = true;
+            IsActive = true;
         }
     }
 
     public void Reset()
     {
-        _isActive = false;
+        IsActive = false;
         _cubeMesh.material.color = Color.white;
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
         transform.rotation = Quaternion.identity;
-    }
-
-    private Color GetColor()
-    {
-        return new Color(UnityEngine.Random.Range(0, 1f), UnityEngine.Random.Range(0, 1f), UnityEngine.Random.Range(0, 1f));
     }
 }
