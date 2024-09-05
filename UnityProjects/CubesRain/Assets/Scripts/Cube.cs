@@ -7,7 +7,6 @@ using UnityEngine;
 public class Cube : MonoBehaviour
 {
     public static Action<Cube> OnTouched;
-    public static Action<Cube> OnColorChanged;
 
     private MeshRenderer _cubeMesh;
     private Rigidbody _rigidbody;
