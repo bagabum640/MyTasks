@@ -10,7 +10,6 @@ public class Cube : MonoBehaviour
 
     private MeshRenderer _cubeMesh;
     private Rigidbody _rigidbody;
-
     private bool _isActive;
 
     private void Awake()
