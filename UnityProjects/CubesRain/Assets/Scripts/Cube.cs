@@ -10,7 +10,8 @@ public class Cube : MonoBehaviour
 
     private MeshRenderer _cubeMesh;
     private Rigidbody _rigidbody;
-    public bool IsActive { get; private set; }
+
+    private bool _isActive;
 
     private void Awake()
     {
@@ -25,17 +26,17 @@ public class Cube : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (IsActive == false && collision.gameObject.TryGetComponent<ColorChanger>(out ColorChanger colorChanger))
+        if (_isActive == false && collision.gameObject.TryGetComponent<ColorChanger>(out ColorChanger colorChanger))
         {
             _cubeMesh.material.color = colorChanger.GetColor();
             OnTouched?.Invoke(this);
-            IsActive = true;
+            _isActive = true;
         }
     }
 
     public void Reset()
     {
-        IsActive = false;
+        _isActive = false;
         _cubeMesh.material.color = Color.white;
         _rigidbody.velocity = Vector3.zero;
         _rigidbody.angularVelocity = Vector3.zero;
