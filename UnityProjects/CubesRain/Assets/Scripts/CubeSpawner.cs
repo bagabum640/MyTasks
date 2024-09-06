@@ -11,56 +11,51 @@ public class CubeSpawner : MonoBehaviour
     [SerializeField] private int _poolMaxSize;
     [SerializeField] private float _repeatRate;
 
+    readonly private bool _isWorking = true;
+
     private ObjectPool<Cube> _pool;
 
     private void Awake()
     {
         _pool = new ObjectPool<Cube>(
-        createFunc: () => Instantiate(_cubePrefab, transform, true),
-        actionOnGet: (cube) => ActionOnGet(cube),
-        actionOnRelease: (cube) => ActionOnRelease(cube),
-        actionOnDestroy: (cube) => Destroy(cube.gameObject),
-        defaultCapacity: _poolCapacity,
-        maxSize: _poolMaxSize);
+            createFunc: () => Instantiate(_cubePrefab, transform, true),
+            actionOnGet: (cube) => SetUp(cube),
+            actionOnRelease: (cube) => ResetCube(cube),
+            defaultCapacity: _poolCapacity,
+            maxSize: _poolMaxSize);
     }
 
-    private void OnEnable() => Cube.OnTouched += Release;
+    private void Start() => StartCoroutine(Spawn());
 
-    private void OnDisable() => Cube.OnTouched -= Release;
-
-    private void Start() => InvokeRepeating(nameof(GetCube), 0.0f, _repeatRate);
-
-    private void GetCube() => _pool.Get();
-
-    private void Release(Cube cube) => StartCoroutine(WaitForRelease(cube));
-
-    private void ActionOnGet(Cube cube)
+    private IEnumerator Spawn()
     {
+        while (_isWorking)
+        {
+            _pool.Get();
+            yield return new WaitForSeconds(_repeatRate);
+        }
+    }
+
+    private void Release(Cube cube) => _pool.Release(cube);   
+
+    private void SetUp(Cube cube)
+    {
+        cube.OnTouched += Release;
         cube.transform.position = GetSpawnPosition();
         cube.gameObject.SetActive(true);
     }
 
-    private void ActionOnRelease(Cube cube)
+    private void ResetCube(Cube cube)
     {
+        cube.OnTouched -= Release;
         cube.gameObject.SetActive(false);
         cube.Reset();
     }
- 
+
     private Vector3 GetSpawnPosition()
     {
         return new Vector3(Random.Range(_minPosition.x, _maxPosition.x),
                            Random.Range(_minPosition.y, _maxPosition.y),
                            Random.Range(_minPosition.z, _maxPosition.z));
-    }
-
-    private IEnumerator WaitForRelease(Cube cube)
-    {
-        int _minLifeTime = 2;
-        int _maxLifeTime = 5;
-        int delay = Random.Range(_minLifeTime, _maxLifeTime);
-
-        yield return new WaitForSeconds(delay);
-
-        _pool.Release(cube);
     }
 }
