@@ -1,7 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
-public class SpawnersController : MonoBehaviour
+public class SpawnDeterminer : MonoBehaviour
 {
     [SerializeField] private Spawner[] _spawnPoints;
     [SerializeField] private float _repeatRate = 2.0f;
