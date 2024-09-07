@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-public class Spawner : MonoBehaviour
+public class SpawnPoint : MonoBehaviour
 {
     [SerializeField] private Unit[] _units;
     [SerializeField] private Directions _directions;

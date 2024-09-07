@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class SpawnDeterminer : MonoBehaviour
 {
-    [SerializeField] private Spawner[] _spawnPoints;
+    [SerializeField] private SpawnPoint[] _spawnPoints;
     [SerializeField] private float _repeatRate = 2.0f;
 
     private readonly bool _isWorking = true;
