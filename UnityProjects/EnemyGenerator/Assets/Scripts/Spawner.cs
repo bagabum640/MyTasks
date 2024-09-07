@@ -50,4 +50,12 @@ public class Spawner : MonoBehaviour
             _ => Vector2.zero,
         };
     }
+
+    private enum Directions
+    {
+        Right,
+        Left,
+        Top,
+        Bottom
+    }
 }

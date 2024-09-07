@@ -19,13 +19,13 @@ public class Unit : MonoBehaviour
         _spriteRenderer = GetComponent<SpriteRenderer>();
     }
 
+    private void FixedUpdate() => Move();
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Unit>(out _) == false)
             OnReleased?.Invoke(this);
     }
-
-    private void Update() => Move();
 
     public void SetDirection(Vector2 direction) => _direction = direction;
 

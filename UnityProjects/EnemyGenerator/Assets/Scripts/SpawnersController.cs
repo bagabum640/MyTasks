@@ -6,7 +6,7 @@ public class SpawnersController : MonoBehaviour
     [SerializeField] private Spawner[] _spawnPoints;
     [SerializeField] private float _repeatRate = 2.0f;
 
-    readonly private bool _isWorking = true;
+    private readonly bool _isWorking = true;
 
     private void Start()
     {
@@ -16,10 +16,12 @@ public class SpawnersController : MonoBehaviour
 
     private IEnumerator Spawn()
     {
+        WaitForSeconds waitForSeconds = new (_repeatRate);
+
         while (_isWorking)
         {
             _spawnPoints[Random.Range(0, _spawnPoints.Length)].CreateUnit();
-            yield return new WaitForSeconds(_repeatRate);
+            yield return waitForSeconds;
         }
     }
 }
