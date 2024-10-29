@@ -8,17 +8,18 @@ public class Spawner : MonoBehaviour
 
     private readonly bool _isWork = true;
 
-    private void Start() 
+    private void Start()
     {
         if (_spawnPoints.Length > 0)
-            StartCoroutine(Spawn()); 
+            StartCoroutine(Spawn());
     }
 
     private IEnumerator Spawn()
     {
+        WaitForSeconds waitForSeconds = new(_spawnRate);
+
         while (_isWork)
         {
-            WaitForSeconds waitForSeconds = new(_spawnRate);
             SpawnPoint spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
 
             spawnPoint.SetTarget(Instantiate(spawnPoint.Unit, spawnPoint.transform));
