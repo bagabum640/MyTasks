@@ -13,7 +13,8 @@ public class Target : MonoBehaviour
     private Vector3 _currentPath;
     private int _currentIndex = 0;
 
-    private void Awake() => _spriteRenderer = GetComponent<SpriteRenderer>();
+    private void Awake() =>
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
     private void Start()
     {
@@ -35,7 +36,8 @@ public class Target : MonoBehaviour
         Flip();
     }
 
-    private void FixedUpdate() => MoveToPoint();
+    private void FixedUpdate() =>
+        MoveToPoint();
 
     private void MoveToPoint()
     {
@@ -59,7 +61,7 @@ public class Target : MonoBehaviour
     {
         if (_currentPath.x > transform.position.x)
             _spriteRenderer.flipX = false;
-        else if(_currentPath.x < transform.position.x)
+        else if (_currentPath.x < transform.position.x)
             _spriteRenderer.flipX = true;
     }
 }

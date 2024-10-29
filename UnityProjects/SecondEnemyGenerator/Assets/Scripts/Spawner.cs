@@ -21,9 +21,8 @@ public class Spawner : MonoBehaviour
         while (_isWork)
         {
             SpawnPoint spawnPoint = _spawnPoints[Random.Range(0, _spawnPoints.Length)];
-
-            spawnPoint.SetTarget(Instantiate(spawnPoint.Unit, spawnPoint.transform));
-
+            Instantiate(spawnPoint.Unit, spawnPoint.transform).SetTarget(spawnPoint.Target);
+            
             yield return waitForSeconds;
         }
     }

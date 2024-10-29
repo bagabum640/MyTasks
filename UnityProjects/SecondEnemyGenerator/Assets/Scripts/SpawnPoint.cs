@@ -7,5 +7,5 @@ public class SpawnPoint : MonoBehaviour
 
     public Unit Unit => _unit;
 
-    public void SetTarget(Unit unit) => unit.SetTarget(_target);
+    public Target Target => _target;
 }

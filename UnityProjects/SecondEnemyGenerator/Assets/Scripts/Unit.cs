@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -9,11 +8,11 @@ public class Unit : MonoBehaviour
     private SpriteRenderer _spriteRenderer;
     private Target _target;
 
-    public event Action<Unit> OnReleased;
+    private void Awake() =>
+        _spriteRenderer = GetComponent<SpriteRenderer>();
 
-    private void Awake() => _spriteRenderer = GetComponent<SpriteRenderer>();
-
-    private void FixedUpdate() => Move();
+    private void FixedUpdate() =>
+        Move();
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -21,7 +20,8 @@ public class Unit : MonoBehaviour
             Destroy(this.gameObject);
     }
 
-    public void SetTarget(Target target) => _target = target;
+    public void SetTarget(Target target) => 
+        _target = target;
 
     private void Move()
     {
