@@ -18,7 +18,7 @@ public class Unit : MonoBehaviour
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Target>(out _) == true)
-            OnReleased?.Invoke(this);
+            Destroy(this.gameObject);
     }
 
     public void SetTarget(Target target) => _target = target;
