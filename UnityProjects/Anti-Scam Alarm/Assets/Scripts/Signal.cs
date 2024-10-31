@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class Signal : MonoBehaviour
 {
-    [SerializeField] private float _playbackSpeed;
+    [SerializeField] private float _rateOfChange;
 
     private AudioSource _audioSource;
 
@@ -49,7 +49,7 @@ public class Signal : MonoBehaviour
     {
         while (_audioSource.volume > 0f || _isInside == true)
         {
-            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _currentVolume, _playbackSpeed * Time.deltaTime);
+            _audioSource.volume = Mathf.MoveTowards(_audioSource.volume, _currentVolume, _rateOfChange * Time.deltaTime);
             yield return null;
         }
 
