@@ -7,7 +7,6 @@ public class Signal : MonoBehaviour
     [SerializeField] private float _rateOfChange;
 
     private AudioSource _audioSource;
-
     private float _currentVolume;
     private bool _isInside = false;
 
