@@ -21,17 +21,14 @@ public class Movement : MonoBehaviour
 
     private void Move()
     {
-        Vector3 movement = Vector3.zero;
-
-        float horizontalInput = Input.GetAxis("Horizontal"); 
+        float horizontalInput = Input.GetAxis("Horizontal");
         float verticalInput = Input.GetAxis("Vertical");
 
-        if (horizontalInput != 0f || verticalInput != 0f)
-        {
-            movement.x = horizontalInput * _moveSpeed;
-            movement.z = verticalInput * _moveSpeed;
-            movement = Vector3.ClampMagnitude(movement, _moveSpeed);
+        Vector3 movement = new Vector3(horizontalInput, 0, verticalInput) * _moveSpeed;
+        movement = Vector3.ClampMagnitude(movement, _moveSpeed);
 
+        if (movement.magnitude > 0f)
+        {
             Quaternion initialOrientation = _camera.rotation;
             _camera.eulerAngles = new Vector3(0, _camera.eulerAngles.y, 0);
             movement = _camera.TransformDirection(movement);
