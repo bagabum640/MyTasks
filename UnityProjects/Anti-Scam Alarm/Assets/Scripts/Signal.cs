@@ -1,6 +1,7 @@
 using System.Collections;
 using UnityEngine;
 
+[RequireComponent(typeof(AudioSource))]
 public class Signal : MonoBehaviour
 {
     [SerializeField] private float _rateOfChange;
@@ -8,7 +9,6 @@ public class Signal : MonoBehaviour
     private AudioSource _audioSource;
 
     private float _currentVolume;
-
     private bool _isInside = false;
 
     private readonly float _minVolume = 0;
