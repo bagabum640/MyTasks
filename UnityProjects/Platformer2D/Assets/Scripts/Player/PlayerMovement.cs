@@ -57,7 +57,7 @@ public class PlayerMovement : MonoBehaviour
     }
 
     private void Fall() =>
-        _animator.SetFloat(VerticalSpeed, _rigidbody.velocity.y);
+        _animator.SetFloat(Falling, _rigidbody.velocity.y);
 
 
     private void Flip()
