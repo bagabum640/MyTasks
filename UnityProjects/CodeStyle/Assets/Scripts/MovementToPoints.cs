@@ -5,15 +5,15 @@ public class Movement : MonoBehaviour
     [SerializeField] private Transform _path;
     [SerializeField] private float _speed;
 
-    private Transform[] _points;
+    private Vector3[] _points;
     private int _pointNumber = 0;
 
     private void Start()
     {
-        _points = new Transform[_path.childCount];
+        _points = new Vector3[_path.childCount];
 
         for (int i = 0; i < _path.childCount; i++)
-            _points[i] = _path.GetChild(i).GetComponent<Transform>();
+            _points[i] = _path.GetChild(i).position;
     }
 
     private void FixedUpdate() =>
@@ -21,12 +21,9 @@ public class Movement : MonoBehaviour
 
     private void MoveToPoint()
     {
-        if (_pointNumber == _points.Length)
-            _pointNumber = 0;
+        if (transform.position == _points[_pointNumber])
+            _pointNumber = ++_pointNumber % _points.Length;
 
-        transform.position = Vector3.MoveTowards(transform.position, _points[_pointNumber].position, _speed * Time.deltaTime);
-
-        if (transform.position == _points[_pointNumber].position)
-            _pointNumber++;
+        transform.position = Vector3.MoveTowards(transform.position, _points[_pointNumber], _speed * Time.deltaTime);
     }
 }

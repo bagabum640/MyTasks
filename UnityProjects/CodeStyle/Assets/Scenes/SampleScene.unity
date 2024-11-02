@@ -485,7 +485,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _bullet: {fileID: 1173402052124424618, guid: 6acf58726d9ac0a43889f97db5bfce79, type: 3}
   _target: {fileID: 840730707}
-  _delay: 0
+  _delay: 1
 --- !u!136 &829371070
 CapsuleCollider:
   m_ObjectHideFlags: 0
