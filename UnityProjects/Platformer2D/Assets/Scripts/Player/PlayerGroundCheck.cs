@@ -6,20 +6,14 @@ public class PlayerGroundCheck : MonoBehaviour
     [SerializeField] private LayerMask _groundLayerMask;
     [SerializeField] private float _groundCheckRadius;
 
-    public bool OnGround {  get; private set; }
+    public bool OnGround { get; private set; }
 
-    private void Start()
-    {
+    private void Start() =>
         _groundCheckRadius = _groundCheckPoint.GetComponent<CircleCollider2D>().radius;
-    }
 
-    private void FixedUpdate()
-    {
+    private void Update() =>
         GroundCheck();
-    }
 
-    private void GroundCheck()
-    {
-        OnGround = Physics2D.OverlapCircle(_groundCheckPoint.position,_groundCheckRadius,_groundLayerMask);
-    }
+    private void GroundCheck() =>
+        OnGround = Physics2D.OverlapCircle(_groundCheckPoint.position, _groundCheckRadius, _groundLayerMask);
 }

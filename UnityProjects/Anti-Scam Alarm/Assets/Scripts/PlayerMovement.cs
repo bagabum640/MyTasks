@@ -1,4 +1,5 @@
 using UnityEngine;
+using static PlayerAnimations.Params;
 
 [RequireComponent(typeof(CharacterController),
                   typeof(Animator))]
@@ -20,7 +21,7 @@ public class PlayerMovement : MonoBehaviour
         _animator = GetComponent<Animator>();
     }
 
-    private void FixedUpdate() =>
+    private void Update() =>
         Move();
 
     private void Move()
@@ -43,17 +44,9 @@ public class PlayerMovement : MonoBehaviour
             transform.rotation = Quaternion.Lerp(transform.rotation, direction, _rotateSpeed * Time.deltaTime);
         }
 
-        _animator.SetFloat(PlayerAnimator.Params.Speed, movement.sqrMagnitude);
+        _animator.SetFloat(Speed, movement.sqrMagnitude);
 
         movement *= Time.deltaTime;
         _characterController.Move(movement);
-    }
-}
-
-public static class PlayerAnimator
-{
-    public static class Params
-    {
-        public static int Speed = Animator.StringToHash("Speed");
     }
 }

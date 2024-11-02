@@ -1,39 +1,26 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(SpriteRenderer))]
 public class EnemyMovement : MonoBehaviour
 {
-    [SerializeField] private Transform[] _points;
     [SerializeField] private float _speed;
 
-    private readonly List<Vector2> _path = new();
-
+    private Vector3[] _points;
     private SpriteRenderer _spriteRenderer;
-    private Vector3 _currentPath;
-    private int _currentIndex = 0;
+    private int _currentPath = 0;
 
     private void Awake() =>
        _spriteRenderer = GetComponent<SpriteRenderer>();
 
     private void Start()
     {
-        if (_points.Length > 0)
-        {
-            foreach (Transform point in _points)
-            {
-                _path.Add(point.position);
-                point.gameObject.SetActive(false);
-            }
+        _points = new Vector3[transform.childCount];
 
-            _currentPath = _path[_currentIndex];
-        }
-        else
+        for (int i = 0; i < transform.childCount; i++)
         {
-            _currentPath = transform.position;
+            _points[i] = transform.GetChild(i).position;
         }
-
-        Flip();
     }
 
     private void FixedUpdate() =>
@@ -41,27 +28,19 @@ public class EnemyMovement : MonoBehaviour
 
     private void MoveToPoint()
     {
-        transform.position = Vector2.MoveTowards(transform.position, _currentPath, _speed * Time.deltaTime);
+        if (Vector3.Distance(transform.position,_points[_currentPath]) < 0.2f)
+            _currentPath = ++_currentPath % _points.Length;
 
-        if (transform.position == _currentPath)
-            ChangeDirection();
-    }
-
-    private void ChangeDirection()
-    {
-        if (_currentIndex >= _path.Count)
-            _currentIndex = 0;
-        else
-            _currentPath = _path[_currentIndex++];
+        transform.position = Vector2.MoveTowards(transform.position, _points[_currentPath], _speed * Time.deltaTime);
 
         Flip();
     }
 
     private void Flip()
     {
-        if (_currentPath.x > transform.position.x)
+        if (_points[_currentPath].x > transform.position.x)
             _spriteRenderer.flipX = false;
-        else if (_currentPath.x < transform.position.x)
+        else if (_points[_currentPath].x < transform.position.x)
             _spriteRenderer.flipX = true;
     }
 }

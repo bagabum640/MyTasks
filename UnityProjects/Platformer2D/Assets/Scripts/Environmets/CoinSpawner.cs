@@ -5,17 +5,16 @@ public class CoinSpawner : MonoBehaviour
 {
     [SerializeField] private Coin _coin;
 
-    private Vector2[] _spawners;
-    private int _spawnCount;
+    private Vector2[] _spawnPoints;
 
     private void Start()
     {
-        _spawners = new Vector2[transform.childCount];
+        _spawnPoints = new Vector2[transform.childCount];
 
         for (int i = 0; i < transform.childCount; i++)
         {
-            _spawners[i] = transform.GetChild(i).position;
-            StartCoroutine(SpawnCoin(_spawners[i]));
+            _spawnPoints[i] = transform.GetChild(i).position;
+            StartCoroutine(SpawnCoin(_spawnPoints[i]));
         }
     }
 
@@ -30,7 +29,7 @@ public class CoinSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(firstSpawnDelay);
 
-        Coin coin = Instantiate(_coin, position, Quaternion.identity);
+        Coin coin = Instantiate(_coin, position, Quaternion.identity,transform);
 
         coin.OnCreate += Create;
     }

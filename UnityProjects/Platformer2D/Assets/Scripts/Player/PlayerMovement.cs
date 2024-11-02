@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using static PlayerAnimator;
 
 [RequireComponent(typeof(Rigidbody2D),
                   typeof(Animator),
@@ -30,10 +32,8 @@ public class PlayerMovement : MonoBehaviour
         Fall();
     }
 
-    private void FixedUpdate()
-    {
+    private void FixedUpdate() =>
         Move();
-    }
 
     private void Move()
     {
@@ -41,7 +41,7 @@ public class PlayerMovement : MonoBehaviour
 
         _rigidbody.velocity = new Vector2(_movement.x * _speed, _rigidbody.velocity.y);
 
-        _animator.SetFloat("Speed", Mathf.Abs(_movement.x));
+        _animator.SetFloat(MovementSpeed, Mathf.Abs(_movement.x));
 
         Flip();
     }
@@ -50,15 +50,14 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.Space) && _check.OnGround)
         {
-            _rigidbody.AddForce(_jumpForce * Vector2.up,ForceMode2D.Impulse);
-            _animator.SetTrigger("Jump");
+            _rigidbody.AddForce(_jumpForce * Vector2.up, ForceMode2D.Impulse);
+            _animator.SetTrigger(Jumping);
         }
     }
 
-    private void Fall()
-    {
-        _animator.SetFloat("AirSpeedY", _rigidbody.velocity.y);
-    }
+    private void Fall() =>
+        _animator.SetFloat(VerticalSpeed, _rigidbody.velocity.y);
+
 
     private void Flip()
     {
