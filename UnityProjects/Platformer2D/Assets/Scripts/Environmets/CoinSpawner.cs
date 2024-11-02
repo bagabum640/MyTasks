@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class CoinSpawner : MonoBehaviour
 {
-    [SerializeField] private Coin _coin;
+    [SerializeField] private Coin _coinPrefab;
 
     private Vector2[] _spawnPoints;
 
@@ -29,7 +29,7 @@ public class CoinSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(firstSpawnDelay);
 
-        Coin coin = Instantiate(_coin, position, Quaternion.identity,transform);
+        Coin coin = Instantiate(_coinPrefab, position, Quaternion.identity,transform);
 
         coin.OnCreate += Create;
     }

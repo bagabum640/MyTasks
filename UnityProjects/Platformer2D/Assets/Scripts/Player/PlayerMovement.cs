@@ -5,6 +5,7 @@ using static PlayerAnimator;
 [RequireComponent(typeof(Rigidbody2D),
                   typeof(Animator),
                   typeof(SpriteRenderer))]
+[RequireComponent(typeof(PlayerGroundCheck))]
 public class PlayerMovement : MonoBehaviour
 {
     private const string Horizontal = "Horizontal";

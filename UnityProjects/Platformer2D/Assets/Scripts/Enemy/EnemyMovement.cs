@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(SpriteRenderer))]
@@ -6,8 +5,8 @@ public class EnemyMovement : MonoBehaviour
 {
     [SerializeField] private float _speed;
 
-    private Vector3[] _points;
     private SpriteRenderer _spriteRenderer;
+    private Vector3[] _points;
     private int _currentPath = 0;
 
     private void Awake() =>
@@ -23,12 +22,12 @@ public class EnemyMovement : MonoBehaviour
         }
     }
 
-    private void FixedUpdate() =>
+    private void Update() =>
         MoveToPoint();
 
     private void MoveToPoint()
     {
-        if (Vector3.Distance(transform.position,_points[_currentPath]) < 0.2f)
+        if (Vector3.Distance(transform.position, _points[_currentPath]) < 0.2f)
             _currentPath = ++_currentPath % _points.Length;
 
         transform.position = Vector2.MoveTowards(transform.position, _points[_currentPath], _speed * Time.deltaTime);
