@@ -2,8 +2,10 @@ using UnityEngine;
 
 public class PatrolState : EnemyState
 {
-    private Transform[] _points;
     private int _pointNumber = 0;
+
+    private readonly Transform[] _points;
+    private readonly float _speed = 3f;
 
     public PatrolState(Enemy enemy, EnemyStateMachine enemyStateMachine, Transform[] points) : base(enemy, enemyStateMachine)
     {
@@ -25,12 +27,12 @@ public class PatrolState : EnemyState
     {
         if (enemy.IsAggroed)
         {
-            enemy.stateMachine.ChangeState(enemy.ChaseState);
+            enemy.StateMachine.ChangeState(enemy.ChaseState);
         }
 
         if (enemy.transform.position == _points[_pointNumber].position)
             _pointNumber = ++_pointNumber % _points.Length;
 
-        enemy.SetDirection(_points[_pointNumber].position);
+        enemy.SetDirection(_points[_pointNumber].position, _speed);
     }
 }

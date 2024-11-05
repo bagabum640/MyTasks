@@ -5,54 +5,51 @@ public class Enemy : MonoBehaviour
 {
     [SerializeField] private Transform[] _points;
     [SerializeField] private Transform _target;
-    [SerializeField] private float _speed;
+    [SerializeField] private float _attackRange = 2f;
 
-    private EnemyHealth _enemyHealth;
-    private EnemyMovement _movement;
     private SpriteRenderer _spriteRenderer;
-    private int _currentIndex = 0;
-    private float _distanceToTarget = 0.2f;
-
-    public EnemyStateMachine stateMachine;
-
+    private Animator _animator;
 
     private readonly List<Vector3> _path = new();
+    private readonly int _currentIndex = 0;
 
-    public PatrolState PatrolState { get; set; }
-    public ChasingState ChaseState { get; set; }
-    public bool IsAggroed { get; set; }
+    public EnemyStateMachine StateMachine { get; private set; }
+    public PatrolState PatrolState { get; private set; }
+    public ChasingState ChaseState { get; private set; }
+    public CombatState CombatState { get; private set; }
+    public bool IsAggroed { get; private set; }
 
     private void Awake()
     {
-        _enemyHealth = GetComponent<EnemyHealth>();
+        _animator = GetComponent<Animator>();
         _spriteRenderer = GetComponent<SpriteRenderer>();
-        _movement = GetComponent<EnemyMovement>();
 
-        stateMachine = new EnemyStateMachine();
+        StateMachine = new EnemyStateMachine();
 
-        PatrolState = new PatrolState(this, stateMachine, _points);
-        ChaseState = new ChasingState(this, stateMachine, _target);
+        PatrolState = new PatrolState(this, StateMachine, _points);
+        ChaseState = new ChasingState(this, StateMachine, _target,_attackRange);
+        CombatState = new CombatState(this, StateMachine, _target, _animator, _attackRange);
     }
 
     private void Start()
     {
         PathInit();
-        stateMachine.Initialize(PatrolState);
+        StateMachine.Initialize(PatrolState);
     }
 
     private void Update()
     {
-        stateMachine.CurrentEnemyState.UpdateState();
+        StateMachine.CurrentEnemyState.UpdateState();
     }
 
-    public void SetDirection(Vector3 direction)
+    public void SetDirection(Vector3 direction, float speed = 3f)
     {
-        if (_target.position.x > transform.position.x)
+        if (direction.x > transform.position.x)
             _spriteRenderer.flipX = false;
-        else if (_target.position.x < transform.position.x)
+        else if (direction.x < transform.position.x)
             _spriteRenderer.flipX = true;
 
-       
+        transform.position = Vector3.MoveTowards(transform.position, direction, speed * Time.deltaTime);
     }
 
     public void SetAggroStatus(bool isAggroed)

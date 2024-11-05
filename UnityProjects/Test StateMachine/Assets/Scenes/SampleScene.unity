@@ -388,6 +388,8 @@ MonoBehaviour:
   - {fileID: 338223976}
   _target: {fileID: 95180467}
   _speed: 3
+  _attackRange: 80
+  <Bullet>k__BackingField: {fileID: 5313040933451643054, guid: 7ded8878229748e4aa76da0773f59c54, type: 3}
 --- !u!1 &338223975
 GameObject:
   m_ObjectHideFlags: 0
@@ -621,7 +623,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 6
+  m_Radius: 12
 --- !u!1 &1056547511
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 public class EnemyStateMachine
 {
-    public EnemyState CurrentEnemyState {  get; set; }
+    public EnemyState CurrentEnemyState { get; private set; }
 
     public void Initialize(EnemyState startingState)
     {
