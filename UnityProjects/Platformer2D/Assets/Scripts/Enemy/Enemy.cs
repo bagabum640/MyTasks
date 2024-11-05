@@ -18,7 +18,7 @@ public class Enemy : MonoBehaviour
     public ChasingState ChaseState { get; private set; }
     public CombatState CombatState { get; private set; }
     public bool IsAggroed { get; private set; }
-
+    
     private void Awake()
     {
         _animator = GetComponent<Animator>();
@@ -27,8 +27,8 @@ public class Enemy : MonoBehaviour
         StateMachine = new EnemyStateMachine();
 
         PatrolState = new PatrolState(this, StateMachine, _points);
-        ChaseState = new ChasingState(this, StateMachine, _target,_attackRange);
-        CombatState = new CombatState(this, StateMachine, _target, _animator, _attackRange);
+        ChaseState = new ChasingState(this, StateMachine, _target, _attackRange);
+        CombatState = new CombatState(this, StateMachine, _target, _animator, _attackRange);        
     }
 
     private void Start()

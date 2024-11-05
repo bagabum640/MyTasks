@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 
 public class CombatState : EnemyState
@@ -25,7 +26,7 @@ public class CombatState : EnemyState
     public override void ExitState()
     {
         base.ExitState();
-        _animator.SetBool("IsAttacking", false);
+       
     }
 
     public override void UpdateState()
@@ -35,10 +36,21 @@ public class CombatState : EnemyState
 
         if (_timer >= _timerBetweenShots)
         {
-            _animator.SetBool("IsAttacking", true);
+            
             _timer = 0f;
         }
 
         _timer += Time.deltaTime;
+    }
+
+    private IEnumerator Attack()
+    {
+        WaitForSeconds waitForSeconds = new(1f);
+
+        _animator.SetBool("IsAttacking", true);
+
+        yield return waitForSeconds;
+
+        _animator.SetBool("IsAttacking", false);
     }
 }
