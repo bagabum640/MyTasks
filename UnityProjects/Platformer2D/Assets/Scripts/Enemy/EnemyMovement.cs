@@ -1,45 +1,71 @@
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(SpriteRenderer))]
+[RequireComponent(typeof(SpriteRenderer),
+                  typeof(EnemyHealth))]
 public class EnemyMovement : MonoBehaviour
 {
+    [SerializeField] private Transform[] _points;
     [SerializeField] private float _speed;
 
     private SpriteRenderer _spriteRenderer;
-    private Vector3[] _points;
-    private int _currentPath = 0;
+    private EnemyHealth _enemyHealth;
+    private int _currentIndex = 0;
 
-    private void Awake() =>
-       _spriteRenderer = GetComponent<SpriteRenderer>();
+    private readonly List<Vector3> _path = new();
+    private readonly float _distanceToTarget = 0.2f;
 
-    private void Start()
+    private void Awake()
     {
-        _points = new Vector3[transform.childCount];
+        _spriteRenderer = GetComponent<SpriteRenderer>();
+        _enemyHealth = GetComponent<EnemyHealth>();
 
-        for (int i = 0; i < transform.childCount; i++)
-        {
-            _points[i] = transform.GetChild(i).position;
-        }
+        Init();
     }
 
     private void Update() =>
-        MoveToPoint();
+        MoveToTarget(_path[_currentIndex]);
 
-    private void MoveToPoint()
+    private void Init()
     {
-        if (Vector3.Distance(transform.position, _points[_currentPath]) < 0.2f)
-            _currentPath = ++_currentPath % _points.Length;
+        if (_points.Length > 0)
+        {
+            foreach (Transform point in _points)
+            {
+                _path.Add(point.position);
+                point.gameObject.SetActive(false);
+            }
 
-        transform.position = Vector2.MoveTowards(transform.position, _points[_currentPath], _speed * Time.deltaTime);
-
-        Flip();
+            _path[_currentIndex] = _points[_currentIndex].position;
+        }
+        else
+        {
+            _path[_currentIndex] = transform.position;
+        }
     }
 
-    private void Flip()
+    public void MoveToTarget(Vector3 direction)
     {
-        if (_points[_currentPath].x > transform.position.x)
+        if (_enemyHealth.Health > 0)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, direction, _speed * Time.deltaTime);
+
+            if ((transform.position - direction).sqrMagnitude < _distanceToTarget)
+                _currentIndex = ++_currentIndex % _path.Count;
+        }
+        else
+        {
+            _speed = 0;
+        }
+
+        Flip(direction);
+    }
+
+    private void Flip(Vector3 target)
+    {
+        if (target.x > transform.position.x)
             _spriteRenderer.flipX = false;
-        else if (_points[_currentPath].x < transform.position.x)
+        else if (target.x < transform.position.x)
             _spriteRenderer.flipX = true;
     }
 }

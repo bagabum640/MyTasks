@@ -1,19 +1,19 @@
 using UnityEngine;
 
-public class PlayerGroundCheck : MonoBehaviour
+public class PlayerGroundDetector : MonoBehaviour
 {
     [SerializeField] private Transform _groundCheckPoint;
     [SerializeField] private LayerMask _groundLayerMask;
     [SerializeField] private float _groundCheckRadius;
 
-    public bool OnGround { get; private set; }
+    public bool IsGround { get; private set; }
 
-    private void Start() =>
+    private void Awake() =>
         _groundCheckRadius = _groundCheckPoint.GetComponent<CircleCollider2D>().radius;
 
     private void Update() =>
-        GroundCheck();
+        GroundDetect();
 
-    private void GroundCheck() =>
-        OnGround = Physics2D.OverlapCircle(_groundCheckPoint.position, _groundCheckRadius, _groundLayerMask);
+    private void GroundDetect() =>
+        IsGround = Physics2D.OverlapCircle(_groundCheckPoint.position, _groundCheckRadius, _groundLayerMask);
 }

@@ -1,74 +1,43 @@
-using System.Collections;
 using UnityEngine;
 using static PlayerAnimator;
 
 [RequireComponent(typeof(Rigidbody2D),
-                  typeof(Animator),
-                  typeof(SpriteRenderer))]
-[RequireComponent(typeof(PlayerGroundCheck))]
+                  typeof(Animator))]
 public class PlayerMovement : MonoBehaviour
 {
-    private const string Horizontal = "Horizontal";
-
     [SerializeField] private float _speed;
     [SerializeField] private float _jumpForce;
 
-    private PlayerGroundCheck _check;
-    private SpriteRenderer _spriteRenderer;
     private Rigidbody2D _rigidbody;
     private Animator _animator;
-    private Vector2 _movement;
+
+    private bool _isFlipped = true;
 
     private void Awake()
     {
-        _check = GetComponent<PlayerGroundCheck>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
         _rigidbody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
     }
 
-    private void Update()
+    public void Move(float direction)
     {
-        Jump();
-        Fall();
-    }
-
-    private void FixedUpdate() =>
-        Move();
-
-    private void Move()
-    {
-        _movement.x = Input.GetAxis(Horizontal);
-
-        _rigidbody.velocity = new Vector2(_movement.x * _speed, _rigidbody.velocity.y);
-
-        _animator.SetFloat(MovementSpeed, Mathf.Abs(_movement.x));
-
-        Flip();
-    }
-
-    private void Jump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && _check.OnGround)
+        if ((direction > 0 && !_isFlipped) || (direction < 0 && _isFlipped))
         {
-            _rigidbody.AddForce(_jumpForce * Vector2.up, ForceMode2D.Impulse);
-            _animator.SetTrigger(Jumping);
+            transform.localScale *= new Vector2(-1f, 1f);
+            _isFlipped = !_isFlipped;
         }
+
+        _rigidbody.velocity = new Vector2(direction * _speed, _rigidbody.velocity.y);
+
+        _animator.SetFloat(MovementSpeed, Mathf.Abs(direction));
     }
 
-    private void Fall() =>
+    public void Jump()
+    {
+        _rigidbody.AddForce(_jumpForce * Vector2.up, ForceMode2D.Impulse);
+        _animator.SetTrigger(Jumping);
+    }
+
+    public void Fall() =>
         _animator.SetFloat(Falling, _rigidbody.velocity.y);
-
-
-    private void Flip()
-    {
-        if ((_movement.x > 0))
-        {
-            _spriteRenderer.flipX = false;
-        }
-        else if ((_movement.x < 0))
-        {
-            _spriteRenderer.flipX = true;
-        }
-    }
 }
