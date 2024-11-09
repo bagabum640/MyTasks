@@ -1,6 +1,5 @@
 using UnityEngine;
 
-[RequireComponent(typeof(CircleCollider2D))]
 public class PlayerGroundDetector : MonoBehaviour
 {
     [SerializeField] private Transform _groundCheckPoint;
