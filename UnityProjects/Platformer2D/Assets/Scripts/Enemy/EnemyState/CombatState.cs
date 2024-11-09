@@ -1,56 +1,43 @@
-using System.Collections;
 using UnityEngine;
+using static EnemyAnimations;
 
 public class CombatState : EnemyState
 {
+    private readonly Animator _animator;
+    private readonly EnemyAttack _enemyAttack;
+    private readonly float _timerBetweenAttack = 1f;
+
     private float _timer;
 
-    private readonly Animator _animator;
-    private readonly Transform _target;
-    private readonly float _attackRange;
-    private readonly float _timerBetweenShots = 2f;
-
-    public CombatState(Enemy enemy, EnemyStateMachine enemyStateMachine, Transform target, Animator animator, float attackRange) : base(enemy, enemyStateMachine)
+    public CombatState(Enemy enemy, EnemyStateMachine enemyStateMachine, Animator animator, EnemyAttack enemyAttack) : base(enemy, enemyStateMachine)
     {
-        _target = target;
-        _attackRange = attackRange;
         _animator = animator;
-        _timer = _timerBetweenShots;
-    }
-
-    public override void EnterState()
-    {
-        base.EnterState();
-    }
-
-    public override void ExitState()
-    {
-        base.ExitState();
-       
+        _enemyAttack = enemyAttack;
+        _timer = _timerBetweenAttack;
     }
 
     public override void UpdateState()
     {
-        if ((_target.position - enemy.transform.position).sqrMagnitude > _attackRange)
-            enemy.StateMachine.ChangeState(enemy.ChaseState);
+        if (Enemy.IsAggroed && (Enemy.GetTargetPosition() - Enemy.transform.position).sqrMagnitude > _enemyAttack.AttackRange)
+            EnemyStateMachine.SetState<ChaseState>();
 
-        if (_timer >= _timerBetweenShots)
+        if (!Enemy.IsAggroed)
+            EnemyStateMachine.SetState<PatrolState>();
+
+        if (Enemy.IsFighted)
         {
-            
-            _timer = 0f;
+            if (_timer >= _timerBetweenAttack)
+            {
+                _timer = 0f;
+
+                _animator.SetTrigger(Attack);
+            }
+        }
+        else
+        {
+            EnemyStateMachine.SetState<ChaseState>();
         }
 
         _timer += Time.deltaTime;
-    }
-
-    private IEnumerator Attack()
-    {
-        WaitForSeconds waitForSeconds = new(1f);
-
-        _animator.SetBool("IsAttacking", true);
-
-        yield return waitForSeconds;
-
-        _animator.SetBool("IsAttacking", false);
     }
 }

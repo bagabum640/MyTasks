@@ -8,8 +8,8 @@ public class Player : MonoBehaviour
 {
     private PlayerGroundDetector _groundCheck;
     private PlayerMovement _movement;
-    private PlayerInput _input;
     private PlayerCombat _combat;
+    private PlayerInput _input;
 
     private void Awake()
     {
@@ -26,5 +26,11 @@ public class Player : MonoBehaviour
 
         if (_input.GetJumpSignal() && _groundCheck.IsGround)
             _movement.Jump();
+
+        if (_input.GetJumpOffSignal() && _groundCheck.IsGround)
+            _movement.JumpOffPlatform();
+
+        if(_input.GetAttackSignal() && _groundCheck.IsGround)
+            _combat.AttackDelay();
     }
 }

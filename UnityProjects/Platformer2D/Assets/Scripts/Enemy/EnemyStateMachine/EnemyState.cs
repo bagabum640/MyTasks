@@ -1,15 +1,16 @@
 public class EnemyState
 {
-    protected Enemy enemy;
-    protected EnemyStateMachine enemyStateMachine;
+    protected Enemy Enemy;
+    protected EnemyStateMachine EnemyStateMachine;
 
-    public EnemyState(Enemy enemy,EnemyStateMachine enemyStateMachine)
+    public EnemyState(Enemy enemy, EnemyStateMachine enemyStateMachine)
     {
-        this.enemy = enemy;
-        this.enemyStateMachine = enemyStateMachine;
+        Enemy = enemy;
+        EnemyStateMachine = enemyStateMachine;
     }
 
-    public virtual void EnterState() { }
-    public virtual void ExitState() { }
+    public virtual void Enter() { }
+    public virtual void Exit() { }
     public virtual void UpdateState() { }
+    public virtual void PhysicUpdateState() { }  
 }

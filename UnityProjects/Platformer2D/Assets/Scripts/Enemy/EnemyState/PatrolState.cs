@@ -1,38 +1,55 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class PatrolState : EnemyState
 {
-    private int _pointNumber = 0;
+    private readonly EnemyMovement _enemyMovement;
+    private readonly List<Vector3> _path = new();
+    private readonly float _distanceToPoint = 1f;
 
-    private readonly Transform[] _points;
-    private readonly float _speed = 3f;
+    private int _pointNumber;
 
-    public PatrolState(Enemy enemy, EnemyStateMachine enemyStateMachine, Transform[] points) : base(enemy, enemyStateMachine)
+    public PatrolState(Enemy enemy, EnemyStateMachine enemyStateMachine, EnemyMovement enemyMovement) : base(enemy, enemyStateMachine)
     {
-        _points = points;
+        _enemyMovement = enemyMovement;
+
+        PathInit(_enemyMovement.GetPointsPosition());
     }
 
-    public override void EnterState()
-    {
-        base.EnterState();
-        enemy.SetDirection(_points[_pointNumber].position);
-    }
+    public override void Enter() =>
+        _enemyMovement.SetDirection(_path[_pointNumber]);
 
-    public override void ExitState()
-    {
-        base.ExitState();
-    }
+    public override void Exit() =>
+        _enemyMovement.ResetSpeed();
 
-    public override void UpdateState()
+    public override void PhysicUpdateState()
     {
-        if (enemy.IsAggroed)
+        if (Enemy.IsAggroed)
         {
-            enemy.StateMachine.ChangeState(enemy.ChaseState);
+            EnemyStateMachine.SetState<ChaseState>();
         }
 
-        if (enemy.transform.position == _points[_pointNumber].position)
-            _pointNumber = ++_pointNumber % _points.Length;
+        if (Mathf.Abs(_path[_pointNumber].x - Enemy.transform.position.x) <= _distanceToPoint)
+        {
+            _pointNumber = ++_pointNumber % _path.Count;
+            _enemyMovement.SetDirection(_path[_pointNumber]);
+        }
 
-        enemy.SetDirection(_points[_pointNumber].position, _speed);
+        _enemyMovement.SetTargetToMove(_path[_pointNumber]);
+    }
+
+    private void PathInit(List<Vector3> points)
+    {
+        if (points.Count > 0)
+        {
+            foreach (Vector3 point in points)
+                _path.Add(point);
+
+            _path[_pointNumber] = points[_pointNumber];
+        }
+        else
+        {
+            _path[_pointNumber] = Enemy.transform.position;
+        }
     }
 }

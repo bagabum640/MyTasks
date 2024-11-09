@@ -1,77 +1,64 @@
-using System.Collections.Generic;
 using UnityEngine;
+using static EnemyAnimations;
 
+[RequireComponent(typeof(EnemyMovement),
+                  typeof(EnemyHealth),
+                  typeof(Animator))]
+[RequireComponent(typeof(EnemyAttack))]
 public class Enemy : MonoBehaviour
 {
-    [SerializeField] private Transform[] _points;
-    [SerializeField] private Transform _target;
-    [SerializeField] private float _attackRange = 2f;
-
-    private SpriteRenderer _spriteRenderer;
+    private Transform _target;
     private Animator _animator;
+    private EnemyHealth _enemyHealth;
+    private EnemyStateMachine _stateMachine;
+    private EnemyAttack _enemyAttack;
+    private EnemyMovement _enemyMovement;
 
-    private readonly List<Vector3> _path = new();
-    private readonly int _currentIndex = 0;
-
-    public EnemyStateMachine StateMachine { get; private set; }
-    public PatrolState PatrolState { get; private set; }
-    public ChasingState ChaseState { get; private set; }
-    public CombatState CombatState { get; private set; }
     public bool IsAggroed { get; private set; }
-    
+   [field: SerializeField] public bool IsFighted { get; private set; }
+
     private void Awake()
     {
+        _enemyHealth = GetComponent<EnemyHealth>();
+        _enemyMovement = GetComponent<EnemyMovement>();
+        _enemyAttack = GetComponent<EnemyAttack>();
         _animator = GetComponent<Animator>();
-        _spriteRenderer = GetComponent<SpriteRenderer>();
 
-        StateMachine = new EnemyStateMachine();
-
-        PatrolState = new PatrolState(this, StateMachine, _points);
-        ChaseState = new ChasingState(this, StateMachine, _target, _attackRange);
-        CombatState = new CombatState(this, StateMachine, _target, _animator, _attackRange);        
-    }
-
-    private void Start()
-    {
-        PathInit();
-        StateMachine.Initialize(PatrolState);
+        _stateMachine = new EnemyStateMachine(this, _animator, _enemyMovement, _enemyAttack);
+        _stateMachine.SetState<PatrolState>();
     }
 
     private void Update()
     {
-        StateMachine.CurrentEnemyState.UpdateState();
+        if (_enemyHealth.Health > 0)
+        {
+            _stateMachine.CurrentEnemyState.UpdateState();
+            _animator.SetFloat(MovementSpeed, Mathf.Abs(_enemyMovement.GetSpeed()));
+        }
     }
 
-    public void SetDirection(Vector3 direction, float speed = 3f)
+    private void FixedUpdate()
     {
-        if (direction.x > transform.position.x)
-            _spriteRenderer.flipX = false;
-        else if (direction.x < transform.position.x)
-            _spriteRenderer.flipX = true;
-
-        transform.position = Vector3.MoveTowards(transform.position, direction, speed * Time.deltaTime);
+        if (_enemyHealth.Health > 0)       
+            _stateMachine.CurrentEnemyState.PhysicUpdateState();       
     }
 
-    public void SetAggroStatus(bool isAggroed)
+    public Vector3 GetTargetPosition()
     {
+        if (_target != null)
+        {
+            return _target.position;
+        }
+
+        return Vector3.zero;
+    }
+
+    public void SetTarget(Transform target) =>
+        _target = target;
+
+    public void SetAggroStatus(bool isAggroed) =>
         IsAggroed = isAggroed;
-    }
 
-    private void PathInit()
-    {
-        if (_points.Length > 0)
-        {
-            foreach (Transform point in _points)
-            {
-                _path.Add(point.position);
-                point.gameObject.SetActive(false);
-            }
-
-            _path[_currentIndex] = _points[_currentIndex].position;
-        }
-        else
-        {
-            _path[_currentIndex] = transform.position;
-        }
-    }
+    public void SetFightStatus(bool isFighted) =>
+        IsFighted = isFighted;
 }

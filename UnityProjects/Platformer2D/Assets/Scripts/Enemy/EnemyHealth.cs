@@ -1,18 +1,16 @@
-using System;
-using System.Collections;
 using UnityEngine;
+using static EnemyAnimations;
 
-[RequireComponent(typeof(Animator))]
+[RequireComponent(typeof(Animator),
+                  typeof(Rigidbody2D))]
 public class EnemyHealth : MonoBehaviour
 {
     [field: SerializeField] public int Health { get; private set; }
 
     private Animator _animator;
 
-    private void Awake()
-    {
-        _animator = GetComponent<Animator>();
-    }
+    private void Awake() =>    
+        _animator = GetComponent<Animator>();   
 
     public void TakeDamage(int damage)
     {
@@ -20,24 +18,20 @@ public class EnemyHealth : MonoBehaviour
 
         if (Health <= 0)
         {
-            StartCoroutine(DestroyEnemy());
+            Die();
         }
         else
         {
-            _animator.SetTrigger("Hurt");
+            _animator.SetTrigger(Hurt);
         }
     }
 
-    private IEnumerator DestroyEnemy()
+    private void Die()
     {
-        float delay = 1.5f;
-
         GetComponent<Collider2D>().enabled = false;
+        GetComponent<Rigidbody2D>().isKinematic = true;
+        GetComponent<Rigidbody2D>().velocity = Vector3.zero;
 
-        _animator.SetTrigger("Death");
-
-        yield return new WaitForSeconds(delay);
-
-        Destroy(gameObject);
+        _animator.SetTrigger(Death);      
     }
 }
