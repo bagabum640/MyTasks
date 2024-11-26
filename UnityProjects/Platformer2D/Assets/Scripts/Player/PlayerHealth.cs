@@ -1,41 +1,43 @@
 using UnityEngine;
-using static PlayerAnimations;
 
+[RequireComponent(typeof(PlayerAnimations))]
 public class PlayerHealth : MonoBehaviour
 {
     [SerializeField] private float _maxHealth = 10;
     [SerializeField] private float _currentHealth;
 
+    private PlayerAnimations _playerAnimations;
+
     public bool IsAlive { get; private set; } = true;
 
-    private void Awake() =>
+    private void Awake()
+    {
+        _playerAnimations = GetComponent<PlayerAnimations>();
+
         _currentHealth = _maxHealth;
-    
+
+        HealthKit.IsHealing += RestoreHealth;
+    }   
+
     public void TakeDamage(float damage)
     {
         _currentHealth -= damage;
 
         if (_currentHealth <= 0)
-        {
             PlayerDead();
-        }
         else
+            _playerAnimations.HurtAnimation();
+    }
+
+    public void RestoreHealth(float heal)
+    {
+        if (_currentHealth != _maxHealth)
         {
-            PlayerAnimator.SetTrigger(Hurt);
+            _currentHealth += heal;
+
+            if (_currentHealth > _maxHealth)
+                _currentHealth = _maxHealth;            
         }
-    }
-
-    public void RestoreHealth(float health)
-    {
-        _currentHealth += health;
-
-        if (_currentHealth > _maxHealth)
-            _currentHealth = _maxHealth;
-    }
-
-    public bool CanTake()
-    {
-        return _currentHealth == _maxHealth;
     }
 
     private void PlayerDead()
@@ -46,6 +48,6 @@ public class PlayerHealth : MonoBehaviour
         GetComponent<Rigidbody2D>().isKinematic = true;
         GetComponent<Player>().enabled = false;
 
-        PlayerAnimator.SetTrigger(Death);
+        _playerAnimations.DeathAnimation();
     }
 }

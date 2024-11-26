@@ -1,3 +1,4 @@
+using System.Xml.Linq;
 using UnityEngine;
 using static EnemyAnimations;
 
@@ -5,39 +6,31 @@ public class CombatState : EnemyState
 {
     private readonly Animator _animator;
     private readonly EnemyAttack _enemyAttack;
+    private readonly EnemyMovement _enemyMovement;
     private readonly float _timerBetweenAttack = 1f;
 
-    private float _timer;
-
-    public CombatState(Enemy enemy, EnemyStateMachine enemyStateMachine, Animator animator, EnemyAttack enemyAttack) : base(enemy, enemyStateMachine)
+    public CombatState(Enemy enemy, Animator animator, EnemyMovement enemyMovement,EnemyAttack enemyAttack) : base(enemy)
     {
         _animator = animator;
         _enemyAttack = enemyAttack;
-        _timer = _timerBetweenAttack;
+        _enemyMovement = enemyMovement;
     }
 
     public override void UpdateState()
     {
-        if (Enemy.IsAggroed && (Enemy.GetTargetPosition() - Enemy.transform.position).sqrMagnitude > _enemyAttack.AttackRange)
-            EnemyStateMachine.SetState<ChaseState>();
+        if (Enemy.IsAggroed && Mathf.Abs(Enemy.GetTargetPosition().x - Enemy.transform.position.x) > _enemyAttack.AttackRange)
+            Enemy.StateMachine.SetState<ChaseState>();
 
-        if (!Enemy.IsAggroed)
-            EnemyStateMachine.SetState<PatrolState>();
+        if (Enemy.IsAggroed == false)
+            Enemy.StateMachine.SetState<PatrolState>();
 
-        if (Enemy.IsFighted)
+        _enemyMovement.SetDirection(Enemy.GetTargetPosition());
+
+        if (_enemyAttack.AttackDelay >= _timerBetweenAttack)
         {
-            if (_timer >= _timerBetweenAttack)
-            {
-                _timer = 0f;
+            _enemyAttack.ResetTimerAttack();
 
-                _animator.SetTrigger(Attack);
-            }
+            _animator.SetTrigger(Attack);
         }
-        else
-        {
-            EnemyStateMachine.SetState<ChaseState>();
-        }
-
-        _timer += Time.deltaTime;
     }
 }

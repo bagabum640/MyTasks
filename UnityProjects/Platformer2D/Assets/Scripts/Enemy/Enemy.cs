@@ -7,15 +7,18 @@ using static EnemyAnimations;
 [RequireComponent(typeof(EnemyAttack))]
 public class Enemy : MonoBehaviour
 {
+    [SerializeField] private AggroDetector _aggroDetector;
+
     private Transform _target;
     private Animator _animator;
     private EnemyHealth _enemyHealth;
-    private EnemyStateMachine _stateMachine;
     private EnemyAttack _enemyAttack;
     private EnemyMovement _enemyMovement;
 
+    public EnemyStateMachine StateMachine { get; private set; }
+    
     public bool IsAggroed { get; private set; }
-   [field: SerializeField] public bool IsFighted { get; private set; }
+    public bool IsFighted { get; private set; }
 
     private void Awake()
     {
@@ -24,23 +27,39 @@ public class Enemy : MonoBehaviour
         _enemyAttack = GetComponent<EnemyAttack>();
         _animator = GetComponent<Animator>();
 
-        _stateMachine = new EnemyStateMachine(this, _animator, _enemyMovement, _enemyAttack);
-        _stateMachine.SetState<PatrolState>();
+        StateMachine = new EnemyStateMachine(this, _animator, _enemyMovement, _enemyAttack);
+        StateMachine.SetState<PatrolState>();
+    }
+
+    private void Start()
+    {
+        _aggroDetector.IsAggroed += SetActiveAggroStatus;
+        _aggroDetector.IsExitedAggro += SetDeactiveAggroStatus;
+        _aggroDetector.IsSetTarget += SetTarget;
+        _aggroDetector.IsLostTarget += LossOfTarget;
+    }
+
+    private void OnDisable()
+    {
+        _aggroDetector.IsAggroed -= SetActiveAggroStatus;
+        _aggroDetector.IsAggroed -= SetDeactiveAggroStatus;
+        _aggroDetector.IsSetTarget -= SetTarget;
+        _aggroDetector.IsLostTarget -= LossOfTarget;
     }
 
     private void Update()
     {
         if (_enemyHealth.Health > 0)
         {
-            _stateMachine.CurrentEnemyState.UpdateState();
+            StateMachine.Update();
             _animator.SetFloat(MovementSpeed, Mathf.Abs(_enemyMovement.GetSpeed()));
         }
     }
 
     private void FixedUpdate()
     {
-        if (_enemyHealth.Health > 0)       
-            _stateMachine.CurrentEnemyState.PhysicUpdateState();       
+        if (_enemyHealth.Health > 0)
+            StateMachine.FixedUpdate();
     }
 
     public Vector3 GetTargetPosition()
@@ -51,14 +70,17 @@ public class Enemy : MonoBehaviour
         }
 
         return Vector3.zero;
-    }
+    }  
 
     public void SetTarget(Transform target) =>
         _target = target;
 
-    public void SetAggroStatus(bool isAggroed) =>
-        IsAggroed = isAggroed;
+    private void LossOfTarget() =>
+        _target = null;
 
-    public void SetFightStatus(bool isFighted) =>
-        IsFighted = isFighted;
+    private void SetActiveAggroStatus() =>   
+        IsAggroed = true;  
+
+    private void SetDeactiveAggroStatus() =>   
+        IsAggroed = false;   
 }

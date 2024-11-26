@@ -1,6 +1,6 @@
 using UnityEngine;
-using static PlayerAnimations;
 
+[RequireComponent(typeof(PlayerAnimations))]
 public class PlayerCombat : MonoBehaviour
 {
     [SerializeField] private Transform _attackPoint;
@@ -8,7 +8,12 @@ public class PlayerCombat : MonoBehaviour
     [SerializeField] private float _attackRange;
     [SerializeField] private float _attackDelay;
 
+    private PlayerAnimations _playerAnimations;
+
     private float _timer;
+
+    private void Awake() =>   
+        _playerAnimations = GetComponent<PlayerAnimations>();    
 
     private void Update() =>
         _timer += Time.deltaTime;
@@ -19,7 +24,7 @@ public class PlayerCombat : MonoBehaviour
         {
             _timer = 0;
 
-            PlayerAnimator.SetTrigger(Attacking);
+            _playerAnimations.AttackAnimation();
         }
     }
 

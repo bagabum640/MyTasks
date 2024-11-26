@@ -6,25 +6,28 @@ public class EnemyStateMachine
 {
     private readonly Dictionary<Type, EnemyState> _states = new();
 
-    public EnemyState CurrentEnemyState { get; private set; }
-    public PatrolState PatrolState { get; private set; }
-    public ChaseState ChaseState { get; private set; }
-    public CombatState CombatState { get; private set; }
+    private EnemyState _currentEnemyState;
 
     public EnemyStateMachine(Enemy enemy, Animator animator, EnemyMovement enemyMovement, EnemyAttack enemyAttack)
     {
-        _states.Add(typeof(PatrolState), new PatrolState(enemy, this, enemyMovement));
-        _states.Add(typeof(ChaseState), new ChaseState(enemy, this, enemyMovement, enemyAttack));
-        _states.Add(typeof(CombatState), new CombatState(enemy, this, animator, enemyAttack));
+        _states.Add(typeof(PatrolState), new PatrolState(enemy, enemyMovement));
+        _states.Add(typeof(ChaseState), new ChaseState(enemy, enemyMovement, enemyAttack));
+        _states.Add(typeof(CombatState), new CombatState(enemy, animator,enemyMovement, enemyAttack));
     }
 
-    public void SetState<Type>() where Type : EnemyState
+    public void Update() =>    
+        _currentEnemyState.UpdateState();   
+
+    public void FixedUpdate() =>    
+        _currentEnemyState.PhysicUpdateState();  
+
+    public void SetState<TState>() where TState : EnemyState
     {
-        if (_states.TryGetValue(typeof(Type), out EnemyState nextState))
+        if (_states.TryGetValue(typeof(TState), out EnemyState nextState))
         {
-            CurrentEnemyState?.Exit();
-            CurrentEnemyState = nextState;
-            CurrentEnemyState?.Enter();
+            _currentEnemyState?.Exit();
+            _currentEnemyState = nextState;
+            _currentEnemyState?.Enter();
         }
     }
 }

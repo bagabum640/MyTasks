@@ -1,12 +1,10 @@
 public class EnemyState
 {
     protected Enemy Enemy;
-    protected EnemyStateMachine EnemyStateMachine;
 
-    public EnemyState(Enemy enemy, EnemyStateMachine enemyStateMachine)
+    public EnemyState(Enemy enemy)
     {
         Enemy = enemy;
-        EnemyStateMachine = enemyStateMachine;
     }
 
     public virtual void Enter() { }

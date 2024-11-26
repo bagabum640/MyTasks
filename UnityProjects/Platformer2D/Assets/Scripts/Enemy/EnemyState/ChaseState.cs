@@ -1,10 +1,12 @@
+using UnityEngine;
+
 public class ChaseState : EnemyState
 {
     private readonly EnemyMovement _enemyMovement;
     private readonly EnemyAttack _enemyAttack;
     private readonly float _multiplieSpeed = 2f;
 
-    public ChaseState(Enemy enemy, EnemyStateMachine enemyStateMachine, EnemyMovement enemyMovement, EnemyAttack enemyAttack) : base(enemy, enemyStateMachine)
+    public ChaseState(Enemy enemy, EnemyMovement enemyMovement, EnemyAttack enemyAttack) : base(enemy)
     {
         _enemyAttack = enemyAttack;
         _enemyMovement = enemyMovement;
@@ -18,11 +20,11 @@ public class ChaseState : EnemyState
 
     public override void PhysicUpdateState()
     {
-        if (!Enemy.IsAggroed)
-            EnemyStateMachine.SetState<PatrolState>();
+        if (Enemy.IsAggroed == false)
+            Enemy.StateMachine.SetState<PatrolState>();
 
-        if (Enemy.IsFighted && (Enemy.GetTargetPosition() - Enemy.transform.position).sqrMagnitude <= _enemyAttack.AttackRange)
-            EnemyStateMachine.SetState<CombatState>();
+        if (Enemy.IsAggroed && Mathf.Abs(Enemy.GetTargetPosition().x - Enemy.transform.position.x) <= _enemyAttack.AttackRange)
+            Enemy.StateMachine.SetState<CombatState>();
 
         _enemyMovement.SetTargetToMove(Enemy.GetTargetPosition(), _multiplieSpeed);
     }

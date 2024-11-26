@@ -9,7 +9,7 @@ public class PatrolState : EnemyState
 
     private int _pointNumber;
 
-    public PatrolState(Enemy enemy, EnemyStateMachine enemyStateMachine, EnemyMovement enemyMovement) : base(enemy, enemyStateMachine)
+    public PatrolState(Enemy enemy, EnemyMovement enemyMovement) : base(enemy)
     {
         _enemyMovement = enemyMovement;
 
@@ -26,7 +26,7 @@ public class PatrolState : EnemyState
     {
         if (Enemy.IsAggroed)
         {
-            EnemyStateMachine.SetState<ChaseState>();
+            Enemy.StateMachine.SetState<ChaseState>();
         }
 
         if (Mathf.Abs(_path[_pointNumber].x - Enemy.transform.position.x) <= _distanceToPoint)

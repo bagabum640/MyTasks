@@ -1,18 +1,19 @@
+using System;
 using UnityEngine;
 
 public class AggroDetector : MonoBehaviour
 {
-    private Enemy _enemy;
-
-    private void Awake()  =>
-        _enemy = GetComponentInParent<Enemy>();   
+    public event Action IsAggroed;
+    public event Action IsExitedAggro;
+    public event Action<Transform> IsSetTarget;
+    public event Action IsLostTarget;
 
     private void OnTriggerStay2D(Collider2D collision)
     {
         if (collision.TryGetComponent<Player>(out Player player))
         {
-            _enemy.SetTarget(player.transform);
-            _enemy.SetAggroStatus(true);
+            IsAggroed?.Invoke();
+            IsSetTarget?.Invoke(player.transform);
         }
     }
 
@@ -20,8 +21,8 @@ public class AggroDetector : MonoBehaviour
     {
         if (collision.TryGetComponent<Player>(out _))
         {
-            _enemy.SetTarget(null);
-            _enemy.SetAggroStatus(false);
+            IsExitedAggro?.Invoke();
+            IsLostTarget?.Invoke();
         }
     }
 }

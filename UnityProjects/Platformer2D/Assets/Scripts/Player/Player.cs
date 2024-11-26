@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerGroundDetector),
@@ -11,6 +12,8 @@ public class Player : MonoBehaviour
     private PlayerCombat _combat;
     private PlayerInput _input;
 
+    public event Action<bool> InputChanged;
+
     private void Awake()
     {
         _input = GetComponent<PlayerInput>();
@@ -19,18 +22,41 @@ public class Player : MonoBehaviour
         _combat = GetComponent<PlayerCombat>();
     }
 
+    private void OnEnable()
+    {
+        _input.Jumped += Jump;
+        _input.JumpedOff += JumpOff;
+        _input.Attacking += Attacking;
+    }
+
     private void FixedUpdate()
     {
         _movement.Move(_input.Direction);
         _movement.Fall();
+    }
 
-        if (_input.GetJumpSignal() && _groundCheck.IsGround)
-            _movement.Jump();
+    private void OnDisable()
+    {
+        _input.Jumped -= Jump;
+        _input.JumpedOff -= JumpOff;
+        _input.Attacking -= Attacking;
+    }
 
-        if (_input.GetJumpOffSignal() && _groundCheck.IsGround)
-            _movement.JumpOffPlatform();
-
-        if(_input.GetAttackSignal() && _groundCheck.IsGround)
+    private void Attacking()
+    {
+        if(_groundCheck.IsOnGround)
             _combat.AttackDelay();
+    }
+
+    private void JumpOff()
+    {
+        if(_groundCheck.IsOnGround)
+            _movement.JumpOff();
+    }
+
+    private void Jump()
+    {
+        if (_groundCheck.IsOnGround)
+            _movement.Jump();
     }
 }
