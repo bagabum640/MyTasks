@@ -31,7 +31,7 @@ public class Enemy : MonoBehaviour
         StateMachine.SetState<PatrolState>();
     }
 
-    private void Start()
+    private void OnEnable()
     {
         _aggroDetector.IsAggroed += SetActiveAggroStatus;
         _aggroDetector.IsExitedAggro += SetDeactiveAggroStatus;

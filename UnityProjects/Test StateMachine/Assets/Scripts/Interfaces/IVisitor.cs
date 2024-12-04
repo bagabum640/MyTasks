@@ -1,5 +1,5 @@
 public interface IVisitor
 {
-    public void Visit(HealthKit healthKit);
-    public void Visit(Coin coin);
+   public void Visit(Medkit medkit);
+   public void Visit(Coin coin);
 }

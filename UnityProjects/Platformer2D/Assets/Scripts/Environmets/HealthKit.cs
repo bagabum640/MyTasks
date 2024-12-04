@@ -1,18 +1,19 @@
-using System;
 using UnityEngine;
 
-public class HealthKit : MonoBehaviour, ICollectable, IHealable
+public class HealthKit : MonoBehaviour, IVisitable
 {
-    //[SerializeField] private float _healthRestoreCount = 3;
+    [SerializeField] private float _healCount = 3;
 
-    public float _healCount { get; set; } = 3f;
+    public void Accept(IVisitor visitor) =>    
+        visitor.Visit(this);   
 
-    public static event Action<float> IsHealing;
-
-    public void Collect()
+    public void Use(PlayerHealth playerHealth)
     {
-        IsHealing?.Invoke(_healCount);
+        if (playerHealth.GetPossibleOfHealing())
+        {
+            playerHealth.RestoreHealth(_healCount);
 
-        Destroy(gameObject);
+            Destroy(gameObject);
+        }
     }
 }

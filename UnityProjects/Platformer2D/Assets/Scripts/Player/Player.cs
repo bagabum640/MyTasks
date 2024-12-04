@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerGroundDetector),
@@ -11,8 +10,6 @@ public class Player : MonoBehaviour
     private PlayerMovement _movement;
     private PlayerCombat _combat;
     private PlayerInput _input;
-
-    public event Action<bool> InputChanged;
 
     private void Awake()
     {

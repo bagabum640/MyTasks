@@ -5,11 +5,11 @@ public class PlayerInput : MonoBehaviour
 {
     public const string Horizontal = "Horizontal";
 
+    public float Direction { get; private set; }
+
     public event Action Attacking;
     public event Action Jumped;
     public event Action JumpedOff;
-
-    public float Direction { get; private set; }
 
     private void Update()
     {

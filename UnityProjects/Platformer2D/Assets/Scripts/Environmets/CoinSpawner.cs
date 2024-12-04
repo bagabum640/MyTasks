@@ -6,10 +6,8 @@ public class CoinSpawner : MonoBehaviour
     [SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private Coin _coinPrefab;
 
-    private void Awake()
-    {
-        Init();
-    }
+    private void Awake() =>   
+        Init();   
 
     private IEnumerator SpawnCoin(Vector2 position, float firstSpawnDelay = 0.1f)
     {

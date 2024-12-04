@@ -15,8 +15,6 @@ public class PlayerHealth : MonoBehaviour
         _playerAnimations = GetComponent<PlayerAnimations>();
 
         _currentHealth = _maxHealth;
-
-        HealthKit.IsHealing += RestoreHealth;
     }   
 
     public void TakeDamage(float damage)
@@ -38,6 +36,11 @@ public class PlayerHealth : MonoBehaviour
             if (_currentHealth > _maxHealth)
                 _currentHealth = _maxHealth;            
         }
+    }
+
+    public bool GetPossibleOfHealing()
+    {
+        return _currentHealth < _maxHealth;
     }
 
     private void PlayerDead()

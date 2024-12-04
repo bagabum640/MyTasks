@@ -24,11 +24,9 @@ public class PatrolState : EnemyState
 
     public override void PhysicUpdateState()
     {
-        if (Enemy.IsAggroed)
-        {
+        if (Enemy.IsAggroed)        
             Enemy.StateMachine.SetState<ChaseState>();
-        }
-
+        
         if (Mathf.Abs(_path[_pointNumber].x - Enemy.transform.position.x) <= _distanceToPoint)
         {
             _pointNumber = ++_pointNumber % _path.Count;

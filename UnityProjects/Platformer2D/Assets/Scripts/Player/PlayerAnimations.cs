@@ -2,14 +2,14 @@ using UnityEngine;
 
 public class PlayerAnimations : MonoBehaviour
 {
-    public Animator _playerAnimator;
+    private Animator _playerAnimator;
 
-    public readonly int MovementSpeed = Animator.StringToHash("MovementSpeed");
-    public readonly int Jumping = Animator.StringToHash("Jumping");
-    public readonly int Falling = Animator.StringToHash("Falling");
-    public readonly int Attacking = Animator.StringToHash("Attacking");
-    public readonly int Hurt = Animator.StringToHash("Hurt");
-    public readonly int Death = Animator.StringToHash("Death");
+    private readonly int MovementSpeed = Animator.StringToHash("MovementSpeed");
+    private readonly int Jumping = Animator.StringToHash("Jumping");
+    private readonly int Falling = Animator.StringToHash("Falling");
+    private readonly int Attacking = Animator.StringToHash("Attacking");
+    private readonly int Hurt = Animator.StringToHash("Hurt");
+    private readonly int Death = Animator.StringToHash("Death");
 
     private void Awake() =>
         _playerAnimator = GetComponent<Animator>();

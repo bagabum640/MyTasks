@@ -10,16 +10,24 @@ public class AggroDetector : MonoBehaviour
 
     private void OnTriggerStay2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<Player>(out Player player))
+        if (collision.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
         {
-            IsAggroed?.Invoke();
-            IsSetTarget?.Invoke(player.transform);
+            if (playerHealth.IsAlive)
+            {
+                IsAggroed?.Invoke();
+                IsSetTarget?.Invoke(playerHealth.transform);
+            }
+            else
+            {
+                IsExitedAggro?.Invoke();
+                IsLostTarget?.Invoke();
+            }
         }
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
-        if (collision.TryGetComponent<Player>(out _))
+        if (collision.TryGetComponent<PlayerHealth>(out _))
         {
             IsExitedAggro?.Invoke();
             IsLostTarget?.Invoke();
