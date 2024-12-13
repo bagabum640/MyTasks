@@ -1,8 +1,8 @@
 using UnityEngine;
-using static EnemyAnimations;
+using static EnemyAnimationData;
 
 [RequireComponent(typeof(EnemyMovement),
-                  typeof(EnemyHealth),
+                  typeof(EnemyDamageHandler),
                   typeof(Animator))]
 [RequireComponent(typeof(EnemyAttack))]
 public class Enemy : MonoBehaviour
@@ -11,7 +11,7 @@ public class Enemy : MonoBehaviour
 
     private Transform _target;
     private Animator _animator;
-    private EnemyHealth _enemyHealth;
+    private EnemyDamageHandler _enemyDamageHandler;
     private EnemyAttack _enemyAttack;
     private EnemyMovement _enemyMovement;
 
@@ -22,7 +22,7 @@ public class Enemy : MonoBehaviour
 
     private void Awake()
     {
-        _enemyHealth = GetComponent<EnemyHealth>();
+        _enemyDamageHandler = GetComponent<EnemyDamageHandler>();
         _enemyMovement = GetComponent<EnemyMovement>();
         _enemyAttack = GetComponent<EnemyAttack>();
         _animator = GetComponent<Animator>();
@@ -33,32 +33,28 @@ public class Enemy : MonoBehaviour
 
     private void OnEnable()
     {
-        _aggroDetector.IsAggroed += SetActiveAggroStatus;
-        _aggroDetector.IsExitedAggro += SetDeactiveAggroStatus;
         _aggroDetector.IsSetTarget += SetTarget;
         _aggroDetector.IsLostTarget += LossOfTarget;
     }
 
     private void OnDisable()
     {
-        _aggroDetector.IsAggroed -= SetActiveAggroStatus;
-        _aggroDetector.IsAggroed -= SetDeactiveAggroStatus;
         _aggroDetector.IsSetTarget -= SetTarget;
         _aggroDetector.IsLostTarget -= LossOfTarget;
     }
 
     private void Update()
     {
-        if (_enemyHealth.Health > 0)
+        if (_enemyDamageHandler.Health > 0)
         {
             StateMachine.Update();
-            _animator.SetFloat(MovementSpeed, Mathf.Abs(_enemyMovement.GetSpeed()));
+            _animator.SetFloat(MovementSpeed, Mathf.Abs(_enemyMovement.GetCurrentSpeed));
         }
     }
 
     private void FixedUpdate()
     {
-        if (_enemyHealth.Health > 0)
+        if (_enemyDamageHandler.Health > 0)
             StateMachine.FixedUpdate();
     }
 
@@ -72,15 +68,15 @@ public class Enemy : MonoBehaviour
         return Vector3.zero;
     }  
 
-    public void SetTarget(Transform target) =>
+    public void SetTarget(Transform target)
+    {
         _target = target;
+        IsAggroed = true;
+    }
 
-    private void LossOfTarget() =>
+    private void LossOfTarget()
+    {
         _target = null;
-
-    private void SetActiveAggroStatus() =>   
-        IsAggroed = true;  
-
-    private void SetDeactiveAggroStatus() =>   
-        IsAggroed = false;   
+        IsAggroed = false;
+    }     
 }

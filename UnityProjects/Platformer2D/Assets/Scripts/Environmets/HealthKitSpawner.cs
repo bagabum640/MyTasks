@@ -11,9 +11,7 @@ public class HealthKitSpawner : MonoBehaviour
     private void Init()
     {
         if (_spawnPoints.Length > 0)
-            for (int i = 0; i < _spawnPoints.Length; i++)
-            {
-                Instantiate(_healthKitPrefab, _spawnPoints[i].position, Quaternion.identity, transform);
-            }
+            for (int i = 0; i < _spawnPoints.Length; i++)            
+                Instantiate(_healthKitPrefab, _spawnPoints[i].position, Quaternion.identity, transform);            
     }
 }

@@ -1,36 +1,42 @@
 using System;
+using System.Collections;
 using UnityEngine;
 
 public class AggroDetector : MonoBehaviour
 {
-    public event Action IsAggroed;
-    public event Action IsExitedAggro;
+    [SerializeField] private LayerMask _playerLayerMask;
+    [SerializeField] private float _delay = 0.2f;
+
+    private readonly bool _isWork = true;
+
     public event Action<Transform> IsSetTarget;
     public event Action IsLostTarget;
 
-    private void OnTriggerStay2D(Collider2D collision)
+    private void Start() =>
+        StartCoroutine(FindTarget());
+
+    private IEnumerator FindTarget()
     {
-        if (collision.TryGetComponent<PlayerHealth>(out PlayerHealth playerHealth))
+        float angleBox = 0f;
+
+        WaitForSeconds waitForSeconds = new(_delay);
+        Collider2D hitCollider;
+
+        while (_isWork)
         {
-            if (playerHealth.IsAlive)
-            {
-                IsAggroed?.Invoke();
-                IsSetTarget?.Invoke(playerHealth.transform);
-            }
+            hitCollider = Physics2D.OverlapBox(transform.position, transform.localScale, angleBox, _playerLayerMask);
+
+            if (hitCollider != null)
+                IsSetTarget?.Invoke(hitCollider.transform);
             else
-            {
-                IsExitedAggro?.Invoke();
                 IsLostTarget?.Invoke();
-            }
+
+            yield return waitForSeconds;
         }
     }
 
-    private void OnTriggerExit2D(Collider2D collision)
+    private void OnDrawGizmos()
     {
-        if (collision.TryGetComponent<PlayerHealth>(out _))
-        {
-            IsExitedAggro?.Invoke();
-            IsLostTarget?.Invoke();
-        }
+        Gizmos.DrawWireCube(transform.position, transform.localScale);
     }
 }

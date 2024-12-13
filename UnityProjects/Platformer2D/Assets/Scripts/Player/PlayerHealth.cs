@@ -3,7 +3,9 @@ using UnityEngine;
 [RequireComponent(typeof(PlayerAnimations))]
 public class PlayerHealth : MonoBehaviour
 {
-    [SerializeField] private float _maxHealth = 10;
+    private readonly float _minHealth = 0f;
+    private readonly float _maxHealth = 10;
+
     [SerializeField] private float _currentHealth;
 
     private PlayerAnimations _playerAnimations;
@@ -15,11 +17,11 @@ public class PlayerHealth : MonoBehaviour
         _playerAnimations = GetComponent<PlayerAnimations>();
 
         _currentHealth = _maxHealth;
-    }   
+    }
 
     public void TakeDamage(float damage)
     {
-        _currentHealth -= damage;
+        _currentHealth = Mathf.Clamp(_currentHealth - Mathf.Abs(damage), _minHealth, _maxHealth);
 
         if (_currentHealth <= 0)
             PlayerDead();
@@ -27,30 +29,28 @@ public class PlayerHealth : MonoBehaviour
             _playerAnimations.HurtAnimation();
     }
 
-    public void RestoreHealth(float heal)
-    {
-        if (_currentHealth != _maxHealth)
-        {
-            _currentHealth += heal;
-
-            if (_currentHealth > _maxHealth)
-                _currentHealth = _maxHealth;            
-        }
-    }
-
-    public bool GetPossibleOfHealing()
-    {
-        return _currentHealth < _maxHealth;
-    }
+    public void RestoreHealth(HealthKit healthKit) =>   
+        _currentHealth = Mathf.Clamp(_currentHealth + Mathf.Abs(healthKit.HealthAmount), _minHealth, _maxHealth);
+    
+    public bool GetPossibleOfHealing() =>
+        _currentHealth < _maxHealth;
 
     private void PlayerDead()
     {
         IsAlive = false;
 
-        GetComponent<Collider2D>().isTrigger = true;
+        SetChildrenActiveState();
+        GetComponent<Collider2D>().enabled = false;
         GetComponent<Rigidbody2D>().isKinematic = true;
+        GetComponent<Rigidbody2D>().velocity = Vector3.zero;
         GetComponent<Player>().enabled = false;
 
         _playerAnimations.DeathAnimation();
+    }
+
+    private void SetChildrenActiveState()
+    {
+        foreach (Transform child in transform)
+            child.gameObject.SetActive(false);
     }
 }

@@ -1,59 +1,49 @@
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerGroundDetector),
-                  typeof(PlayerMovement),
+                  typeof(PlayerMover),
                   typeof(PlayerInput))]
 [RequireComponent(typeof(PlayerCombat))]
 public class Player : MonoBehaviour
 {
     private PlayerGroundDetector _groundCheck;
-    private PlayerMovement _movement;
+    private PlayerMover _movement;
     private PlayerCombat _combat;
     private PlayerInput _input;
 
     private void Awake()
     {
         _input = GetComponent<PlayerInput>();
-        _movement = GetComponent<PlayerMovement>();
+        _movement = GetComponent<PlayerMover>();
         _groundCheck = GetComponent<PlayerGroundDetector>();
         _combat = GetComponent<PlayerCombat>();
-    }
-
-    private void OnEnable()
-    {
-        _input.Jumped += Jump;
-        _input.JumpedOff += JumpOff;
-        _input.Attacking += Attacking;
     }
 
     private void FixedUpdate()
     {
         _movement.Move(_input.Direction);
         _movement.Fall();
-    }
 
-    private void OnDisable()
-    {
-        _input.Jumped -= Jump;
-        _input.JumpedOff -= JumpOff;
-        _input.Attacking -= Attacking;
+        Attacking();
+        JumpDown();
+        Jump();
     }
 
     private void Attacking()
     {
-        if(_groundCheck.IsOnGround)
+        if(_input.GetIsAttack() && _groundCheck.IsOnGround)
             _combat.AttackDelay();
     }
 
-    private void JumpOff()
+    private void JumpDown()
     {
-        if(_groundCheck.IsOnGround)
-            _movement.JumpOff();
+        if(_input.GetIsJumpDown() && _groundCheck.IsOnGround)
+            _movement.JumpDown();
     }
 
     private void Jump()
     {
-        if (_groundCheck.IsOnGround)
+        if (_input.GetIsJump() && _groundCheck.IsOnGround)
             _movement.Jump();
     }
 }

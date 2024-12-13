@@ -17,7 +17,7 @@ public class PatrolState : EnemyState
     }
 
     public override void Enter() =>
-        _enemyMovement.SetDirection(_path[_pointNumber]);
+        _enemyMovement.GetPathDirection(_path[_pointNumber]);
 
     public override void Exit() =>
         _enemyMovement.ResetSpeed();
@@ -30,10 +30,10 @@ public class PatrolState : EnemyState
         if (Mathf.Abs(_path[_pointNumber].x - Enemy.transform.position.x) <= _distanceToPoint)
         {
             _pointNumber = ++_pointNumber % _path.Count;
-            _enemyMovement.SetDirection(_path[_pointNumber]);
+            _enemyMovement.GetPathDirection(_path[_pointNumber]);
         }
 
-        _enemyMovement.SetTargetToMove(_path[_pointNumber]);
+        _enemyMovement.GetPathToMove(_path[_pointNumber]);
     }
 
     private void PathInit(List<Vector3> points)

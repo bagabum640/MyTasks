@@ -9,7 +9,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6161476106942158950}
-  - component: {fileID: 7873892603177186300}
   - component: {fileID: 73898520495208766}
   m_Layer: 0
   m_Name: AggroTrigger
@@ -27,57 +26,12 @@ Transform:
   m_GameObject: {fileID: 4971951159814056415}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 2.45, y: 1, z: 1}
+  m_LocalPosition: {x: 0, y: 0.128, z: 0}
+  m_LocalScale: {x: 15, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7859454173965417564}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!61 &7873892603177186300
-BoxCollider2D:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4971951159814056415}
-  m_Enabled: 1
-  m_Density: 1
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_ForceSendLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ForceReceiveLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_ContactCaptureLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_CallbackLayers:
-    serializedVersion: 2
-    m_Bits: 4294967295
-  m_IsTrigger: 1
-  m_UsedByEffector: 0
-  m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0.13844347}
-  m_SpriteTilingProperty:
-    border: {x: 0, y: 0, z: 0, w: 0}
-    pivot: {x: 0, y: 0}
-    oldSize: {x: 0, y: 0}
-    newSize: {x: 0, y: 0}
-    adaptiveTilingThreshold: 0
-    drawMode: 0
-    adaptiveTiling: 0
-  m_AutoTiling: 0
-  serializedVersion: 2
-  m_Size: {x: 1.3226446, y: 0.27688694}
-  m_EdgeRadius: 0
 --- !u!114 &73898520495208766
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -90,6 +44,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7d6ca7d8edf208545a291ac6dadc2be4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _playerLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  _delay: 1
 --- !u!1 &5089953822684884546
 GameObject:
   m_ObjectHideFlags: 0
@@ -230,9 +188,9 @@ GameObject:
   - component: {fileID: 35349228829270126}
   - component: {fileID: 7373321109607327760}
   - component: {fileID: 4410868135531014763}
-  - component: {fileID: 7901227624527737125}
   - component: {fileID: 8119132701058392416}
   - component: {fileID: -8218635560654685505}
+  - component: {fileID: 1242012526759220341}
   m_Layer: 8
   m_Name: Skelet
   m_TagString: Untagged
@@ -416,19 +374,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _aggroDetector: {fileID: 73898520495208766}
---- !u!114 &7901227624527737125
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7938706248072812130}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 418e55d3eea724245bf16d91b3842e0f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  <Health>k__BackingField: 7
 --- !u!114 &8119132701058392416
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -460,3 +405,16 @@ MonoBehaviour:
   _weaponPoint: {fileID: 1716756989154824695}
   _damage: 2
   <AttackRange>k__BackingField: 1.5
+--- !u!114 &1242012526759220341
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7938706248072812130}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2f0739e481a34be40a1baca5ee4e1a3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  <Health>k__BackingField: 10

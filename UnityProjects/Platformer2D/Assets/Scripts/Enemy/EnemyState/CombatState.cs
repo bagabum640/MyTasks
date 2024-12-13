@@ -1,5 +1,5 @@
 using UnityEngine;
-using static EnemyAnimations;
+using static EnemyAnimationData;
 
 public class CombatState : EnemyState
 {
@@ -23,7 +23,7 @@ public class CombatState : EnemyState
         if (Enemy.IsAggroed == false)
             Enemy.StateMachine.SetState<PatrolState>();
 
-        _enemyMovement.SetDirection(Enemy.GetTargetPosition());
+        _enemyMovement.GetPathDirection(Enemy.GetTargetPosition());
 
         if (_enemyAttack.AttackDelay >= _timerBetweenAttack)
         {

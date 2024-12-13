@@ -13,7 +13,7 @@ public class ChaseState : EnemyState
     }
 
     public override void Enter() =>
-        _enemyMovement.SetDirection(Enemy.GetTargetPosition());
+        _enemyMovement.GetPathDirection(Enemy.GetTargetPosition());
 
     public override void Exit() =>
         _enemyMovement.ResetSpeed();
@@ -26,6 +26,6 @@ public class ChaseState : EnemyState
         if (Enemy.IsAggroed && Mathf.Abs(Enemy.GetTargetPosition().x - Enemy.transform.position.x) <= _enemyAttack.AttackRange)
             Enemy.StateMachine.SetState<CombatState>();
 
-        _enemyMovement.SetTargetToMove(Enemy.GetTargetPosition(), _multiplieSpeed);
+        _enemyMovement.GetPathToMove(Enemy.GetTargetPosition(), _multiplieSpeed);
     }
 }

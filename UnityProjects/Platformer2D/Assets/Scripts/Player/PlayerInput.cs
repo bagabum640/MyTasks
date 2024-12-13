@@ -1,40 +1,42 @@
-using System;
 using UnityEngine;
 
 public class PlayerInput : MonoBehaviour
 {
     public const string Horizontal = "Horizontal";
+    private const KeyCode JumpKey = KeyCode.Space;
+    private const KeyCode JumpDownKey = KeyCode.S;
+    private const int AttackMouseButton = 0;
+
+    private bool _isJump;
+    private bool _isJumpDown;
+    private bool _isAttack;
 
     public float Direction { get; private set; }
 
-    public event Action Attacking;
-    public event Action Jumped;
-    public event Action JumpedOff;
-
     private void Update()
     {
-        Direction = Input.GetAxis(Horizontal);
+        Direction = Input.GetAxis(Horizontal);        
 
-        JumpInput();
-        JumpOffInput();
-        AttackInput();
+        if(Input.GetKeyDown(JumpKey)) 
+            _isJump = true;
+
+        if(Input.GetKeyDown(JumpDownKey))
+            _isJumpDown = true;
+
+        if(Input.GetMouseButtonDown(AttackMouseButton))
+            _isAttack = true;
     }
 
-    private void AttackInput()
-    {
-        if (Input.GetMouseButtonDown(0))
-            Attacking?.Invoke();  
-    }
+    public bool GetIsJump() => GetBoolAsTrigger(ref _isJump);
 
-    private void JumpOffInput()
-    {
-        if(Input.GetKeyDown(KeyCode.S))            
-            JumpedOff?.Invoke();
-    }
+    public bool GetIsJumpDown() => GetBoolAsTrigger(ref _isJumpDown);
 
-    private void JumpInput()
+    public bool GetIsAttack() => GetBoolAsTrigger(ref _isAttack);
+    
+    private bool GetBoolAsTrigger(ref bool value)
     {
-        if (Input.GetKeyDown(KeyCode.Space))
-            Jumped?.Invoke();
+        bool localValue = value;
+        value = false;
+        return localValue;
     }
 }

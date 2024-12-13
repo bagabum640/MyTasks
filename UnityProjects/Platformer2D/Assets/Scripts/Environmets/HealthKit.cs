@@ -1,18 +1,16 @@
 using UnityEngine;
 
-public class HealthKit : MonoBehaviour, IVisitable
+public class HealthKit : MonoBehaviour,ICollectable
 {
-    [SerializeField] private float _healCount = 3;
+    [field: SerializeField] public float HealthAmount { get; private set; } = 3;
 
-    public void Accept(IVisitor visitor) =>    
-        visitor.Visit(this);   
-
-    public void Use(PlayerHealth playerHealth)
+    public void Collect()
     {
+        PlayerHealth playerHealth = FindObjectOfType<PlayerHealth>();
+
         if (playerHealth.GetPossibleOfHealing())
         {
-            playerHealth.RestoreHealth(_healCount);
-
+            playerHealth.RestoreHealth(this);
             Destroy(gameObject);
         }
     }

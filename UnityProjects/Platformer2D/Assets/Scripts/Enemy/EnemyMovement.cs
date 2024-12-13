@@ -10,14 +10,19 @@ public class EnemyMovement : MonoBehaviour
     private Rigidbody2D _rigidbody;
     private bool _isFlipped = true;
 
+    public float GetCurrentSpeed => _rigidbody.velocity.x;
+
     private void Awake() =>
         _rigidbody = GetComponent<Rigidbody2D>();
-    public void SetTargetToMove(Vector3 direction, float multiplieSpeed = 1f) =>
-       _rigidbody.velocity = (direction - transform.position).normalized * (_speed * multiplieSpeed) * Vector2.right;
+
+    public void GetPathToMove(Vector3 path, float multiplieSpeed = 1f) =>
+       _rigidbody.velocity = (path - transform.position).normalized * (_speed * multiplieSpeed) * Vector2.right;
     
-    public void SetDirection(Vector3 direction)
+    public void GetPathDirection(Vector3 path)
     {
-        if (((direction.x - transform.position.x) > 0 && !_isFlipped) || ((direction.x - transform.position.x) < 0 && _isFlipped))
+        float direction = path.x - transform.position.x;
+
+        if ((direction > 0 && !_isFlipped) || (direction < 0 && _isFlipped))
         {
             transform.localScale *= new Vector2(-1f, 1f);
             _isFlipped = !_isFlipped;
@@ -35,9 +40,6 @@ public class EnemyMovement : MonoBehaviour
 
         return points;
     }
-
-    public float GetSpeed() =>
-        _rigidbody.velocity.x;
 
     public void ResetSpeed() =>
         _rigidbody.velocity = Vector3.zero;

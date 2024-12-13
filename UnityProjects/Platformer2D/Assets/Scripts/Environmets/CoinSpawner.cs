@@ -6,6 +6,8 @@ public class CoinSpawner : MonoBehaviour
     [SerializeField] private Transform[] _spawnPoints;
     [SerializeField] private Coin _coinPrefab;
 
+    private Coin _coin;
+
     private void Awake() =>   
         Init();   
 
@@ -13,18 +15,14 @@ public class CoinSpawner : MonoBehaviour
     {
         yield return new WaitForSeconds(firstSpawnDelay);
 
-        Coin coin = Instantiate(_coinPrefab, position, Quaternion.identity, transform);
-
-        coin.IsDestroyed += Create;
+        CreateCoin(position);
     }
 
     private void Init()
     {
         if (_spawnPoints.Length > 0)
-            for (int i = 0; i < transform.childCount; i++)
-            {
-                StartCoroutine(SpawnCoin(_spawnPoints[i].position));
-            }
+            for (int i = 0; i < _spawnPoints.Length; i++)
+                CreateCoin(_spawnPoints[i].position);
     }
 
     public void Create(Coin coin)
@@ -32,5 +30,11 @@ public class CoinSpawner : MonoBehaviour
         float spawnDelay = 1f;
         StartCoroutine(SpawnCoin(coin.transform.position, spawnDelay));
         coin.IsDestroyed -= Create;
+    }
+
+    private void CreateCoin(Vector2 position)
+    {
+        _coin = Instantiate(_coinPrefab, position, Quaternion.identity, transform);
+        _coin.IsDestroyed += Create;
     }
 }
