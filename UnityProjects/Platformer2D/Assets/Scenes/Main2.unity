@@ -3957,7 +3957,7 @@ Transform:
   m_GameObject: {fileID: 519420028}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 36.62, y: -21.52, z: -10}
+  m_LocalPosition: {x: 32.79, y: -21.79, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -5799,6 +5799,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1625350486}
     m_Modifications:
+    - target: {fileID: 73898520495208766, guid: ad3ad9c2567cd2f41a1cca6aa82c3cb8, type: 3}
+      propertyPath: _playerLayerMask.m_Bits
+      value: 136
+      objectReference: {fileID: 0}
     - target: {fileID: 4410868135531014763, guid: ad3ad9c2567cd2f41a1cca6aa82c3cb8, type: 3}
       propertyPath: _aggroDetector
       value: 
@@ -5923,6 +5927,10 @@ PrefabInstance:
     m_TransformParent: {fileID: 1625350486}
     m_Modifications:
     - target: {fileID: -8218635560654685505, guid: ad3ad9c2567cd2f41a1cca6aa82c3cb8, type: 3}
+      propertyPath: _damage
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -8218635560654685505, guid: ad3ad9c2567cd2f41a1cca6aa82c3cb8, type: 3}
       propertyPath: _weaponPoint
       value: 
       objectReference: {fileID: 1726406173}
@@ -6012,7 +6020,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7859454173965417564, guid: ad3ad9c2567cd2f41a1cca6aa82c3cb8, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 17.6
+      value: 17.74
       objectReference: {fileID: 0}
     - target: {fileID: 7859454173965417564, guid: ad3ad9c2567cd2f41a1cca6aa82c3cb8, type: 3}
       propertyPath: m_LocalPosition.y
@@ -6174,7 +6182,7 @@ GameObject:
   m_Component:
   - component: {fileID: 980682155}
   - component: {fileID: 980682156}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: AttackRadiusPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8006,7 +8014,7 @@ Transform:
   m_GameObject: {fileID: 1150766507}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 36.62, y: -21.52, z: -10}
+  m_LocalPosition: {x: 32.79, y: -21.79, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -54295,7 +54303,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1485162455}
   - component: {fileID: 1485162456}
-  m_Layer: 7
+  m_Layer: 0
   m_Name: GroundCheckPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60822,11 +60830,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4685172041672524356, guid: 14bc1929a4a389c43b1865e9aedce087, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 36.62
+      value: 32.79
       objectReference: {fileID: 0}
     - target: {fileID: 4685172041672524356, guid: 14bc1929a4a389c43b1865e9aedce087, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -24.02
+      value: -24.29
       objectReference: {fileID: 0}
     - target: {fileID: 4685172041672524356, guid: 14bc1929a4a389c43b1865e9aedce087, type: 3}
       propertyPath: m_LocalPosition.z

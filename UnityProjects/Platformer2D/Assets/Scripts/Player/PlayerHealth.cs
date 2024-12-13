@@ -4,8 +4,8 @@ using UnityEngine;
 public class PlayerHealth : MonoBehaviour
 {
     private readonly float _minHealth = 0f;
-    private readonly float _maxHealth = 10;
 
+    [SerializeField] private float _maxHealth = 10;
     [SerializeField] private float _currentHealth;
 
     private PlayerAnimations _playerAnimations;

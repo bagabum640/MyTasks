@@ -45,7 +45,7 @@ public class Enemy : MonoBehaviour
 
     private void Update()
     {
-        if (_enemyDamageHandler.Health > 0)
+        if (_enemyDamageHandler.IsAlive)
         {
             StateMachine.Update();
             _animator.SetFloat(MovementSpeed, Mathf.Abs(_enemyMovement.GetCurrentSpeed));
@@ -54,7 +54,7 @@ public class Enemy : MonoBehaviour
 
     private void FixedUpdate()
     {
-        if (_enemyDamageHandler.Health > 0)
+        if (_enemyDamageHandler.IsAlive)
             StateMachine.FixedUpdate();
     }
 
