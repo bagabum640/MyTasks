@@ -47,7 +47,7 @@ MonoBehaviour:
   _playerLayerMask:
     serializedVersion: 2
     m_Bits: 128
-  _delay: 1
+  _delay: 0.3
 --- !u!1 &5089953822684884546
 GameObject:
   m_ObjectHideFlags: 0
@@ -190,7 +190,7 @@ GameObject:
   - component: {fileID: 4410868135531014763}
   - component: {fileID: 8119132701058392416}
   - component: {fileID: -8218635560654685505}
-  - component: {fileID: 1242012526759220341}
+  - component: {fileID: 2712469268916348414}
   m_Layer: 8
   m_Name: Skelet
   m_TagString: Untagged
@@ -405,7 +405,7 @@ MonoBehaviour:
   _weaponPoint: {fileID: 1716756989154824695}
   _damage: 2
   <AttackRange>k__BackingField: 1.5
---- !u!114 &1242012526759220341
+--- !u!114 &2712469268916348414
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -414,7 +414,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 7938706248072812130}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2f0739e481a34be40a1baca5ee4e1a3e, type: 3}
+  m_Script: {fileID: 11500000, guid: 9ff1f5246cbf2d142a70a1ad68125761, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  <Health>k__BackingField: 10
+  _maxHealth: 10
+  _currentHealth: 10

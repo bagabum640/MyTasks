@@ -2,21 +2,33 @@ using UnityEngine;
 
 [RequireComponent(typeof(PlayerGroundDetector),
                   typeof(PlayerMover),
-                  typeof(PlayerInput))]
+                  typeof(PlayerInputReader))]
 [RequireComponent(typeof(PlayerCombat))]
 public class Player : MonoBehaviour
 {
     private PlayerGroundDetector _groundCheck;
     private PlayerMover _movement;
     private PlayerCombat _combat;
-    private PlayerInput _input;
+    private PlayerHealth _health;
+    private PlayerInputReader _input;
 
     private void Awake()
     {
-        _input = GetComponent<PlayerInput>();
+        _input = GetComponent<PlayerInputReader>();
         _movement = GetComponent<PlayerMover>();
         _groundCheck = GetComponent<PlayerGroundDetector>();
         _combat = GetComponent<PlayerCombat>();
+        _health = GetComponent<PlayerHealth>();
+    }
+
+    private void OnEnable()
+    {
+        _health.PlayerDied += Die;
+    }
+
+    private void OnDisable()
+    {
+        _health.PlayerDied -= Die;
     }
 
     private void FixedUpdate()
@@ -24,12 +36,12 @@ public class Player : MonoBehaviour
         _movement.Move(_input.Direction);
         _movement.Fall();
 
-        Attacking();
+        Attack();
         JumpDown();
         Jump();
     }
 
-    private void Attacking()
+    private void Attack()
     {
         if(_input.GetIsAttack() && _groundCheck.IsOnGround)
             _combat.AttackDelay();
@@ -45,5 +57,13 @@ public class Player : MonoBehaviour
     {
         if (_input.GetIsJump() && _groundCheck.IsOnGround)
             _movement.Jump();
+    }
+
+    private void Die()
+    {
+        GetComponent<Collider2D>().enabled = false;
+        GetComponent<Rigidbody2D>().isKinematic = true;
+        GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+        GetComponent<Player>().enabled = false;       
     }
 }

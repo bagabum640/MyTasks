@@ -1,56 +1,46 @@
+using System;
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerAnimations))]
 public class PlayerHealth : MonoBehaviour
 {
-    private readonly float _minHealth = 0f;
+    [SerializeField] private float _maxHealthAmount = 10;
+    [SerializeField] private float _currentHealthAmount;
 
-    [SerializeField] private float _maxHealth = 10;
-    [SerializeField] private float _currentHealth;
+    private readonly float _minHealthAmount = 0f;
 
     private PlayerAnimations _playerAnimations;
 
     public bool IsAlive { get; private set; } = true;
 
+    public event Action PlayerDied;
+
     private void Awake()
     {
         _playerAnimations = GetComponent<PlayerAnimations>();
 
-        _currentHealth = _maxHealth;
+        _currentHealthAmount = _maxHealthAmount;
     }
 
     public void TakeDamage(float damage)
     {
-        _currentHealth = Mathf.Clamp(_currentHealth - Mathf.Abs(damage), _minHealth, _maxHealth);
+        _currentHealthAmount = Mathf.Clamp(_currentHealthAmount - Mathf.Abs(damage), _minHealthAmount, _maxHealthAmount);
 
-        if (_currentHealth <= 0)
-            PlayerDead();
+        if (_currentHealthAmount <= 0)
+        {
+            IsAlive = false;
+            PlayerDied?.Invoke();
+            _playerAnimations.DeathAnimation();
+        }
         else
+        {
             _playerAnimations.HurtAnimation();
+        }
     }
 
-    public void RestoreHealth(HealthKit healthKit) =>   
-        _currentHealth = Mathf.Clamp(_currentHealth + Mathf.Abs(healthKit.HealthAmount), _minHealth, _maxHealth);
-    
+    public void RestoreHealth(int healthAmount) =>
+        _currentHealthAmount = Mathf.Clamp(_currentHealthAmount + Mathf.Abs(healthAmount), _minHealthAmount, _maxHealthAmount);
+
     public bool GetPossibleOfHealing() =>
-        _currentHealth < _maxHealth;
-
-    private void PlayerDead()
-    {
-        IsAlive = false;
-
-        SetChildrenActiveState();
-        GetComponent<Collider2D>().enabled = false;
-        GetComponent<Rigidbody2D>().isKinematic = true;
-        GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-        GetComponent<Player>().enabled = false;
-
-        _playerAnimations.DeathAnimation();
-    }
-
-    private void SetChildrenActiveState()
-    {
-        foreach (Transform child in transform)
-            child.gameObject.SetActive(false);
-    }
+        _currentHealthAmount < _maxHealthAmount;
 }

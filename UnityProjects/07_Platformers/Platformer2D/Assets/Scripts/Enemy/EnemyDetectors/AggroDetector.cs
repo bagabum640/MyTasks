@@ -9,8 +9,8 @@ public class AggroDetector : MonoBehaviour
 
     private readonly bool _isWork = true;
 
-    public event Action<Transform> IsSetTarget;
-    public event Action IsLostTarget;
+    public event Action<Transform> TargetFound;
+    public event Action TargetLost;
 
     private void Start() =>
         StartCoroutine(FindTarget());
@@ -27,9 +27,9 @@ public class AggroDetector : MonoBehaviour
             hitCollider = Physics2D.OverlapBox(transform.position, transform.localScale, angleBox, _playerLayerMask);
 
             if (hitCollider != null)
-                IsSetTarget?.Invoke(hitCollider.transform);
+                TargetFound?.Invoke(hitCollider.transform);
             else
-                IsLostTarget?.Invoke();
+                TargetLost?.Invoke();
 
             yield return waitForSeconds;
         }

@@ -3,7 +3,7 @@ using static EnemyAnimationData;
 
 [RequireComponent(typeof(Animator),
                   typeof(Rigidbody2D))]
-public class EnemyDamageHandler : MonoBehaviour
+public class EnemyHealth : MonoBehaviour
 {
     private readonly int _minHealth = 0;
 

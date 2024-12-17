@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class PlayerInput : MonoBehaviour
+public class PlayerInputReader : MonoBehaviour
 {
     public const string Horizontal = "Horizontal";
     private const KeyCode JumpKey = KeyCode.Space;

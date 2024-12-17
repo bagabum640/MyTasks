@@ -9,23 +9,22 @@ public class PatrolState : EnemyState
 
     private int _pointNumber;
 
-    public PatrolState(Enemy enemy, EnemyMovement enemyMovement) : base(enemy)
+    public PatrolState(Enemy enemy, EnemyMovement enemyMovement,IStateChanger stateChanger) : base(enemy,stateChanger)
     {
         _enemyMovement = enemyMovement;
 
         PathInit(_enemyMovement.GetPointsPosition());
     }
 
-    public override void Enter() =>
+    public override void Enter()
+    {
         _enemyMovement.GetPathDirection(_path[_pointNumber]);
+    }
 
-    public override void Exit() =>
-        _enemyMovement.ResetSpeed();
-
-    public override void PhysicUpdateState()
+    public override void UpdatePhysicState()
     {
         if (Enemy.IsAggroed)        
-            Enemy.StateMachine.SetState<ChaseState>();
+            StateChanger.SetState<ChaseState>();
         
         if (Mathf.Abs(_path[_pointNumber].x - Enemy.transform.position.x) <= _distanceToPoint)
         {

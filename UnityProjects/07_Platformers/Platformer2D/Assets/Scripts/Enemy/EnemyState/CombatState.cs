@@ -8,7 +8,7 @@ public class CombatState : EnemyState
     private readonly EnemyMovement _enemyMovement;
     private readonly float _timerBetweenAttack = 1f;
 
-    public CombatState(Enemy enemy, Animator animator, EnemyMovement enemyMovement,EnemyAttack enemyAttack) : base(enemy)
+    public CombatState(Enemy enemy, Animator animator, EnemyMovement enemyMovement, EnemyAttack enemyAttack, IStateChanger stateChanger) : base(enemy, stateChanger)
     {
         _animator = animator;
         _enemyAttack = enemyAttack;
@@ -17,19 +17,19 @@ public class CombatState : EnemyState
 
     public override void UpdateState()
     {
-        if (Enemy.IsAggroed && Mathf.Abs(Enemy.GetTargetPosition().x - Enemy.transform.position.x) > _enemyAttack.AttackRange)
-            Enemy.StateMachine.SetState<ChaseState>();
+        if (Enemy.IsAggroed && Mathf.Abs(Enemy.GetTargetPosition().x - Enemy.transform.position.x) > _enemyAttack.AttackRange && _enemyMovement.CanMove)
+            StateChanger.SetState<ChaseState>();
 
         if (Enemy.IsAggroed == false)
-            Enemy.StateMachine.SetState<PatrolState>();
+            StateChanger.SetState<PatrolState>();
 
         _enemyMovement.GetPathDirection(Enemy.GetTargetPosition());
-
+        
         if (_enemyAttack.AttackDelay >= _timerBetweenAttack)
-        {
+        {            
             _enemyAttack.ResetTimerAttack();
-
-            _animator.SetTrigger(Attack);
-        }
+            _enemyMovement.ProhibitMove();
+            _animator.SetTrigger(Attack);         
+        }        
     }
 }

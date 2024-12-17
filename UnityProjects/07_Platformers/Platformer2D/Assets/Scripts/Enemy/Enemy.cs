@@ -2,7 +2,7 @@ using UnityEngine;
 using static EnemyAnimationData;
 
 [RequireComponent(typeof(EnemyMovement),
-                  typeof(EnemyDamageHandler),
+                  typeof(EnemyHealth),
                   typeof(Animator))]
 [RequireComponent(typeof(EnemyAttack))]
 public class Enemy : MonoBehaviour
@@ -11,60 +11,53 @@ public class Enemy : MonoBehaviour
 
     private Transform _target;
     private Animator _animator;
-    private EnemyDamageHandler _enemyDamageHandler;
+    private EnemyHealth _enemyHealth;
     private EnemyAttack _enemyAttack;
     private EnemyMovement _enemyMovement;
-
-    public EnemyStateMachine StateMachine { get; private set; }
+    private EnemyStateMachine _stateMachine;
     
     public bool IsAggroed { get; private set; }
-    public bool IsFighted { get; private set; }
 
     private void Awake()
     {
-        _enemyDamageHandler = GetComponent<EnemyDamageHandler>();
+        _enemyHealth = GetComponent<EnemyHealth>();
         _enemyMovement = GetComponent<EnemyMovement>();
         _enemyAttack = GetComponent<EnemyAttack>();
         _animator = GetComponent<Animator>();
 
-        StateMachine = new EnemyStateMachine(this, _animator, _enemyMovement, _enemyAttack);
-        StateMachine.SetState<PatrolState>();
+        _stateMachine = new EnemyStateMachine(this, _animator, _enemyMovement, _enemyAttack);
+        _stateMachine.SetState<PatrolState>();
     }
 
     private void OnEnable()
     {
-        _aggroDetector.IsSetTarget += SetTarget;
-        _aggroDetector.IsLostTarget += LossOfTarget;
+        _aggroDetector.TargetFound += SetTarget;
+        _aggroDetector.TargetLost += LossOfTarget;
     }
 
     private void OnDisable()
     {
-        _aggroDetector.IsSetTarget -= SetTarget;
-        _aggroDetector.IsLostTarget -= LossOfTarget;
+        _aggroDetector.TargetFound -= SetTarget;
+        _aggroDetector.TargetLost -= LossOfTarget;
     }
 
     private void Update()
     {
-        if (_enemyDamageHandler.IsAlive)
-        {
-            StateMachine.Update();
-            _animator.SetFloat(MovementSpeed, Mathf.Abs(_enemyMovement.GetCurrentSpeed));
-        }
+        if (_enemyHealth.IsAlive)       
+            _stateMachine.Update();                   
     }
 
     private void FixedUpdate()
     {
-        if (_enemyDamageHandler.IsAlive)
-            StateMachine.FixedUpdate();
+        if (_enemyHealth.IsAlive)
+            _stateMachine.FixedUpdate();
     }
 
     public Vector3 GetTargetPosition()
     {
-        if (_target != null)
-        {
+        if (_target != null)       
             return _target.position;
-        }
-
+        
         return Vector3.zero;
     }  
 

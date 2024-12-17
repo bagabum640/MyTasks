@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyStateMachine
+public class EnemyStateMachine : IStateChanger
 {
     private readonly Dictionary<Type, EnemyState> _states = new();
 
@@ -10,16 +10,16 @@ public class EnemyStateMachine
 
     public EnemyStateMachine(Enemy enemy, Animator animator, EnemyMovement enemyMovement, EnemyAttack enemyAttack)
     {
-        _states.Add(typeof(PatrolState), new PatrolState(enemy, enemyMovement));
-        _states.Add(typeof(ChaseState), new ChaseState(enemy, enemyMovement, enemyAttack));
-        _states.Add(typeof(CombatState), new CombatState(enemy, animator,enemyMovement, enemyAttack));
+        _states.Add(typeof(PatrolState), new PatrolState(enemy, enemyMovement,this));
+        _states.Add(typeof(ChaseState), new ChaseState(enemy, enemyMovement, enemyAttack, this));
+        _states.Add(typeof(CombatState), new CombatState(enemy, animator, enemyMovement, enemyAttack, this));
     }
 
-    public void Update() =>    
-        _currentEnemyState.UpdateState();   
+    public void Update() =>
+        _currentEnemyState.UpdateState();
 
-    public void FixedUpdate() =>    
-        _currentEnemyState.PhysicUpdateState();  
+    public void FixedUpdate() =>
+        _currentEnemyState.UpdatePhysicState();
 
     public void SetState<TState>() where TState : EnemyState
     {

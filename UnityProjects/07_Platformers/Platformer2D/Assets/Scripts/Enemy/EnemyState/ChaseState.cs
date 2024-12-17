@@ -4,9 +4,9 @@ public class ChaseState : EnemyState
 {
     private readonly EnemyMovement _enemyMovement;
     private readonly EnemyAttack _enemyAttack;
-    private readonly float _multiplieSpeed = 2f;
+    private readonly int _multiplieSpeed = 2;
 
-    public ChaseState(Enemy enemy, EnemyMovement enemyMovement, EnemyAttack enemyAttack) : base(enemy)
+    public ChaseState(Enemy enemy, EnemyMovement enemyMovement, EnemyAttack enemyAttack, IStateChanger stateChanger) : base(enemy, stateChanger)
     {
         _enemyAttack = enemyAttack;
         _enemyMovement = enemyMovement;
@@ -18,13 +18,13 @@ public class ChaseState : EnemyState
     public override void Exit() =>
         _enemyMovement.ResetSpeed();
 
-    public override void PhysicUpdateState()
+    public override void UpdatePhysicState()
     {
         if (Enemy.IsAggroed == false)
-            Enemy.StateMachine.SetState<PatrolState>();
+            StateChanger.SetState<PatrolState>();
 
         if (Enemy.IsAggroed && Mathf.Abs(Enemy.GetTargetPosition().x - Enemy.transform.position.x) <= _enemyAttack.AttackRange)
-            Enemy.StateMachine.SetState<CombatState>();
+            StateChanger.SetState<CombatState>();
 
         _enemyMovement.GetPathToMove(Enemy.GetTargetPosition(), _multiplieSpeed);
     }
