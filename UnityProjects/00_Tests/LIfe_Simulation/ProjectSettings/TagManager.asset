@@ -14,7 +14,7 @@ TagManager:
   - Gold
   - Wood
   - Food
-  - 
+  - Worker
   - 
   - 
   - 
@@ -40,4 +40,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Worker
+    uniqueID: 3080812445
     locked: 0

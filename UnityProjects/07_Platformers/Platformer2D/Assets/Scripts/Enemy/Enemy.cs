@@ -33,12 +33,14 @@ public class Enemy : MonoBehaviour
     {
         _aggroDetector.TargetFound += SetTarget;
         _aggroDetector.TargetLost += LossOfTarget;
+        _enemyHealth.EnemyDied += Die;
     }
 
     private void OnDisable()
     {
         _aggroDetector.TargetFound -= SetTarget;
         _aggroDetector.TargetLost -= LossOfTarget;
+        _enemyHealth.EnemyDied -= Die;
     }
 
     private void Update()
@@ -72,4 +74,11 @@ public class Enemy : MonoBehaviour
         _target = null;
         IsAggroed = false;
     }     
+
+    private void Die()
+    {
+        GetComponent<Collider2D>().enabled = false;
+        GetComponent<Rigidbody2D>().isKinematic = true;
+        GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+    }
 }

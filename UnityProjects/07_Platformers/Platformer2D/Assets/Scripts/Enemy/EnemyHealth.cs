@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using static EnemyAnimationData;
 
@@ -14,6 +15,8 @@ public class EnemyHealth : MonoBehaviour
 
     public bool IsAlive { get; private set; } = true;
 
+    public event Action EnemyDied;
+
     private void Awake()
     {
         _animator = GetComponent<Animator>();
@@ -26,19 +29,12 @@ public class EnemyHealth : MonoBehaviour
         _currentHealth = Mathf.Clamp(_currentHealth - Mathf.Abs(damage), _minHealth, _maxHealth);
 
         if (_currentHealth <= 0)
-            Die();
+        {
+            IsAlive = false;
+            EnemyDied?.Invoke();
+            _animator.SetTrigger(Death);
+        }         
         else
             _animator.SetTrigger(Hurt);
-    }
-
-    private void Die()
-    {
-        IsAlive = false;
-
-        GetComponent<Collider2D>().enabled = false;
-        GetComponent<Rigidbody2D>().isKinematic = true;
-        GetComponent<Rigidbody2D>().velocity = Vector3.zero;
-
-        _animator.SetTrigger(Death);
     }
 }

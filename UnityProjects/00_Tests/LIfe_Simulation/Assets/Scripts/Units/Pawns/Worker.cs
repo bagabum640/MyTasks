@@ -6,6 +6,7 @@ public class Worker : Unit
     [SerializeField] private List<ResourcePoint> _resourcePoints;
     [SerializeField] private TownHall _townHall;
     [SerializeField] private Transform _handPosition;
+    [SerializeField] private float _rangeToTarget = 0.2f;
 
     private PawnStateMachine _stateMachine;
     private Resource _resourse;
@@ -38,8 +39,8 @@ public class Worker : Unit
                 _stateMachine.SetState<TreeMiningState>();
                 break;
             case ResourceType.Food:
-                _stateMachine.SetState<FoodMiningState>();              
-                break;                
+                _stateMachine.SetState<FoodMiningState>();
+                break;
         }
 
         _stateMachine.Update();
@@ -54,7 +55,7 @@ public class Worker : Unit
     {
         if (resourcePoint != null)
         {
-            if ((transform.position - resourcePoint.transform.position).magnitude < 0.2f)
+            if ((transform.position - resourcePoint.transform.position).magnitude < _rangeToTarget)
             {
                 if (ResourseInHand == false)
                 {
@@ -64,7 +65,7 @@ public class Worker : Unit
                 }
             }
 
-            GetPathToMove(resourcePoint.transform.position);
+           GetPathToMove(resourcePoint.transform.position);
         }
     }
 
@@ -72,7 +73,7 @@ public class Worker : Unit
     {
         if (ResourseInHand)
         {
-            if ((transform.position - _townHall.transform.position).magnitude < 0.2f)
+            if ((transform.position - _townHall.transform.position).magnitude < _rangeToTarget)
             {
                 _townHall.GetResource(_resourse);
 
